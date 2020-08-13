@@ -1,4 +1,6 @@
 const path = require('path') // enlist-disable-line
+  
+// argv: weapp / swan / alipay / h5 / rn / tt / qq / quickapp
 const config = {
   projectName: 'cxsj-miniprograme-taro',
   date: '2020-7-30',
@@ -9,7 +11,7 @@ const config = {
     828: 1.81 / 2
   },
   sourceRoot: 'src',
-  outputRoot: 'dist',
+  outputRoot: `dist/${process.argv[4]}`,
   alias: {
     '@': path.resolve(__dirname, '..', 'src'),
   },
@@ -67,6 +69,7 @@ const config = {
 }
 
 module.exports = function (merge) {
+
   if (process.env.NODE_ENV === 'development') {
     return merge({}, config, require('./dev'))
   }

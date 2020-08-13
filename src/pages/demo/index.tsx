@@ -1,5 +1,3 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { View, Button, Text } from '@tarojs/components'
 
 import { add, minus, asyncAdd } from '../../actions/counter'

@@ -52,7 +52,11 @@ interface Index {
   }
 }))
 class Index extends Component {
-  componentWillReceiveProps (nextProps) {
+  config: Config = {
+    navigationBarTitleText: 'taro-music'
+  }
+
+  UNSAFE_componentWillReceiveProps (nextProps) {
     console.log(this.props, nextProps)
   }
 
