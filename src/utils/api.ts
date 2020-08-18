@@ -19,21 +19,22 @@ class API {
   // api控制器
   http(args, method = 'GET') {
     let { url, data, loading, toast } = args
+    
     url = this.resetUrl(url)
     // loading
     loading && showLoading({ title: '加载中...', mask: true })
     // 判断请求类型
     let contentType
     // GET请求
-    // if (method === 'GET') {
-    //   contentType = 'application/json'
-    //   // POST 请求
-    // } else if (method === 'POST') {
-    //   contentType = 'application/x-www-form-urlencoded'
-    // }
+    if (method === 'GET') {
+      contentType = 'application/json'
+      // POST 请求
+    } else if (method === 'POST') {
+      contentType = 'application/x-www-form-urlencoded'
+    }
 
     // 用户token
-    let Authorization = Taro.getStorageSync('token') || ''
+    // let Authorization = Taro.getStorageSync('token') || ''
     let _this = this
     return new Promise((resolve, reject) => {
       request({
@@ -42,7 +43,7 @@ class API {
         method,
         header: {
           'content-type': contentType,
-          Authorization,
+          // Authorization,
         },
         // 请求成功回调
         success(res) {
@@ -66,8 +67,15 @@ class API {
   }
   // 修改请求地址
   resetUrl(url) {
+    let defaultUrl = ''
     let API_URL = process.env.API_URL
-    return API_URL + url
+    let VEGA_STATION = process.env.VEGA_STATION
+    if (url.includes(item => item === '/api')) {
+      defaultUrl =  API_URL + url.replace('/api', '')
+    } else {
+      defaultUrl = VEGA_STATION + url
+    }
+    return defaultUrl
   }
 
   // 响应拦截

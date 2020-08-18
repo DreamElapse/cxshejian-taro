@@ -1,10 +1,16 @@
 export default {
   pages: [
       'pages/index/index',
+      'pages/add/index',
+      'pages/calendar/index',
+      'pages/selectSite/index',
+      'pages/lateQueryResults/index',
       'pages/demo/index',
       'pages/user/index'
   ],
-       
+      
+      
+            
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',

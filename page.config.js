@@ -2,6 +2,7 @@ const fs = require('fs') // enlist-disable-line
 
 // 读取pages目录内文件生成app.config.ts文件内容
 let files = fs.readdirSync('./src/pages')
+files.splice(files.findIndex(item => item === '.DS_Store'), 1)
 files.splice(files.findIndex(item => item === 'index'), 1)
 files.unshift('index')
 let fileArr = files.map(item => {

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { View, Button, Text } from '@tarojs/components'
-
+import Taro from '@tarojs/taro'
 import { add, minus, asyncAdd } from '../../store/actions'
 import API from '@/api/index'
+import Add from './station/add/add'
 
 import './index.scss'
 
@@ -43,6 +44,9 @@ interface Index {
   counter
 }), (dispatch) => ({
   add () {
+    Taro.navigateTo({
+      url: 'add'
+    })
     dispatch(add())
   },
   dec () {
@@ -80,6 +84,7 @@ class Index extends Component {
         <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
         <View><Text>{this.props.counter.num}</Text></View>
         <View><Text>Hello, World</Text></View>
+        {/* <Add></Add> */}
       </View>
     )
   }
