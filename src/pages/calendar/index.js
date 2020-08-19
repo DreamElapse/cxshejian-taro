@@ -206,8 +206,6 @@ export default class Calendar extends Component {
       //         let item = refs[i]
       //         if(item.refName == this.updateRef){//item.refName == 'tripCard'
       //           let target_component = item.target
-      //           // console.log('target_component: ')
-      //           // console.log(target_component)
       //           //触发父页面中 子组件的方法
       //           target_component && target_component.updateBackPageData && target_component.updateBackPageData('date',data)
       //           Taro.navigateBack({delta: 1})
@@ -225,11 +223,10 @@ export default class Calendar extends Component {
   render () {
     let { dateData,weeks} = this.state
     const HaveDay = ({dated,index}) => {
-      console.log(index,dated,1233)
       return (
         dated.map((item, idx) => {
-          console.log(idx,item,111)
-          return <View className={"day {{item.selected == 1 ? 'bc' : ''}} {{idx == 0 && index == 0 ? 'todaySty' : ''}}"} key={idx} data-index={index} data-indexs={idx} onClick={this.selectday}>
+          
+          return <View className={`day ${+item.selected === 1 ? 'bc' : ''} ${+idx === 0 && +index === 0 ? 'todaySty' : ''}`} key={idx} data-index={index} data-indexs={idx} onClick={this.selectday}>
             <View className={"actname {{item.selected == 1 ? 'bc2' : ''}}"}></View>
             {(idx == 0 && index==0) && <Text>今天</Text>}
             {!(idx == 0 && index==0) && <Text> {dated[idx].day}</Text>}

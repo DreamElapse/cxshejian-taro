@@ -286,7 +286,7 @@ export default class Index extends Component {
           that.init_data(list, dateC)
           that.isload_success = true
         })
-        .finally(() => {
+        .catch((e) => {
           that.isload_success = false
         })
       }

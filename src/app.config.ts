@@ -6,6 +6,9 @@ export default {
       'pages/selectSite/index',
       'pages/lateQueryResults/index',
       'pages/city/index',
+      'pages/findStation/index',
+      'pages/switchStation/index',
+      'pages/stationLargeScreen/index',
       'pages/demo/index',
       'pages/user/index'
   ],

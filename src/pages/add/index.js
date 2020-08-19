@@ -69,7 +69,6 @@ export default class Add extends Component {
 
   componentWillMount () {
     let qOption = getCurrentInstance().router.params.q ? parseUrlStr2ParamsObj(decodeURIComponent(getCurrentInstance().router.params.q)) : null
-    console.log(qOption,910219827)
     if(qOption){
       this.sourcefrom = qOption.sourcefrom
 
@@ -180,8 +179,6 @@ export default class Add extends Component {
        * @param {*} data 更新数据
        */
   updateBackPageData = (type, data) => {//refs: tripCard
-    console.log("updateBackData data: ")
-    console.log(data)
     if(type == 'date'){//更新日期
       this.setState({
         dateC:data.dateC,
@@ -265,17 +262,13 @@ export default class Add extends Component {
           timeCC: timeCC,
           weekDay: weekDay
         }
-        console.log(queryParams(jump_params), 123)
         let jumpUrl = '../selectSite/index?'+queryParams(jump_params)
-        console.log(jumpUrl)
         Taro.navigateTo({
           url: jumpUrl
         }).then(res=>{
           that.onHiddenKeyBoard()
           let arry = Taro.getStorageSync('hCArry') || []
           let cc = trainNO
-          console.log(arry,24324)
-
           if (arry.length == 0) {
             arry.unshift(cc)
           } else if (arry.indexOf(cc) != -1) {
@@ -289,7 +282,7 @@ export default class Add extends Component {
           Taro.setStorageSync('hCArry', arry)
         })
       })
-      .finally(() => {
+      .catch((e) => {
         
       })
     }else if(current == '1'){
@@ -306,52 +299,28 @@ export default class Add extends Component {
         to_station_type: that.to_station_type,
         type: source == addTrip_sourcefrom_enum.momentSearch_stationSearch ? 'time' : 'bind'
       }
+      
       // debugger
-      let jumpUrl = '../findStation/findStation?'+queryParams(jump_params)
-      console.log('时刻查询 站站查询  jumpUrl： '+jumpUrl)
+      let jumpUrl = '../findStation/index?'+queryParams(jump_params)
       Taro.navigateTo({
         url: jumpUrl
       }).then(res=>{
-        let arry = Taro.getStorageSync('hZArry')
+        let arry = Taro.getStorageSync('hZArry') || []
         let czzc = cityNameS + '-' + cityNameE
         if (arry.length == 0) {
           arry.unshift(czzc)
         } else if (arry.indexOf(czzc) != -1) {
-
+           
         } else {
           arry.unshift(czzc)
           if(arry.length>=20){
             arry.pop()
           }
         }
+        
         Taro.setStorageSync('hZArry', arry)
       })
     }
-  }
-
-  choise = () => {
-    let that = this
-    api.get(getGlobalData('domain_trainlink') + '/station/getTrainDetailList',{
-      date: that.state.dateC,
-      arrCity: that.state.cityNameE,
-      dptCity: that.state.cityNameS
-    }).then((res)=>{
-        let arry = Taro.getStorageSync('hZArry');
-        let czzc = Taro.getStorageSync('cityNameS') + '-' + Taro.getStorageSync('cityNameE');
-        if (arry.length == 0) {
-          arry.unshift(czzc)
-        } else if (arry.indexOf(czzc) != -1) {
-
-        } else {
-          arry.unshift(czzc)
-        }
-        Taro.setStorageSync('hZArry', arry)
-        Taro.setStorage({key:'trinklist',data:res.data.data}).then(res=>{
-          Taro.navigateTo({
-            url: '../findStation/findStation'
-          })
-        })
-    })
   }
 
   //调换起点终点
@@ -383,7 +352,6 @@ export default class Add extends Component {
   //接受按键值
   onGetCode (e) {
     let tex = e.val;
-    console.log(111111,tex)
     this.setState({
       color: '#323232'
     });
@@ -462,36 +430,7 @@ export default class Add extends Component {
       that.choice()
     })   
   }
-  //扫码车票二维码
-  scanTicket = () => {
-      let that = this
-  
-      Taro.scanCode({
-        success(res) {
-          let code = res.result
-          let source_scan = that.is_monent_enter ? addTrip_sourcefrom_enum.momentSearch_scanTicket : addTrip_sourcefrom_enum.addTrain_scanTicket
-          TrainUtil.request_scanTicket(code, source_scan).then((jump_params)=>{
-            let jumpUrl = '../lateQueryResults/index?'+queryParams(jump_params)
-            console.log('跳转车次结果页：'+jumpUrl)
-            Taro.navigateTo({
-              url: jumpUrl
-            })
-          },(e)=>{
-               
-          })
-        },fail(e){
-          // that.setState({ //显示loading
-          //   scanHidden: false
-          // })
-          Taro.showToast({
-            title:'扫描识别失败',
-            icon: 'none',
-            duration:1000,
-          })
-        }
-      })
-    
-  }
+ 
 
   showKeyBoard = (e) => {
     e.stopPropagation();
@@ -592,10 +531,10 @@ export default class Add extends Component {
                 <View id='ATadd1' className={"inputCol {{animations}}"} onClick={this.showKeyBoard} style={"color:{{color}}"}>{content}</View>
               </View>
               <View className='rightBox' id='ATadd2'>
-                <View className="scanbgc">
+                {/* <View className="scanbgc">
                     <Image className='scanImg' src={this.basScr + '/h5/tarocx9z/czt_v1/search/icon_saomiao.png'} onClick={this.scanTicket}></Image>
                 </View>
-                <View className='scanText'>扫一扫</View>
+                <View className='scanText'>扫一扫</View> */}
               </View>
             </View>
 

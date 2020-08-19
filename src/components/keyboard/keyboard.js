@@ -18,17 +18,9 @@ class Keyboard extends Component {
         let myEventDetail = {
           val: tex
         } // detail对象，提供给事件监听函数
-      //   console.log(12312312,myEventDetail)
         //this.$scope.triggerEvent('myevent', myEventDetail) //myevent自定义名称事件，父组件中使用
          this.props.onGetCode(myEventDetail);   
       }
-
-   // viewClick(e){
-   //    // console.log('--- keyboard viewClick ')
-   //    if(this.props.onHidden){
-   //       this.props.onHidden(e)
-   //    }
-   // }
 
    stopClick = (e) =>{
       e.stopPropagation()
@@ -37,7 +29,6 @@ class Keyboard extends Component {
    UNSAFE_componentWillMount() {
       Taro.getSystemInfo({
          success: function (res) {
-             console.log(res)
              var name = 'iPhone X'
              var name1 = 'iPhone XS MAX'
              var name2 = 'iPhone XS'

@@ -213,7 +213,6 @@ export default class Index extends Component {
               }
            
               list[i].sectionTitle = is_crossDay ? (is_diff_trianNo ? (crossDayTip+"   |   "+diffTrianNoTip) : crossDayTip) : diffTrianNoTip
-              console.log(i, list[i].sectionTitle)
             }
           }
 
@@ -227,14 +226,9 @@ export default class Index extends Component {
           }
 
           if(i>0 && list[i-1].section){
-            console.log(' ---- 分组: '+list[i-1].stationName+"  index: "+(i-1) +"  日期: "+list[i-1].sectionTitle)
           }
         }
         list[from_index].section_num = section_num
-        // console.log('------- 出发站日期: '+dateC+' 更新后 list:')
-        // console.log(list)
-        // console.log('------- 出发站日期: '+dateC+' selects:')
-        // console.log(selects)
         //到达正点率
         var arriveOntimeRate = ''
         if(isNotEmptyObj(list[to_index].arriveOntimeRate)){
@@ -289,14 +283,12 @@ export default class Index extends Component {
        */
       getTicket = (dateC) => {
         var that = this
-        console.log('getTicket trainNo: '+this.trainNo+' dateC: '+dateC,888888)
-
         API.StationService.getStationToStationByTrainNo({strokeTime:dateC,trainNo:that.trainNo,startStation:this.from_station,endStation:this.to_station})
         .then(res => {
           Taro.setStorageSync('dateC', dateC)
           that.init_data(res.data.data, dateC)
         })
-        .finally(() => {
+        .catch((e) => {
     
         })
       }
@@ -330,7 +322,6 @@ export default class Index extends Component {
        * 点击事件：正点率 
        */
       jump_ontimeRate = (e) => {
-        console.log('正点率')
         var that = this
         if(that.trainNo && that.trainNo!=''){
           Taro.navigateTo({

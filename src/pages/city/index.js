@@ -1,6 +1,6 @@
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import React, { Component } from 'react'
-import { View, Text, ScrollView, Input, Image } from '@tarojs/components'
+import { View, Text, ScrollView, Input, Image, Block} from '@tarojs/components'
 import './city.scss'
 // import api from '../../../../service/api'
 // import {get as getGlobalData } from '../../../../service/config'
@@ -83,7 +83,6 @@ export default class City extends Component {
     Taro.getLocation({
       type: 'gcj02',
       success: function (data) {
-        console.log(data)
         Taro.getSetting({
           success: function (res) {
             if (res.authSetting['scope.userLocation'] || res.authSetting['location']  || res.authSetting['scope.location']) {
@@ -122,7 +121,6 @@ export default class City extends Component {
           Taro.getLocation({
             type: 'gcj02',
             success: function (res) { //01.说明系统位置和小程序位置开启直接获取坐标定位
-              console.log(res);
               that.getMyCity(res);
             },
             fail: function () { //02.说明系统位置获取小程序未开启（1或2）
@@ -149,12 +147,9 @@ export default class City extends Component {
   }
 
   //获取所有城市
-  getAllCity = () => {
-    toast()
-    API.StationService.getAllCityAndStation()
+  getAllCity = () => { 
+    API.StationService.getAllCityAndStation({},true)
     .then(res => {
-      debugger
-      Taro.hideLoading()
       if(res.data.code ==0){
         let array = res.data.data
         let navRight =[]
@@ -176,7 +171,7 @@ export default class City extends Component {
         })
       }
     })
-    .finally(() => {
+    .catch((e) => {
       Taro.hideLoading()
       Taro.showToast({
         title:e.errorText || e,
@@ -190,12 +185,11 @@ export default class City extends Component {
 
     API.StationService.getHotCity()
     .then(res => {
-      debugger
       this.setState({
         hotCity: res.data.hotCity
       })
     })
-    .finally(() => {
+    .catch((e) => {
 
     })
   }
@@ -207,7 +201,6 @@ export default class City extends Component {
     let longitude = res.longitude
     API.StationService.getCityForLngLat({lnglat:latitude + ',' + longitude})
     .then(res => {
-      debugger
       if(Taro.getStorageSync("settinging")){
         Taro.removeStorage({
           key:'settinging'
@@ -218,7 +211,7 @@ export default class City extends Component {
         scoped_loca:true
       })
     })
-    .finally(() => {
+    .catch((e) => {
 
     })
   }
@@ -226,7 +219,6 @@ export default class City extends Component {
   //锚点跳转
   scrollToViewFn = (e) => {
     let _id = e.currentTarget.dataset.id;
-    console.log('打印点击锚标记',e)
     this.setState({
       toView: 'inToView' + _id,
       bigChar:_id
@@ -249,7 +241,6 @@ export default class City extends Component {
         that.state.kong.push(item)
       })
     })
-    console.log(that.state.kong)
     that.setState({
       seach: that.state.kong,
       bok1: false,
@@ -284,7 +275,6 @@ export default class City extends Component {
   //输入
   change = (e) => {
     const value = e.detail.value
-    console.log("change: "+value)
     this.setState({
       value: value
     })
@@ -312,7 +302,6 @@ export default class City extends Component {
         })
       }
     }else{
-      console.log("显示 所有车站 ")
       this.setState({
         //isShowSearchAllStation: true,
         seach: [],
@@ -324,16 +313,12 @@ export default class City extends Component {
   }
 
   searchPyFunc = (pyFirstChar,arrlist) => {
-    console.log(arrlist)
     var updata = []
     var kongList = []
     var py_all = pinyin.getFullChars(pyFirstChar)
-    console.log("搜索 条件："+pyFirstChar + "   --- "+py_all)
     var first_py = py_all && py_all != "" ? py_all.substr(0,1) : ""
     if(first_py != ""){
       first_py = first_py.toUpperCase()
-      console.log("首字母："+first_py)
-     
       for(var i = 0; i<arrlist.length; i++){
         var item = arrlist[i]
         if(item.name == first_py){
@@ -342,7 +327,6 @@ export default class City extends Component {
         }
       }
       var reg = new RegExp(pyFirstChar);
-      console.log('regregregreg',reg)
       for (var i = 0; i < kongList.length; i++) {
         if (kongList[i].cityName.match(reg)  || kongList[i].cityAllPin.match(reg)  || kongList[i].citySimplePin.match(reg)) {
           updata.push(kongList[i])
@@ -364,14 +348,10 @@ export default class City extends Component {
                 }else{
                   updata.push({'cityName':arrlist[i].list[j].cityName,'stationList':stinglist.slice(k,k+1)})
                 }
-                // console.log('我哦我我'+arrlist[i].list[j].stationList[k].stationAllPin)
-                // console.log('你你你你'+arrlist[i].list[j].stationList[k].stationSimplePin)
               }
             }
           }
         }
-      
-      console.log('搜索结果：',updata)
     }
     return updata;
   }
@@ -421,8 +401,6 @@ export default class City extends Component {
               let item = refs[i]
               if(item.refName == this.updateRef){//item.refName == 'tripCard'
                 let target_component = item.target
-                // console.log('target_component: ')
-                // console.log(target_component)
                 //触发父页面中 子组件的方法
                 target_component && target_component.updateBackPageData && target_component.updateBackPageData(this.type,data)
                 Taro.navigateBack({delta: 1})
@@ -441,7 +419,6 @@ export default class City extends Component {
   disBigChar = (e) => {
     e.stopPropagation();
     var realTarget = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-      console.log('dfdf',realTarget)
       this.setState({
         bigChar:e.target.dataset.id
       })
