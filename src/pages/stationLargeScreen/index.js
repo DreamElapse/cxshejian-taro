@@ -22,6 +22,7 @@ export default class LargeScreen extends Component {
   constructor() {
     super(...arguments)
     this.state = {
+
       station: '',
       isNowDate: true, //true为现在，false为历史
       isIcon: true, //true为显示搜索图标和提示文字
@@ -50,19 +51,23 @@ export default class LargeScreen extends Component {
   }
 
   componentWillMount() {
+    let that = this
     let options = getCurrentInstance().router.params
     if(options){
       if(options.station){
+        
+        let opt_station = decodeURI(options.station)
+        
         Taro.setNavigationBarTitle({
-          title: decodeURI(options.station)
+          title: opt_station
         })
-        this.setState({
-          station:decodeURI(options.station)
+
+        that.setState({
+          station:opt_station
         })
       }
     }
     
-    let that = this
     that.setState({
       isWait: options && decodeURI(options.type) === '0'? false:true //1为候车列表，0为接车列表
     })
@@ -140,9 +145,9 @@ export default class LargeScreen extends Component {
         return
     }
     let newList = res.data&&res.data.data&&res.data.data.data || []
-    // debugger
+
     if (newList == null || newList.length == 0) {
-      // debugger
+ 
       if (that.state.pageNum != 1) {
         that.setState({
           flag:true,
@@ -168,6 +173,7 @@ export default class LargeScreen extends Component {
           flag: true,
           isWaitFinish: (newList.length<that.state.pageSize ? true :false)
         },()=>{
+
         })
       }
     }
@@ -636,12 +642,45 @@ export default class LargeScreen extends Component {
       hasBoard: false,
     })
   }
+
+  // 跳转车次选择出发站页
+  see (e) {
+
+    // var {station, isWait} = this.state
+    //跳转车次选择出发站页
+    // var stationName = station
+    // if(isNotEmptyObj(stationName) && stationName.indexOf("站") >= 0){
+    //   stationName = stationName.split("站")[0]
+    // }
+
+    let dataset = e.currentTarget.dataset
+    let trainNo = dataset.trainNo
+     let jump_params = {
+        // sourcefrom: addTrip_sourcefrom_enum.largeScreenQuery, 
+        trainNo: trainNo,
+     }
+
+    //  if(isWait){//候车
+    //    jump_params.from_station = stationName
+    //    jump_params.to_station = ''
+    //  }else{
+    //   jump_params.from_station = ''
+    //   jump_params.to_station = stationName
+    //  }
+
+     let jumpUrl = '../selectSite/index?'+queryParams(jump_params)
+     console.log(jumpUrl)
+     Taro.navigateTo({
+       url: jumpUrl
+     })
+  }
+
   render() {
     let { isWaitFinish,isArriveFinish, isWait, flag, station, isNowDate, isIcon, animation, content, waitList, arriveList, hasBoard, isGaotie, isPukuai, isCheckG } = this.state
     let waitListItem = waitList.map((item, index) => {
       return (
         <Block key={index}>
-          <View id={'ATscreen3' + (index + 1)} className={'tr ' + ((index % 2 == 0) ? '' : 'backgary')} data-train-no={item.stationTrainCode} data-from-station={''} data-to-station={item.endStation} data-type='2'>
+          <View id={'ATscreen3' + (index + 1)} className={'tr ' + ((index % 2 == 0) ? '' : 'backgary')} data-train-no={item.stationTrainCode} data-from-station={''} data-to-station={item.endStation} data-type='2' onClick={this.see}>
             <View className='td w18'>
               {/* <Text className='tip'>{item.trainTit}</Text> */}
               <View className='tNo'>{item.stationTrainCode}</View>
@@ -663,7 +702,7 @@ export default class LargeScreen extends Component {
     let arriveListItem = arriveList.map((item, index) => {
       return (
         <Block key={index}>
-          <View id={'ATscreen4' + (index + 1)} className={'tr ' + ((index % 2 == 0) ? '' : 'backgary')} data-train-no={item.stationTrainCode} data-from-station={item.startStation} data-to-staion={''} data-type='1'>
+          <View id={'ATscreen4' + (index + 1)} className={'tr ' + ((index % 2 == 0) ? '' : 'backgary')} data-train-no={item.stationTrainCode} data-from-station={item.startStation} data-to-staion={''} data-type='1' onClick={this.see}>
             <View className='td w18'>
               {/* <Text className='tip'>{item.trainTit}</Text> */}
               <View className='tNo'>{item.stationTrainCode}</View>

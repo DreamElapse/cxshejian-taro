@@ -228,7 +228,6 @@ export default class Add extends Component {
   // onReloadUser(){
   //   // 刷新授权：子组件 状态
   //   const swiperComponent = getTargetComponentByRef("swiper1");
-  //   // debugger
   //   swiperComponent && swiperComponent.reloadAuthStatus && swiperComponent.reloadAuthStatus() 
   // }
 
@@ -300,7 +299,6 @@ export default class Add extends Component {
         type: source == addTrip_sourcefrom_enum.momentSearch_stationSearch ? 'time' : 'bind'
       }
       
-      // debugger
       let jumpUrl = '../findStation/index?'+queryParams(jump_params)
       Taro.navigateTo({
         url: jumpUrl

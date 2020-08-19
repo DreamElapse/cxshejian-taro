@@ -280,7 +280,7 @@ export default class FindStation extends Component {
       //跨天天数计算
       let daysNum = get_date_crossDay(item.dptDate, item.arrDate)
       let daysNumTip = daysNum > 0 ? "+"+daysNum+"天" : ''
-      return <View id={'ATfind5_' + index} key={index} className={classNames('trip-list', choseindex == index ? 'bodershow' : '')} onClick={this.tobindready} data-status={item.trainStatus} data-valid={item.valid} data-index={index} data-to-arrtime={item.arrDate+" "+item.arrTime} data-depDate={item.dptDate} data-sdate={item.dptDate+" "+item.dptTime} data-edate={item.arrDate+" "+item.arrTime} data-s={item.dptStationName} data-e={item.arrStationName} data-num={item.trainNo}>
+      return <View id={'ATfind5_' + index} key={index} className={classNames('trip-list', choseindex == index ? 'bodershow' : '')} data-status={item.trainStatus} data-valid={item.valid} data-index={index} data-to-arrtime={item.arrDate+" "+item.arrTime} data-depDate={item.dptDate} data-sdate={item.dptDate+" "+item.dptTime} data-edate={item.arrDate+" "+item.arrTime} data-s={item.dptStationName} data-e={item.arrStationName} data-num={item.trainNo}>
         {
           choseindex==index &&
           <Image className="bingstaTion" src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_yixuan2.png'}></Image> 

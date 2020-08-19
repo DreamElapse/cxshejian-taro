@@ -98,7 +98,6 @@ export default class Index extends Component {
        */
       init_data = (station_list, dateC) => {
         var that = this
-        // debugger
         if(!station_list || station_list.length <= 0){
           return
         }
