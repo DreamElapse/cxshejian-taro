@@ -2,7 +2,8 @@ const fs = require('fs') // enlist-disable-line
 
 // 读取pages目录内文件生成app.config.ts文件内容
 let files = fs.readdirSync('./src/pages')
-files.splice(files.findIndex(item => item === '.DS_Store'), 1)
+let index = files.findIndex(item => item === '.DS_Store')
+index > -1 && files.splice(index, 1)
 files.splice(files.findIndex(item => item === 'index'), 1)
 files.unshift('index')
 let fileArr = files.map(item => {
@@ -16,7 +17,7 @@ fs.readFile('./src/app.config.ts', 'utf8', (err, data) => {
   let stringText = `pages: [
       ${fileArr}
   ],`
-  stringText = stringText.replace(/\,/g, '$&\n      ') // 空格符写缩进
+  stringText = stringText.replace(/index\'\,/g, '$&\n      ') // 空格符写缩进
   configContext = configContext.replace(/pages:[\s\S]+\]\,/g, stringText)
   fs.writeFile('./src/app.config.ts', configContext, 'utf8', function (error) {
     if (error) {

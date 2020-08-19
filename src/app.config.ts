@@ -3,13 +3,14 @@ export default {
       'pages/index/index',
       'pages/add/index',
       'pages/calendar/index',
-      'pages/selectSite/index',
-      'pages/lateQueryResults/index',
+      'pages/carFood/index',
       'pages/city/index',
       'pages/demo/index',
+      'pages/lateQueryResults/index',
       'pages/mall/index',
+      'pages/selectSite/index',
       'pages/user/index'
-  ],     
+  ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
