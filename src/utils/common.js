@@ -278,3 +278,10 @@ export function  get_stationSelect_status(select_Stations, is_send_from, is_send
    export const getRandomColor = function() {
     return "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 10) + ')';
 }
+
+export function toast(title='加载中'){
+  Taro.showLoading({ //显示loading
+    title: title,
+    mask: true,
+  })
+}

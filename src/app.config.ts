@@ -5,6 +5,7 @@ export default {
       'pages/calendar/index',
       'pages/selectSite/index',
       'pages/lateQueryResults/index',
+      'pages/city/index',
       'pages/demo/index',
       'pages/user/index'
   ],

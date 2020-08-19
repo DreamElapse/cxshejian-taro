@@ -223,7 +223,7 @@ export default class Add extends Component {
   //选择出发城市--目的城市
   toCityS = (e) => {
     Taro.navigateTo({
-      url: '../city/city?type='+e.currentTarget.dataset.type
+      url: '../city/index?type='+e.currentTarget.dataset.type
     })
   }
 
