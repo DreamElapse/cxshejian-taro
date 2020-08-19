@@ -20,6 +20,7 @@ const config = {
   },
   copy: {
     patterns: [
+      {from: 'src/sitemap.json', to: `dist/${process.argv[4]}/sitemap.json`}
     ],
     options: {
     }
