@@ -1,9 +1,9 @@
-export var pinyin = (function (){
-    var Pinyin = function (ops){
+export const pinyin = (function (){
+    let Pinyin = function (ops){
         this.initialize(ops);
-    },
+    };
 
-    options = {
+    let options = {
         checkPolyphone: false,
         charcase: 'default'
     };
@@ -123,4 +123,4 @@ export var pinyin = (function (){
     };
 
     return new Pinyin(arguments);
-})();
+})()
