@@ -5,6 +5,7 @@ export default {
       'pages/calendar/index',
       'pages/carFood/index',
       'pages/city/index',
+      'pages/createOrder/index',
       'pages/demo/index',
       'pages/lateQueryResults/index',
       'pages/mall/index',

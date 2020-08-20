@@ -1,2 +1,6 @@
 export const ADD = 'ADD'
 export const MINUS = 'MINUS'
+export const RESET_GOODS_AND_PRICE = 'RESET_GOODS_AND_PRICE'
+export const SET_USER_INFO = 'SET_USER_INFO'
+export const ADD_GOODS = 'ADD_GOODS'
+export const CALC_TOTAL_PRICE = 'CALC_TOTAL_PRICE'

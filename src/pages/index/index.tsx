@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 // import { add, minus, asyncAdd } from '../../store/actions'
-import './index.scss'
 import API from '@/api/index'
+import './index.scss'
 
 import icon_xsqg from '@/static/img/index/icon_xsqg.png'
 import icon_thsc from '@/static/img/index/icon_thsc.png'
@@ -28,7 +28,7 @@ type PageDispatchProps = {
 
 type PageOwnProps = {}
 
-type PageState = {}
+// type PageState = {}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -36,7 +36,7 @@ interface Index {
   props: IProps;
 }
 
-const buttonList = [
+const BUTTON_LIST = [
   {
     img: icon_xsqg,
     name: '限时抢购',
@@ -59,7 +59,7 @@ const buttonList = [
   }
 ]
 
-const scrollList = [
+const SCROLL_LIST = [
   {
     img: scroll,
     url: ''
@@ -70,7 +70,7 @@ const scrollList = [
   }
 ]
 
-const recommendList = [
+const RECOMMEND_LIST = [
   {
     img: jhkk,
     city: '广州',
@@ -85,7 +85,7 @@ const recommendList = [
   }
 ]
 
-const goodsList = [
+const GOODS_LIST = [
   {
     img: jhkk,
     name: '广式腊味煲仔饭',
@@ -104,29 +104,25 @@ const cityList = ['上海', '武汉', '长沙']
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
-  
+
 }))
 
 
 class Index extends Component {
-  
+
   state = {
-    buttonList,
-    scrollList,
+    buttonList: BUTTON_LIST,
+    scrollList: SCROLL_LIST,
+    recommendList: RECOMMEND_LIST,
+    goodsList: GOODS_LIST,
     positionCity: '', // 用户定位
-    isSetting: false, // 用户设置
+    // isSetting: false, // 用户设置
     lat: '',
     lon: '',
     tabIndex: 1,
-    recommendList,
     isGetLocation: false,
     hasDistance: true,
-    goodsList,
     cityList
-  }
-
-  UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
   }
 
   UNSAFE_componentWillMount() {
@@ -174,7 +170,7 @@ class Index extends Component {
                   <Text className='name'>广州</Text>
                   <Text className='time'>08: 35</Text>
                 </View>
-                
+
               </View>
               <Text className='bottom-space'></Text>
             </View>
@@ -195,7 +191,7 @@ class Index extends Component {
               )
             })
           }
-          
+
         </View>}
         {/*------免费试吃/开卡------*/}
         <View className='sec-middle'>
@@ -209,7 +205,7 @@ class Index extends Component {
           </View>
         </View>
         {/*------轮播------*/}
-        <Swiper 
+        <Swiper
           className='scroll-box'
           autoplay
           >
@@ -218,16 +214,16 @@ class Index extends Component {
               return (
                 <SwiperItem key={'swiper'+index}>
                   <Image src={item.img} className='scroll-img' mode="aspectFill" ></Image>
-                </SwiperItem>  
+                </SwiperItem>
               )
             })
           }
-        </Swiper> 
+        </Swiper>
         {/*------乘务美食------*/}
         {hasDistance && <View className='crew-food'>
           <View className='title'>
             <Text className='name'>G400乘务员美食推荐</Text>
-            <View className='icon'>更多</View>
+            <View className='icon' onClick={this.toCarFood}>更多</View>
           </View>
           <View className='goods-box'>
             {
@@ -239,7 +235,7 @@ class Index extends Component {
                     <View className='goods-msg'>
                       <Text className='price'>¥{item.price}</Text>
                       <Text className='pre-price'>¥{item.prePrice}</Text>
-                      <Text className='buy-btn'>立即抢购</Text>
+                      <Text className='buy-btn' onClick={this.toCarFood}>立即抢购</Text>
                     </View>
                   </View>
                 )
@@ -266,7 +262,7 @@ class Index extends Component {
           <Text>{lat ? '当前定位' + {positionCity} : '定位服务已关闭，打开定位'}</Text>
           {!lat && <Button openType="openSetting" className="setting">去设置</Button>}
         </View>
-        
+
         {/*------tab切换------*/}
         <View className="tab-list">
           <View className={`tab-item ${tabIndex === 1 && 'active'}`} onClick={() => this.changeTab(1)}>特产推荐</View>
@@ -318,9 +314,9 @@ class Index extends Component {
               })
             },
             fail() {
-              _this.setState({
-                isSetting: false
-              })
+              // _this.setState({
+              //   isSetting: false
+              // })
             },
             complete() {
               _this.setState({
@@ -355,7 +351,7 @@ class Index extends Component {
       console.log(res)
     })
     .finally(() => {
-      
+
     })
   }
 
@@ -374,6 +370,12 @@ class Index extends Component {
           }
         })
       }
+    })
+  }
+
+  toCarFood = () => {
+    Taro.navigateTo({
+      url: '/pages/carFood/index'
     })
   }
 }

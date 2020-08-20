@@ -1,13 +1,18 @@
 import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
-import { View, Button, Image, Text } from '@tarojs/components'
+import { View, Image, Text } from '@tarojs/components'
 
-import goods from '@/static/img/goodsList/noodle.jpg'
+import goodsImg from '@/static/img/goodsList/noodle.jpg'
 import addIcon from '@/static/img/goodsList/add.png'
 import subIcon from '@/static/img/goodsList/sub.png'
 import shoppingCart from '@/static/img/goodsList/shopping-cart.png'
 import clear from '@/static/img/goodsList/clear.png'
+
+import {
+  onAddGoods,
+  onCalcTotalPrice
+} from '@/store/actions'
 
 import './index.scss'
 
@@ -18,14 +23,13 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+  onAddGoods: () => any
+  onCalcTotalPrice: () => any
 }
 
 type PageOwnProps = {}
 
-type PageState = {}
+// type PageState = {}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -33,21 +37,21 @@ interface CarFood {
   props: IProps;
 }
 
-const goodsList = [
+const GOODS_LIST = [
   {
-    img: goods,
+    img: goodsImg,
     name: '方便面',
     price: '15',
     id: 1
   },
   {
-    img: goods,
+    img: goodsImg,
     name: '方便面',
     price: '15',
     id: 2
   },
   {
-    img: goods,
+    img: goodsImg,
     name: '方便面',
     price: '15',
     id: 3
@@ -55,14 +59,20 @@ const goodsList = [
 ]
 
 @connect(({ counter }) => ({
-  counter
+  ...counter
 }), (dispatch) => ({
-  
+  onAddGoods(payload) {
+    dispatch(onAddGoods(payload));
+  },
+  onCalcTotalPrice(payload) {
+    dispatch(onCalcTotalPrice(payload));
+  }
 }))
-class carFood extends Component {
+
+class CarFood extends Component {
 
   state = {
-    goodsList,
+    goodsList: GOODS_LIST,
     showBg: false,
     cartGoods: [
       {name: '方便面', price: 1.00, id: 1, number: 2},
@@ -83,7 +93,7 @@ class carFood extends Component {
       <View className='car-food'>
         <View className='content'>
 
-          <Image src="" mode="aspectFill" className='topImg'></Image>
+          <Image src='' mode='aspectFill' className='topImg'> </Image>
           <Text className='list-title'>G500车次商品推荐</Text>
           {/*-----商品列表------*/}
           <View className='goods-box'>
@@ -91,13 +101,13 @@ class carFood extends Component {
               goodsList.map((item, index) => {
                 return (
                   <View className='goods-item' key={'goods'+index}>
-                    <Image src={item.img} className='goods-img' mode="aspectFill"></Image>
+                    <Image src={item.img} className='goods-img' mode='aspectFill'> </Image>
                     <Text className='goods-title'>{item.name}</Text>
                     <View className='goods-msg'>
                       <Text className='goods-price'>¥{item.price}</Text>
                       <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
                     </View>
-                    
+
                   </View>
                 )
               })
@@ -114,7 +124,7 @@ class carFood extends Component {
                       <Text className='goods-price'>¥{item.price}</Text>
                       <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
                     </View>
-                    
+
                   </View>
                 )
               })
@@ -131,7 +141,7 @@ class carFood extends Component {
                       <Text className='goods-price'>¥{item.price}</Text>
                       <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
                     </View>
-                    
+
                   </View>
                 )
               })
@@ -139,7 +149,7 @@ class carFood extends Component {
           </View>
 
         </View>
-        
+
         {/*-----底部功能区-----*/}
         <View className='bottom-handle'>
           <View className='shopping-cart-box' onClick={this.showBuy}>
@@ -151,12 +161,12 @@ class carFood extends Component {
             {this.totalMoney()}
           </Text>
           <Text className='sumit-button' onClick={this.toAccount}>结算</Text>
-          
+
         </View>
-        
+
         {/*-----购物车列表-----*/}
         <View className={`buy-bg ${showBg && 'active'}`} onClick={this.hideBuy}>
-          <View className={`shopping-cart ${showBg && 'active'}`}>
+          <View className={`shopping-cart ${showBg && 'active'}`} onClick={e => e.stopPropagation()}>
             <View className='cart-title'>
               <Text className='title'>购物车</Text>
               <View className='clear'>
@@ -172,13 +182,13 @@ class carFood extends Component {
                     <Text className='goods-name'>{item.name}</Text>
                     <Text className='price'>¥{item.price}</Text>
                     <View className='number-handle'>
-                      <Image src={subIcon} className='sub-icon' onClick={(e) => this.changeGoodsNumber(item, 'sub', e)}></Image>
+                      <Image src={subIcon} className='sub-icon' onClick={() => this.changeGoodsNumber(item, 'sub')}></Image>
                       <Text className='number'>{item.number}</Text>
-                      <Image src={addIcon} className='add-icon' onClick={(e) => this.changeGoodsNumber(item, 'add', e)}></Image>
+                      <Image src={addIcon} className='add-icon' onClick={() => this.changeGoodsNumber(item, 'add')}></Image>
                     </View>
                   </View>
                 )
-              })    
+              })
             }
 
           </View>
@@ -211,18 +221,20 @@ class carFood extends Component {
   totalMoney = () => {
     let total = 0
     this.state.cartGoods.forEach(item => {
-      total += +((total * 100 + item.number * item.price * 100)/100).toFixed(2)
+      let price = +(item.price * 100).toFixed(2)
+      total = (total*100 + item.number * price)/100
     })
     return total
   }
   toAccount = () => {
+    this.props.onCalcTotalPrice(this.totalMoney())
+    this.props.onAddGoods(this.state.cartGoods)
     Taro.navigateTo({
-      url: 'createOrder'
+      url: '/pages/createOrder/index'
     })
   }
-  changeGoodsNumber = (item, type, event) => {
-    console.log(event)
-    event.stopPropagation()
+  changeGoodsNumber = (item, type) => {
+    // event.stopPropagation()
     let cartGoods = this.state.cartGoods
     let index = cartGoods.findIndex(goods => {
       return goods.id === item.id
@@ -235,5 +247,5 @@ class carFood extends Component {
   }
 }
 
-export default carFood
+export default CarFood
 
