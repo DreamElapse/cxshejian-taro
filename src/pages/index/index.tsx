@@ -113,13 +113,16 @@ class Index extends Component {
   state = {
     buttonList: BUTTON_LIST,
     scrollList: SCROLL_LIST,
-    recommendList: RECOMMEND_LIST,
     goodsList: GOODS_LIST,
+    recommendList: [],
     positionCity: '', // 用户定位
+    areaId: '',
     // isSetting: false, // 用户设置
     lat: '',
     lon: '',
+    startIndex: 1,
     tabIndex: 1,
+    themeId: ['', '101098', '101098'],
     isGetLocation: false,
     hasDistance: true,
     cityList
@@ -132,17 +135,16 @@ class Index extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    this.getLocation()
-   }
+    this.state.areaId && this.getLocation()
+  }
 
   componentDidHide () { }
 
   onReachBottom() {
-    let recommendList = this.state.recommendList
-    recommendList.push(...recommendList)
     this.setState({
-      recommendList
+      startIndex: this.state.startIndex + 1
     })
+    this.getListData()
   }
 
   render () {
@@ -274,13 +276,13 @@ class Index extends Component {
             recommendList.map((item, index) => {
               return (
                 <View className='recommend-item' key={'re'+index}>
-                  <Image src={item.img} className='recommend-img' mode="aspectFill" ></Image>
-                  <Text className='recommend-title'>{item.title}</Text>
+                  <Image src={item.signImg} className='recommend-img' mode="aspectFill" ></Image>
+                  <Text className='recommend-title'>{item.infoTitle}</Text>
                   <View className='recommend-msg'>
                     <Text className='city'>{item.city}</Text>
                     <View className='right-msg'>
                       <Text className='unit'>¥</Text>
-                      <Text className='price'>{item.price}</Text>
+                      <Text className='price'>{item.salePrice}</Text>
                       <Text className='unit'>起</Text>
                       <Text className='buy-btn'>立即抢购</Text>
                     </View>
@@ -309,7 +311,11 @@ class Index extends Component {
               // 用户同意打开地理位置
               Taro.getLocation({
                 success: res => {
-                  console.log(res)
+                  this.setState({
+                    lat: res.latitude,
+                    lon: res.longitude
+                  })
+                  this.getLocationCity()
                 }
               })
             },
@@ -332,6 +338,7 @@ class Index extends Component {
                 lat: res.latitude,
                 lon: res.longitude
               })
+              this.getLocationCity()
               // 通过坐标值获取城市
             },
             complete() {
@@ -345,10 +352,33 @@ class Index extends Component {
     })
   }
 
+  getLocationCity() {
+    let data = {
+      latitude: this.state.lat,
+      logitude: this.state.lon
+    }
+    API.Home.getLocationCity(data)
+      .then(res => {
+        this.setState({
+          positionCity: res.data.areaName,
+          areaId: res.data.areaId
+        })
+      })
+  }
+
   getListData = () => {
-    API.Global.getListData({a: 1})
+    let loading = this.state.startIndex > 0
+    let data = {
+      resultNum: 5,
+      startIndex: this.state.startIndex,
+      areaId: this.state.areaId,
+      themeId: this.state.themeId
+    }
+    API.Home.getListData(data, loading)
     .then(res => {
-      console.log(res)
+      this.setState({
+        recommendList: res.data.results
+      })
     })
     .finally(() => {
 

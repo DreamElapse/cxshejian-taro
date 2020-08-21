@@ -18,8 +18,8 @@ class API {
 
   // api控制器
   http(args, method = 'GET') {
-    let { url, data, loading=false, toast } = args
-    
+    let { url, data, loading=false, toast=false } = args
+
     url = this.resetUrl(url)
     // loading
     loading && showLoading({ title: '加载中...', mask: true })
@@ -43,6 +43,7 @@ class API {
         method,
         header: {
           'content-type': contentType,
+          'X-Authorization': 'Bearer 06764f6f3f9098c31979ab6e6a837267',
           // Authorization,
         },
         // 请求成功回调
@@ -51,6 +52,7 @@ class API {
         },
         // 失败回调
         fail(res) {
+          toast && showToast({title: res.msg || res.message})
           reject(res)
         },
         // 成功失败都回调
@@ -68,22 +70,30 @@ class API {
   // 修改请求地址
   resetUrl(url) {
     let defaultUrl = ''
-    let API_URL = process.env.API_URL
-    let VEGA_STATION = process.env.VEGA_STATION
-    var reg = RegExp(/weitaikeji/);
-    if (url.includes(item => item === '/api')) {
-      defaultUrl =  API_URL + url.replace('/api', '')
-    } else if (url.match(reg)){
-      defaultUrl =  'https://czt.weitaikeji.com' + url.replace('/weitaikeji', '')
-    } else {
-      defaultUrl = VEGA_STATION + url
-    }
+    // 所有接口域名地址配置
+    let urlOptions = [
+      {
+        code: '/api', // 公司内部接口
+        apiUrl: process.env.API_URL
+      },
+      {
+        code: '/wetaikeji', // 武汉威泰行程接口
+        apiUrl: process.env.API_VEGA_STATION
+      },
+      {
+        code: '/ziwoyou', // 自我游接口
+        apiUrl: process.env.API_ZIWOYOU
+      }
+    ]
+    urlOptions.forEach(item => {
+      url.includes(item.code) && (defaultUrl = item.apiUrl + url.replace(item.code, ''))
+    })
     return defaultUrl
   }
 
   // 响应拦截
   beforeResponse(res, toast) {
-    if (+res.error !== 0) {
+    if (+res.error !== 0 || +res.state !== 1) {
       toast && showToast({title: res.message})
     }
     return res
