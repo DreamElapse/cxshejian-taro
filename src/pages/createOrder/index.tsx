@@ -508,14 +508,14 @@ class CreateOrder extends Component {
   // 创建订单
   createOrder = () => {
     // 验证用户名
-    // if (!this.state.username) {
-    //   Taro.showToast({ title: '请输入姓名', icon: 'none', duration: 1500, mask: true });
-    //   return;
-    // }
-    // if (!/^[\u4e00-\u9fa5_a-zA-Z\u00a0|\u0020]+$/.test(this.state.username)) {
-    //   Taro.showToast({ title: '姓名只能输入中英文', icon: 'none', duration: 1500, mask: true });
-    //   return;
-    // }
+    if (!this.state.username) {
+      Taro.showToast({ title: '请输入姓名', icon: 'none', duration: 1500, mask: true });
+      return;
+    }
+    if (!/^[\u4e00-\u9fa5_a-zA-Z\u00a0|\u0020]+$/.test(this.state.username)) {
+      Taro.showToast({ title: '姓名只能输入中英文', icon: 'none', duration: 1500, mask: true });
+      return;
+    }
     // 是否选择座位
     if (!this.state.isSelectedSeat) {
       Taro.showToast({ title: '请选择座位信息', icon: 'none', duration: 1500, mask: true });

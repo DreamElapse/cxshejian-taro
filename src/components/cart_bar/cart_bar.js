@@ -59,7 +59,7 @@ CartBar.defaultProps = {
   toCreateOrder() {
     // 正常流程下，从商品列表页到创建订单页面
     if (this.props.selectedGoodsList.length) {
-      Taro.navigateTo({url: '/pages/order/create_order/create_order'});
+      Taro.navigateTo({url: '/pages/createOrder/index'});
     } else {
       Taro.showToast({title: '您还未选择商品！', icon: 'none', duration: 1500, mask: true});
     }

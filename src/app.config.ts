@@ -9,6 +9,7 @@ export default {
       'pages/demo/index',
       'pages/lateQueryResults/index',
       'pages/mall/index',
+      'pages/payResult/index',
       'pages/selectSite/index',
       'pages/user/index'
   ],
