@@ -18,7 +18,7 @@ class API {
 
   // api控制器
   http(args, method = 'GET') {
-    let { url, data, loading, toast } = args
+    let { url, data, loading=false, toast } = args
     
     url = this.resetUrl(url)
     // loading
@@ -70,8 +70,11 @@ class API {
     let defaultUrl = ''
     let API_URL = process.env.API_URL
     let VEGA_STATION = process.env.VEGA_STATION
+    var reg = RegExp(/weitaikeji/);
     if (url.includes(item => item === '/api')) {
       defaultUrl =  API_URL + url.replace('/api', '')
+    } else if (url.match(reg)){
+      defaultUrl =  'https://czt.weitaikeji.com' + url.replace('/weitaikeji', '')
     } else {
       defaultUrl = VEGA_STATION + url
     }

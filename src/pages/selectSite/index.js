@@ -286,7 +286,7 @@ export default class Index extends Component {
           that.init_data(list, dateC)
           that.isload_success = true
         })
-        .finally(() => {
+        .catch((e) => {
           that.isload_success = false
         })
       }
@@ -319,7 +319,6 @@ export default class Index extends Component {
        */
       handle_check_tripisEndorBinded = () => {
         let that = this
-        // debugger
         var {dateC, selectStations} = that.state
         that.hide_crossDayModal()
 
@@ -381,16 +380,14 @@ export default class Index extends Component {
         if(that.sourcefrom == addTrip_sourcefrom_enum.momentSearch_trainSearch || 
           that.sourcefrom == addTrip_sourcefrom_enum.addTrain_trainSearch ||
           that.sourcefrom == addTrip_sourcefrom_enum.largeScreenQuery){
-            // debugger
           let is_cross_day = check_isCrossDay(that.state.selectStations)  
-          // debugger
           if(is_cross_day){
             that.show_crossDayModal()//显示跨天弹框
             return
           }
         }
          // -> 立即判断是否结束与绑定(api)
-         that.handle_check_tripisEndorBinded()
+        //  that.handle_check_tripisEndorBinded()
       }
 
        /**
@@ -428,7 +425,7 @@ export default class Index extends Component {
       //点击事件：选择日期
       onClick_toDate = () => {
         Taro.navigateTo({
-          url: '../calendar/calendar',
+          url: '../calendar/index',
         })
       }
 
@@ -503,7 +500,6 @@ export default class Index extends Component {
           }
         }
 
-        // debugger
         if(selects && selects.length >=2){
           if(selects[0].stationIndex > selects[1].stationIndex){ // 0站点 > 1站点   交换位置 -> 使  0 起点， 1 终点
             var temp = selects[0];
@@ -511,7 +507,7 @@ export default class Index extends Component {
             selects[1] = temp;
           }
         }
-        // debugger
+
         this.setState({
           selectStations: selects,
           do_select_click: true
@@ -672,7 +668,7 @@ export default class Index extends Component {
                           <View className={cicle_class}></View>
                       </View>
                     </View>
-                    {is_enable && <View className={'box '+box_class} onClick={this.onClick_chooseStation.bind(this, item)}>
+                    {is_enable && <View className={'box '+box_class}>
                       {is_selected && <View style='display:flex;justify-content:center;align-items:center;'>
                         <Image style='width:17px; height:17px; margin-right:8px;' src={this.base_img_url+"icon_zuobiao.png"}></Image>
                         <Text>{station_text}</Text>

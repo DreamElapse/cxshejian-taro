@@ -129,49 +129,37 @@ export function  get_stationSelect_status(select_Stations, is_send_from, is_send
   var selectStations = select_Stations ? select_Stations : []
   let length_select = selectStations.length;
 
-  // console.log('获取当前 车次选择状态 get_stationSelect_status  length_select: '+length_select +" 是否点击："+do_select_click)
-
   var current_status = select_station_status.select_no
   let send_station_none = !is_send_from && !is_send_to// 未传入出发与到达站点
   if(length_select == 0){// 未选中站点，  
     if(do_select_click){
-      // console.log('------- get_stationSelect_status 1111111111111')
       current_status = select_station_status.select_no                  //都可选
     }else{//未做过选择站点操作
       if(send_station_none){//未传入出发与到达站点
-        // console.log('------- get_stationSelect_status 2222')
         current_status = select_station_status.select_no                //都可选
       }else{
         if(is_send_from && is_send_to){ // 传入了出发与到达站点
-          // console.log('------- get_stationSelect_status 3333')
           current_status = select_station_status.select_two               // 选择两个
         }else if(is_send_from){//只传入出发站点
-          // console.log('------- get_stationSelect_status 444')
           current_status = select_station_status.select_one_startStation  // 选择出发站
         }else if(is_send_to){//只传入到达站点
-          // console.log('------- get_stationSelect_status 555')
           current_status = select_station_status.select_one_endStation    //选择到达站
         }
       }
     }
   }else if(length_select == 1){//选中一个
     if(do_select_click){ //做了选择站点操作
-      // console.log('------- get_stationSelect_status 666')
         current_status= select_station_status.select_one                //选中一个，不知道出发还是到达站
     }else{//未做过选择站点操作
       if(is_send_from){
-        // console.log('------- get_stationSelect_status 777')
         current_status = select_station_status.select_one_startStation   // 选择出发站
       }else{ 
-        // console.log('------- get_stationSelect_status 88')
         current_status = select_station_status.select_one_endStation     //选择到达站
       }
     }
   }else if(length_select == 2){//选中两个
-    // console.log('------- get_stationSelect_status 9999')
       current_status = select_station_status.select_two                  // 选择两个
   }
-  // console.log('get_stationSelect_status end 选中状态：'+current_status)
   return current_status;
 }
 
@@ -231,9 +219,6 @@ export function  get_stationSelect_status(select_Stations, is_send_from, is_send
 
      let from_station = selectStations[0]
      let to_station = selectStations[1]
-
-     console.log("from-station : "+from_station.stationName+"  to-station: "+to_station.stationName)
-     console.log('-- from_station', from_station)
      let diff_day = get_fromToStation_crossDay(selectStations)
      //计算从出发：
      let get_obj = (is_from) => {
@@ -274,7 +259,7 @@ export function  get_stationSelect_status(select_Stations, is_send_from, is_send
      }
      return obj
    }
-
+  
    export const getRandomColor = function() {
     return "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 10) + ')';
 }
@@ -284,4 +269,12 @@ export function toast(title='加载中'){
     title: title,
     mask: true,
   })
+}
+
+//判断为空
+export const isEmptyObject = (obj) => {
+  for(let key in obj){
+    return false
+  }
+  return true
 }
