@@ -1,51 +1,33 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Button, Text } from '@tarojs/components'
-
-import { add, minus, asyncAdd } from '../../store/actions'
+import { WebView } from '@tarojs/components'
 
 import './index.scss'
 
 type PageStateProps = {
-  counter: {
-    num: number
-  }
+
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+
 }
 
 type PageOwnProps = {}
 
-type PageState = {}
+// type PageState = {}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
-interface Demo {
+interface Mall {
   props: IProps;
 }
 
-@connect(({ counter }) => ({
-  counter
-}), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
-}))
-class Demo extends Component {
-  UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
-  }
+@connect(() => ({
 
+}), () => ({
+
+}))
+class Mall extends Component {
   componentWillUnmount () { }
 
   componentDidShow () { }
@@ -54,16 +36,10 @@ class Demo extends Component {
 
   render () {
     return (
-      <View className='demo'>
-        <Button className='add_btn' onClick={this.props.add}>11+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
-        <View><Text>Hello, World</Text></View>
-      </View>
+      <WebView src='https://www.baidu.com/' />
     )
   }
 }
 
-export default Demo
+export default Mall
 

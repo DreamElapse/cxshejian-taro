@@ -1,4 +1,4 @@
-import Taro, { request, showLoading, hideLoading, showToast } from '@tarojs/taro'
+import { request, showLoading, hideLoading, showToast } from '@tarojs/taro'
 
 class API {
   // 四种请求方式
@@ -48,12 +48,12 @@ class API {
         },
         // 请求成功回调
         success(res) {
-          resolve(_this.beforeResponse(res, toast))
+          resolve(_this.beforeResponse(res.data, toast))
         },
         // 失败回调
         fail(res) {
-          toast && showToast({title: res.msg || res.message})
-          reject(res)
+          toast && showToast({title: res.data.msg || res.data.message})
+          reject(res.data)
         },
         // 成功失败都回调
         complete: () => {

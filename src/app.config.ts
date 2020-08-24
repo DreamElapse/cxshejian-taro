@@ -6,14 +6,15 @@ export default {
       'pages/carFood/index',
       'pages/city/index',
       'pages/createOrder/index',
-      'pages/findStation/index',
-      'pages/switchStation/index',
-      'pages/stationLargeScreen/index',
       'pages/demo/index',
+      'pages/findStation/index',
       'pages/lateQueryResults/index',
       'pages/mall/index',
+      'pages/orderList/index',
       'pages/payResult/index',
       'pages/selectSite/index',
+      'pages/stationLargeScreen/index',
+      'pages/switchStation/index',
       'pages/user/index'
   ],
   window: {

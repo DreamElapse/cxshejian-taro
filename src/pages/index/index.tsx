@@ -100,7 +100,7 @@ const GOODS_LIST = [
   }
 ]
 
-const cityList = ['上海', '武汉', '长沙']
+const CITY_LIST = ['上海', '武汉', '长沙']
 @connect(({ counter }) => ({
   counter
 }), (dispatch) => ({
@@ -114,6 +114,7 @@ class Index extends Component {
     buttonList: BUTTON_LIST,
     scrollList: SCROLL_LIST,
     goodsList: GOODS_LIST,
+    cityList: CITY_LIST,
     recommendList: [],
     positionCity: '', // 用户定位
     areaId: '',
@@ -122,10 +123,10 @@ class Index extends Component {
     lon: '',
     startIndex: 1,
     tabIndex: 1,
-    themeId: ['', '101098', '101098'],
+    themeId: '',
+    excludeThemeId: '',
     isGetLocation: false,
-    hasDistance: true,
-    cityList
+    hasDistance: true
   }
 
   UNSAFE_componentWillMount() {
@@ -135,7 +136,8 @@ class Index extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    this.state.areaId && this.getLocation()
+    !this.state.areaId && this.getLocation()
+    this.state.areaId && this.getListData()
   }
 
   componentDidHide () { }
@@ -143,8 +145,9 @@ class Index extends Component {
   onReachBottom() {
     this.setState({
       startIndex: this.state.startIndex + 1
+    }, () => {
+      this.getListData()
     })
-    this.getListData()
   }
 
   render () {
@@ -210,7 +213,7 @@ class Index extends Component {
         <Swiper
           className='scroll-box'
           autoplay
-          >
+        >
           {
             scrollList.map((item, index) => {
               return (
@@ -261,7 +264,7 @@ class Index extends Component {
 
         {/*------定位------*/}
         <View className='fixed-position'>
-          <Text>{lat ? '当前定位' + {positionCity} : '定位服务已关闭，打开定位'}</Text>
+          <Text>{positionCity ? '当前定位' + positionCity : '定位服务已关闭，打开定位'}</Text>
           {!lat && <Button openType="openSetting" className="setting">去设置</Button>}
         </View>
 
@@ -307,15 +310,16 @@ class Index extends Component {
         if (!res.authSetting['scope.userLocation']) {
           Taro.authorize({
             scope: 'scope.userLocation',
-            success (res) {
+            success () {
               // 用户同意打开地理位置
               Taro.getLocation({
-                success: res => {
-                  this.setState({
-                    lat: res.latitude,
-                    lon: res.longitude
+                success: val => {
+                  _this.setState({
+                    lat: val.latitude,
+                    lon: val.longitude
+                  }, () => {
+                    _this.getLocationCity()
                   })
-                  this.getLocationCity()
                 }
               })
             },
@@ -333,12 +337,15 @@ class Index extends Component {
           })
         } else {
           Taro.getLocation({
-            success: res => {
-              this.setState({
-                lat: res.latitude,
-                lon: res.longitude
+            success: response => {
+              console.log(response, 778)
+              _this.setState({
+                lat: response.latitude,
+                lon: response.longitude
+              }, () => {
+                _this.getLocationCity()
               })
-              this.getLocationCity()
+
               // 通过坐标值获取城市
             },
             complete() {
@@ -352,17 +359,20 @@ class Index extends Component {
     })
   }
 
-  getLocationCity() {
+  getLocationCity = () => {
     let data = {
       latitude: this.state.lat,
-      logitude: this.state.lon
+      longitude: this.state.lon
     }
     API.Home.getLocationCity(data)
       .then(res => {
         this.setState({
           positionCity: res.data.areaName,
           areaId: res.data.areaId
+        }, () => {
+          this.getListData()
         })
+
       })
   }
 
@@ -372,12 +382,14 @@ class Index extends Component {
       resultNum: 5,
       startIndex: this.state.startIndex,
       areaId: this.state.areaId,
-      themeId: this.state.themeId
+      themeId: this.state.themeId,
+      excludeThemeId: this.state.excludeThemeId
     }
     API.Home.getListData(data, loading)
     .then(res => {
+      let recommendList = this.state.recommendList.concat(res.data.results)
       this.setState({
-        recommendList: res.data.results
+        recommendList
       })
     })
     .finally(() => {
@@ -387,21 +399,27 @@ class Index extends Component {
 
   changeTab = (index) => {
     this.setState({
-      tabIndex: index
+      tabIndex: index,
+      themeId: index === 1 ? '101098' : '',
+      excludeThemeId: index === 2 ? '101098' : '',
+      recommendList: [],
+      startIndex: 1
+    }, () => {
+      this.getListData()
     })
   }
 
-  openSetting = () => {
-    Taro.openSetting({
-      success: res => {
-        Taro.getLocation({
-          success: res => {
-            console.log(res)
-          }
-        })
-      }
-    })
-  }
+  // openSetting = () => {
+  //   Taro.openSetting({
+  //     success: res => {
+  //       Taro.getLocation({
+  //         success: res => {
+  //           console.log(res)
+  //         }
+  //       })
+  //     }
+  //   })
+  // }
 
   toCarFood = () => {
     Taro.navigateTo({

@@ -4,7 +4,8 @@ import {
   RESET_GOODS_AND_PRICE,
   SET_USER_INFO,
   ADD_GOODS,
-  CALC_TOTAL_PRICE
+  CALC_TOTAL_PRICE,
+  CHANGE_AUTH_TYPE
 } from './constants'
 
 export const add = () => {
@@ -50,6 +51,13 @@ export const onAddGoods = (payload) => {
 export const onCalcTotalPrice = (payload) => {
   return {
     type: CALC_TOTAL_PRICE,
+    payload
+  }
+}
+
+export const onChangeAuthType = (payload) => {
+  return {
+    type: CHANGE_AUTH_TYPE,
     payload
   }
 }

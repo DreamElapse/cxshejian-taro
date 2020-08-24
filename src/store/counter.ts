@@ -10,6 +10,7 @@ import {
 
 const INITIAL_STATE = {
   num: 0,
+  isShowAuthButton: false,
   train: 'G111',
   date: moment().format('YYYY-MM-DD'),
   startStation: {
