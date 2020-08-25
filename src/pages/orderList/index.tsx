@@ -12,7 +12,7 @@ import logo from '@/static/img/index/logo.png'
 import AuthButton from "@/components/anth_button/auth_button"
 import OrderItem from "@/components/order_item/order_item";
 
-import { onChangeAuthType } from '@/store/actions'
+import { changeAuthType } from '@/store/actions'
 
 import './index.scss'
 
@@ -22,7 +22,7 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  onChangeAuthType: () => any
+  changeAuthType: () => any
 }
 
 type PageOwnProps = {}
@@ -41,8 +41,8 @@ const PAY_STATUS = [-1, 0, 1, 1, 1]; // 订单支付状态编码
 @connect(({ counter }) => ({
   ...counter
 }), (dispatch) => ({
-  onChangeAuthType(payload) {
-    dispatch(onChangeAuthType(payload))
+  changeAuthType(payload) {
+    dispatch(changeAuthType(payload))
   }
 }))
 
@@ -186,7 +186,7 @@ class OrderList extends Component {
           this.getOrderList();
         }
       }
-      this.props.onChangeAuthType(!isVerify);
+      this.props.changeAuthType(!isVerify);
     });
   }
 

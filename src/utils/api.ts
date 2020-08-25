@@ -1,4 +1,5 @@
-import { request, showLoading, hideLoading, showToast } from '@tarojs/taro'
+import Taro, { request, showLoading, hideLoading, showToast, getCurrentInstance } from '@tarojs/taro'
+import HTTP from '@/api'
 
 class API {
   // 四种请求方式
@@ -18,7 +19,7 @@ class API {
 
   // api控制器
   http(args, method = 'GET') {
-    let { url, data, loading=false, toast=false } = args
+    let { url, data, loading=false, toast=true } = args
 
     url = this.resetUrl(url)
     // loading
@@ -30,7 +31,9 @@ class API {
       contentType = 'application/json'
       // POST 请求
     } else if (method === 'POST') {
-      contentType = 'application/x-www-form-urlencoded'
+      url.includes('/api')
+        ? contentType = 'application/json'
+        : contentType = 'application/x-www-form-urlencoded'
     }
 
     // 用户token
@@ -52,7 +55,7 @@ class API {
         },
         // 失败回调
         fail(res) {
-          toast && showToast({title: res.data.msg || res.data.message})
+          toast && showToast({title: '接口请求失败', icon: 'none'})
           reject(res.data)
         },
         // 成功失败都回调
@@ -93,9 +96,24 @@ class API {
 
   // 响应拦截
   beforeResponse(res, toast) {
-    if (+res.error !== 0 || +res.state !== 1) {
-      toast && showToast({title: res.message})
+    if (+res.code === 200 || +res.code === 201) {
+      Taro.login({
+        success: val => {
+          let code = val.code
+          HTTP.Global.login({code})
+            .then(() => {
+              let page = getCurrentInstance().page
+              page.onShow()
+              // toast && showToast({title: '操作失败，请从新操作'})
+            })
+        }
+      })
+    } else if (+res.status === 400) {
+      toast && showToast({title: '接口请求失败', icon: 'none'})
+    } else if (+res.code !== 1 && +res.state !== 1) {
+      toast && showToast({title: res.message, icon: 'none'})
     }
+
     return res
   }
 }

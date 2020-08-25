@@ -4,7 +4,7 @@ import {
   RESET_GOODS_AND_PRICE,
   SET_USER_INFO,
   ADD_GOODS,
-  CALC_TOTAL_PRICE,
+  SET_TOTAL_PRICE,
   CHANGE_AUTH_TYPE,
   CHANGE_TRAIN
 } from './constants'
@@ -29,34 +29,34 @@ export function asyncAdd () {
   }
 }
 
-export const onResetGoodsAndPrice = () => {
+export const resetGoodsAndPrice = () => {
   return {
     type: RESET_GOODS_AND_PRICE
   }
 }
 
-export const onSetUserInfo = (payload) => {
+export const setUserInfo = (payload) => {
   return {
     type: SET_USER_INFO,
     payload
   }
 }
 
-export const onAddGoods = (payload) => {
+export const addGoods = (payload) => {
   return {
     type: ADD_GOODS,
     payload
   }
 }
 
-export const onCalcTotalPrice = (payload) => {
+export const setTotalPrice = (payload) => {
   return {
-    type: CALC_TOTAL_PRICE,
+    type: SET_TOTAL_PRICE,
     payload
   }
 }
 
-export const onChangeAuthType = (payload) => {
+export const changeAuthType = (payload) => {
   return {
     type: CHANGE_AUTH_TYPE,
     payload

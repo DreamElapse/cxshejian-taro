@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import API from '@/api'
 
 // redux
-import { onChangeAuthType, onSetUserInfo } from '@/store/actions'
+import { changeAuthType, setUserInfo } from '@/store/actions'
 
 // css
 import './auth_button.scss'
@@ -16,11 +16,11 @@ import './auth_button.scss'
 @connect(({reducers}) => (
   {...reducers}
 ), (dispatch) => ({
-  onChangeAuthType (payload) {
-    dispatch(onChangeAuthType(payload));
+  changeAuthType (payload) {
+    dispatch(changeAuthType(payload));
   },
-  onSetUserInfo (payload) {
-    dispatch(onSetUserInfo(payload));
+  setUserInfo (payload) {
+    dispatch(setUserInfo(payload));
   },
 }))
 class AuthButton extends Component {
@@ -46,8 +46,8 @@ class AuthButton extends Component {
 
   async changeUserInfo(userInfo) {
     userInfo['nickname'] = userInfo.nickName;
-    this.props.onSetUserInfo(userInfo);
-    this.props.onChangeAuthType(false);
+    this.props.setUserInfo(userInfo);
+    this.props.changeAuthType(false);
 
     await API.Global.changeUserInfo(userInfo);
     await this.props.onAfterAuthorized();

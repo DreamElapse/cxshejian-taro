@@ -12,6 +12,11 @@ export default {
   verifyAuth(data) {
     const url = ``
     return request.get({ url, data})
-  }
+  },
+  // 用户登录
+  login(data) {
+    const url = `/api/miniapp/api/login/wechatLogin`
+    return request.post({ url, data, loading: false})
+  },
 
 }

@@ -52,6 +52,9 @@ export default {
   permission: {
     'scope.userLocation': {
       desc: '你的位置信息将用于小程序',
-    }
+    },
+    // 'scope.userInfo': {
+    //   desc: 'sdf'
+    // }
   }
 }

@@ -11,21 +11,20 @@ import shoppingCart from '@/static/img/goodsList/shopping-cart.png'
 import clear from '@/static/img/goodsList/clear.png'
 
 import {
-  onAddGoods,
-  onCalcTotalPrice
+  addGoods,
+  setTotalPrice
 } from '@/store/actions'
 
 import './index.scss'
 
 type PageStateProps = {
-  counter: {
-    num: number
-  }
+  train: string,
+  date: string
 }
 
 type PageDispatchProps = {
-  onAddGoods: () => any
-  onCalcTotalPrice: () => any
+  addGoods: () => any
+  setTotalPrice: () => any
 }
 
 type PageOwnProps = {}
@@ -62,11 +61,11 @@ const GOODS_LIST = [
 @connect(({ counter }) => ({
   ...counter
 }), (dispatch) => ({
-  onAddGoods(payload) {
-    dispatch(onAddGoods(payload));
+  addGoods(payload) {
+    dispatch(addGoods(payload));
   },
-  onCalcTotalPrice(payload) {
-    dispatch(onCalcTotalPrice(payload));
+  setTotalPrice(payload) {
+    dispatch(setTotalPrice(payload));
   }
 }))
 
@@ -79,9 +78,7 @@ class CarFood extends Component {
       {name: '方便面', price: 1.00, id: 1, number: 2},
       {name: '方便面', price: 2.01, id: 2, number: 1},
       {name: '方便面', price: 3.00, id: 3, number: 1}
-    ],
-    train: '',
-    trainDate: ''
+    ]
   }
 
   componentWillUnmount () { }
@@ -205,8 +202,8 @@ class CarFood extends Component {
   getCarFood = () => {
     let data = {
       carriageRange: '',
-      train: this.state.train,
-      trainDate: this.state.trainDate
+      train: this.props.train,
+      trainDate: this.props.date
     }
     API.CarFood.getCarData(data)
       .then(res => {
@@ -247,8 +244,8 @@ class CarFood extends Component {
     return total
   }
   toAccount = () => {
-    this.props.onCalcTotalPrice(this.totalMoney())
-    this.props.onAddGoods(this.state.cartGoods)
+    this.props.setTotalPrice(this.totalMoney())
+    this.props.addGoods(this.state.cartGoods)
     Taro.navigateTo({
       url: '/pages/createOrder/index'
     })

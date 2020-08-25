@@ -5,13 +5,14 @@ import {
   RESET_GOODS_AND_PRICE,
   SET_USER_INFO,
   ADD_GOODS,
-  CALC_TOTAL_PRICE,
+  SET_TOTAL_PRICE,
   CHANGE_TRAIN
 } from './constants'
 
 const INITIAL_STATE = {
   num: 0,
   isShowAuthButton: false,
+  userInfo: '',
   train: 'G111',
   date: moment().format('YYYY-MM-DD'),
   startStation: {
@@ -27,7 +28,6 @@ const INITIAL_STATE = {
   carriageNum: 0,
   isLink: false,
   selectedGoodsList: [],
-  userInfo: '',
   totalPrice: 0,
   totalProNum: 0
 }
@@ -60,7 +60,7 @@ export default function counter (state = INITIAL_STATE, action) {
         ...state,
         selectedGoodsList: [...action.payload]
       }
-    case CALC_TOTAL_PRICE:
+    case SET_TOTAL_PRICE:
       return {
         ...state,
         totalPrice: action.payload

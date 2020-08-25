@@ -9,10 +9,10 @@ import arrow from '@/static/img/createOrder/arrow.png'
 // import { add, minus, asyncAdd } from '../../store/actions'
 
 import {
-  // onResetGoodsAndPrice,
-  onSetUserInfo,
-  onAddGoods,
-  onCalcTotalPrice
+  // resetGoodsAndPrice,
+  setUserInfo,
+  addGoods,
+  setTotalPrice
 } from '@/store/actions'
 
 import './index.scss'
@@ -43,7 +43,7 @@ type PageDispatchProps = {
   add: () => void
   dec: () => void
   asyncAdd: () => any,
-  onResetGoodsAndPrice: () => void
+  resetGoodsAndPrice: () => void
 }
 
 type PageOwnProps = {}
@@ -61,16 +61,16 @@ interface CreateOrder {
   ...counter
 }), (dispatch) => ({
   // onResetGoodsAndPriece(payload) {
-  //   dispatch(onResetGoodsAndPrice(payload));
+  //   dispatch(resetGoodsAndPrice(payload));
   // },
-  onSetUserInfo(payload) {
-    dispatch(onSetUserInfo(payload));
+  setUserInfo(payload) {
+    dispatch(setUserInfo(payload));
   },
-  onAddGoods(payload) {
-    dispatch(onAddGoods(payload));
+  addGoods(payload) {
+    dispatch(addGoods(payload));
   },
-  onCalcTotalPrice(payload) {
-    dispatch(onCalcTotalPrice(payload));
+  setTotalPrice(payload) {
+    dispatch(setTotalPrice(payload));
   }
 }))
 
@@ -290,7 +290,7 @@ class CreateOrder extends Component {
         mobile: user.mobile,
         nickname: user.nickname,
       };
-      this.props.onSetUserInfo(userInfo);
+      this.props.setUserInfo(userInfo);
       this.setState({ mobile: userInfo.mobile });
     });
   }
@@ -472,7 +472,7 @@ class CreateOrder extends Component {
       });
     });
 
-    this.props.onAddGoods([...selectedRecommendGoodsList]);
+    this.props.addGoods([...selectedRecommendGoodsList]);
     this.calcSelectedGoodsTotalPrice(this.state.beforeCreateOrderInfo.status);
     this.closeRecommended();
   }
@@ -497,7 +497,7 @@ class CreateOrder extends Component {
         total = (Math.round(total * 100) - Math.round(diffCount * 100)) / 100;
       }
     }
-    this.props.onCalcTotalPrice(total);
+    this.props.setTotalPrice(total);
   }
 
   // 关闭美味推荐窗口

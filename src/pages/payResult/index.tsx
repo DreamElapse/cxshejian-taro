@@ -5,7 +5,7 @@ import Taro from '@tarojs/taro'
 
 import moment from 'dayjs'
 
-import { onResetGoodsAndPrice } from '@/store/actions'
+import { resetGoodsAndPrice } from '@/store/actions'
 
 
 import failIcon from '@/static/img/createOrder/pay_fail.png'
@@ -18,7 +18,7 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  onResetGoodsAndPrice: () => void
+  resetGoodsAndPrice: () => void
 }
 
 type PageOwnProps = {}
@@ -34,8 +34,8 @@ interface PayResult {
 @connect(({ counter }) => ({
   ...counter
 }), (dispatch) => ({
-  onResetGoodsAndPrice(payload) {
-    dispatch(onResetGoodsAndPrice)
+  resetGoodsAndPrice(payload) {
+    dispatch(resetGoodsAndPrice)
   }
 }))
 class PayResult extends Component {
@@ -88,7 +88,7 @@ class PayResult extends Component {
   }
 
   toOrderList = () => {
-    this.props.onResetGoodsAndPrice();
+    this.props.resetGoodsAndPrice();
     Taro.navigateTo({url: '/pages/user/user'});
   }
 
@@ -99,7 +99,7 @@ class PayResult extends Component {
   }
 
   backToIndex = () => {
-    this.props.onResetGoodsAndPrice();
+    this.props.resetGoodsAndPrice();
     Taro.switchTab({url: '/pages/index/index'});
   }
 }

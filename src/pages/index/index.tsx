@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem, Block } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-// import { add, minus, asyncAdd } from '../../store/actions'
+import { setUserInfo } from '@/store/actions'
 import API from '@/api/index'
 import './index.scss'
 
@@ -15,14 +15,12 @@ import mfsc from '@/static/img/index/mfsc.png'
 import scroll from '@/static/img/index/scroll.png'
 
 type PageStateProps = {
-  counter: {
-    num: number
-  }
+  userInfo: object,
+  train: string,
+  date: string
 }
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+  setUserInfo: () => object
 }
 
 type PageOwnProps = {}
@@ -69,21 +67,6 @@ const SCROLL_LIST = [
   }
 ]
 
-const RECOMMEND_LIST = [
-  {
-    img: jhkk,
-    city: '广州',
-    title: '【广州海珠】暑假转场想休息休息想休息休息',
-    price: '39.9'
-  },
-  {
-    img: jhkk,
-    city: '广州',
-    title: '【广州海珠】暑假转场想休息休息想休息休息',
-    price: '39.9'
-  }
-]
-
 const GOODS_LIST = [
   {
     img: jhkk,
@@ -101,9 +84,11 @@ const GOODS_LIST = [
 
 const CITY_LIST = ['上海', '武汉', '长沙']
 @connect(({ counter }) => ({
-  counter
+  ...counter
 }), (dispatch) => ({
-
+  setUserInfo: (payload) => {
+    dispatch(setUserInfo(payload))
+  }
 }))
 
 
@@ -122,14 +107,13 @@ class Index extends Component {
     lon: '',
     startIndex: 1,
     tabIndex: 1,
-    themeId: '',
+    themeId: '101098',
     excludeThemeId: '',
     isGetLocation: false,
     hasDistance: true,
     topAd: [],
     middleAd: [],
-    train: '',
-    trainDate: ''
+    noMoreData: false
   }
 
   UNSAFE_componentWillMount() {
@@ -139,6 +123,9 @@ class Index extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
+    // this.getUserInfo()
+    // this.userLogin()
+
     !this.state.areaId && this.getLocation()
     this.state.areaId && this.getListData()
     this.getCityList()
@@ -149,6 +136,7 @@ class Index extends Component {
   componentDidHide () { }
 
   onReachBottom() {
+    if (this.state.noMoreData) return
     this.setState({
       startIndex: this.state.startIndex + 1
     }, () => {
@@ -359,7 +347,6 @@ class Index extends Component {
         } else {
           Taro.getLocation({
             success: response => {
-              console.log(response, 778)
               _this.setState({
                 lat: response.latitude,
                 lon: response.longitude
@@ -378,6 +365,20 @@ class Index extends Component {
         }
       }
     })
+  }
+
+  // 获取用户信息
+  getUserInfo = () => {
+    console.log(this.props, this.props.userInfo, 222)
+    // if (this.props.userInfo) {
+    //   API.Global.login({code: this.props.userInfo.openId})
+    // }
+
+    // Taro.getUserInfo({
+    //   success: res => {
+    //     console.log(res, 123)
+    //   }
+    // })
   }
 
   // 获取当前城市的城市ID
@@ -400,7 +401,7 @@ class Index extends Component {
 
   // 请求推荐商品列表
   getListData = () => {
-    let loading = this.state.startIndex > 0
+    let loading = this.state.startIndex > 1
     let data = {
       resultNum: 5,
       startIndex: this.state.startIndex,
@@ -410,8 +411,10 @@ class Index extends Component {
     }
     API.Home.getListData(data, loading)
     .then(res => {
-      let recommendList = this.state.recommendList.concat(res.data.results)
+      let recommendList = this.state.recommendList.concat(res.data && res.data.results)
+      let length = res.data ? res.data.results.length : 0
       this.setState({
+        noMoreData: length < 5,
         recommendList
       })
     })
@@ -436,7 +439,7 @@ class Index extends Component {
   getCityList = () => {
     API.Home.getCityList()
       .then(res => {
-        console.log(res.data.areaList)
+        console.log(res.data.areaList, 'getCityList')
       })
   }
 
@@ -458,13 +461,13 @@ class Index extends Component {
   getCarFood = () => {
     let data = {
       carriageRange: '',
-      train: this.state.train,
-      trainDate: this.state.trainDate
+      train: this.props.train,
+      trainDate: this.props.date
     }
     API.CarFood.getCarData(data)
       .then(res => {
         this.setState({
-          goodsList: res.data
+          goodsList: res.data ? res.data : GOODS_LIST
         })
       })
   }
