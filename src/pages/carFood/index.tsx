@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import { View, Image, Text } from '@tarojs/components'
+import API from '@/api'
 
 import goodsImg from '@/static/img/goodsList/noodle.jpg'
 import addIcon from '@/static/img/goodsList/add.png'
@@ -78,12 +79,16 @@ class CarFood extends Component {
       {name: '方便面', price: 1.00, id: 1, number: 2},
       {name: '方便面', price: 2.01, id: 2, number: 1},
       {name: '方便面', price: 3.00, id: 3, number: 1}
-    ]
+    ],
+    train: '',
+    trainDate: ''
   }
 
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () {
+    this.getCarFood()
+  }
 
   componentDidHide () { }
 
@@ -196,6 +201,21 @@ class CarFood extends Component {
       </View>
     )
   }
+  // 获取商品列表
+  getCarFood = () => {
+    let data = {
+      carriageRange: '',
+      train: this.state.train,
+      trainDate: this.state.trainDate
+    }
+    API.CarFood.getCarData(data)
+      .then(res => {
+        this.setState({
+          goodsList: res.data
+        })
+      })
+  }
+
   addGoods = (goods) => {
     let cartGoods = this.state.cartGoods
     cartGoods.push({

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Image, Button, Text, Swiper, SwiperItem } from '@tarojs/components'
+import { View, Image, Button, Text, Swiper, SwiperItem, Block } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 // import { add, minus, asyncAdd } from '../../store/actions'
 import API from '@/api/index'
@@ -19,7 +19,6 @@ type PageStateProps = {
     num: number
   }
 }
-
 type PageDispatchProps = {
   add: () => void
   dec: () => void
@@ -126,11 +125,15 @@ class Index extends Component {
     themeId: '',
     excludeThemeId: '',
     isGetLocation: false,
-    hasDistance: true
+    hasDistance: true,
+    topAd: [],
+    middleAd: [],
+    train: '',
+    trainDate: ''
   }
 
   UNSAFE_componentWillMount() {
-    this.getLocation()
+    // this.getLocation()
   }
 
   componentWillUnmount () { }
@@ -138,6 +141,9 @@ class Index extends Component {
   componentDidShow () {
     !this.state.areaId && this.getLocation()
     this.state.areaId && this.getListData()
+    this.getCityList()
+    this.getAdData()
+    this.getCarFood()
   }
 
   componentDidHide () { }
@@ -151,7 +157,7 @@ class Index extends Component {
   }
 
   render () {
-    const { cityList, buttonList, scrollList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList } = this.state
+    const { cityList, buttonList, scrollList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd } = this.state
     return (
       <View className='home-page'>
         <View className='top-sec'>
@@ -181,7 +187,9 @@ class Index extends Component {
             </View>
           }
           {
-            !hasDistance && <Image src="" mode="aspectFill" className='topImg'></Image>
+            !hasDistance && topAd.map((item, index) => {
+              return <Image src={item.url} mode="aspectFill" className='topImg' key={'img'+index}></Image>
+            })
           }
         </View>
         {/*------按钮------*/}
@@ -209,6 +217,7 @@ class Index extends Component {
             <Image src={jhkk} className='card-img' mode="aspectFill" ></Image>
           </View>
         </View>
+
         {/*------轮播------*/}
         <Swiper
           className='scroll-box'
@@ -217,7 +226,7 @@ class Index extends Component {
           {
             scrollList.map((item, index) => {
               return (
-                <SwiperItem key={'swiper'+index}>
+                <SwiperItem key={'scroll'+index}>
                   <Image src={item.img} className='scroll-img' mode="aspectFill" ></Image>
                 </SwiperItem>
               )
@@ -260,8 +269,19 @@ class Index extends Component {
             }
           </View>
         </View>}
-
-
+        {/*<Swiper>*/}
+        {/*  {*/}
+        {/*    cityList.map((item, index) => {*/}
+        {/*      return (*/}
+        {/*        <Block key={'swiper'+index}>*/}
+        {/*          <SwiperItem >*/}
+        {/*            <Text className={`city ${index === 1 && 'active'}`}>{item}</Text>*/}
+        {/*          </SwiperItem>*/}
+        {/*        </Block>*/}
+        {/*      )*/}
+        {/*    })*/}
+        {/*  }*/}
+        {/*</Swiper>*/}
         {/*------定位------*/}
         <View className='fixed-position'>
           <Text>{positionCity ? '当前定位' + positionCity : '定位服务已关闭，打开定位'}</Text>
@@ -298,6 +318,7 @@ class Index extends Component {
       </View>
     )
   }
+
   // 获取位置信息
   getLocation = () => {
     if (this.state.isGetLocation) return
@@ -359,6 +380,7 @@ class Index extends Component {
     })
   }
 
+  // 获取当前城市的城市ID
   getLocationCity = () => {
     let data = {
       latitude: this.state.lat,
@@ -376,6 +398,7 @@ class Index extends Component {
       })
   }
 
+  // 请求推荐商品列表
   getListData = () => {
     let loading = this.state.startIndex > 0
     let data = {
@@ -397,6 +420,7 @@ class Index extends Component {
     })
   }
 
+  // 切换商品推荐列表
   changeTab = (index) => {
     this.setState({
       tabIndex: index,
@@ -407,6 +431,42 @@ class Index extends Component {
     }, () => {
       this.getListData()
     })
+  }
+
+  getCityList = () => {
+    API.Home.getCityList()
+      .then(res => {
+        console.log(res.data.areaList)
+      })
+  }
+
+  getAdData = () => {
+    // 广告标识code定义
+    // 首页顶部：home-head
+    // 首页中部：home-middle
+    // 下单支付成功页面：pay-success
+    // 车厢美食：train-banner
+    Promise.all([API.Home.getAdData({code: 'home-head'}), API.Home.getAdData({code: 'home-middle'})])
+      .then(res => {
+        this.setState({
+          topAd: res[0].data ? res[0].data.bannerList : [],
+          middleAd: res[1].data ? res[1].data.bannerList : []
+        })
+      })
+  }
+
+  getCarFood = () => {
+    let data = {
+      carriageRange: '',
+      train: this.state.train,
+      trainDate: this.state.trainDate
+    }
+    API.CarFood.getCarData(data)
+      .then(res => {
+        this.setState({
+          goodsList: res.data
+        })
+      })
   }
 
   // openSetting = () => {

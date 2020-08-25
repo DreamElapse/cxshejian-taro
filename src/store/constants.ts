@@ -5,3 +5,4 @@ export const SET_USER_INFO = 'SET_USER_INFO' // 设置用户信息
 export const ADD_GOODS = 'ADD_GOODS' // 添加商品
 export const CALC_TOTAL_PRICE = 'CALC_TOTAL_PRICE' // 设置商品总价
 export const CHANGE_AUTH_TYPE = 'CHANGE_AUTH_TYPE' // 改变授权状态
+export const CHANGE_TRAIN = 'CHANGE_TRAIN' // 车次信息

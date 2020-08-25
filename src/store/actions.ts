@@ -5,7 +5,8 @@ import {
   SET_USER_INFO,
   ADD_GOODS,
   CALC_TOTAL_PRICE,
-  CHANGE_AUTH_TYPE
+  CHANGE_AUTH_TYPE,
+  CHANGE_TRAIN
 } from './constants'
 
 export const add = () => {
@@ -58,6 +59,13 @@ export const onCalcTotalPrice = (payload) => {
 export const onChangeAuthType = (payload) => {
   return {
     type: CHANGE_AUTH_TYPE,
+    payload
+  }
+}
+
+export const changeTrain = (payload) => {
+  return {
+    type: CHANGE_TRAIN,
     payload
   }
 }

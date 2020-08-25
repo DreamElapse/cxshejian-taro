@@ -5,7 +5,8 @@ import {
   RESET_GOODS_AND_PRICE,
   SET_USER_INFO,
   ADD_GOODS,
-  CALC_TOTAL_PRICE
+  CALC_TOTAL_PRICE,
+  CHANGE_TRAIN
 } from './constants'
 
 const INITIAL_STATE = {
@@ -21,6 +22,7 @@ const INITIAL_STATE = {
     aTime: '18:00',
     station: '广州南'
   },
+  trainMsg: {},
   carriage: null,
   carriageNum: 0,
   isLink: false,
@@ -37,32 +39,37 @@ export default function counter (state = INITIAL_STATE, action) {
         ...state,
         num: state.num + 1
       }
-     case MINUS:
-       return {
-         ...state,
-         num: state.num - 1
-       }
-      case RESET_GOODS_AND_PRICE:
-        return {
-          ...state,
-          selectedGoodsList: [],
-          totalPrice: 0
-        }
-      case SET_USER_INFO:
-        return {
-          ...state,
-          userInfo: action.payload
-        }
-      case ADD_GOODS:
-        return {
-          ...state,
-          selectedGoodsList: [...action.payload]
-        }
-      case CALC_TOTAL_PRICE:
-        return {
-          ...state,
-          totalPrice: action.payload
-        }
+    case MINUS:
+     return {
+       ...state,
+       num: state.num - 1
+     }
+    case RESET_GOODS_AND_PRICE:
+      return {
+        ...state,
+        selectedGoodsList: [],
+        totalPrice: 0
+      }
+    case SET_USER_INFO:
+      return {
+        ...state,
+        userInfo: action.payload
+      }
+    case ADD_GOODS:
+      return {
+        ...state,
+        selectedGoodsList: [...action.payload]
+      }
+    case CALC_TOTAL_PRICE:
+      return {
+        ...state,
+        totalPrice: action.payload
+      }
+    case CHANGE_TRAIN:
+      return {
+        ...state,
+        trainMsg: action.payload
+      }
      default:
        return state
   }

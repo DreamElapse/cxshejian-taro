@@ -10,7 +10,25 @@ export default {
   getLocationCity(data) {
     const url = `/ziwoyou/mtourists-api/pddapi/index/getLocationCity`
     return request.get({ url, data })
+  },
+  // 获取城市列表
+  getCityList(data) {
+    const url = `/ziwoyou/mtourists-api/pddapi/index/allcities`
+    return request.get({ url, data })
+  },
+  // 广告管理
+  /**
+   * 广告标识code定义
+     首页顶部：home-head
+     首页中部：home-middle
+     下单支付成功页面：pay-success
+     车厢美食：train-banner
+   * */
+  getAdData(data) {
+    const url = `/api/miniapp/api/banner/list`
+    return request.get({ url, data })
   }
+
 
 
 }
