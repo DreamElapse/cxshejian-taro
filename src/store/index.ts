@@ -42,6 +42,18 @@ const enhancer = composeEnhancers(
 
 // 静默授权
 Taro.checkSession({
+  success: () => {
+    // Taro.login({
+    //   success: val => {
+    //     let code = val.code
+    //     console.log(code, 123)
+    //     API.Global.login({code})
+    //   },
+    //   fail: data => {
+    //     console.log(data, '静默授权失败')
+    //   }
+    // })
+  },
   fail: () => {
     Taro.login({
       success: val => {

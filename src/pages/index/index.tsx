@@ -272,7 +272,7 @@ class Index extends Component {
         {/*</Swiper>*/}
         {/*------定位------*/}
         <View className='fixed-position'>
-          <Text>{positionCity ? '当前定位' + positionCity : '定位服务已关闭，打开定位'}</Text>
+          <Text>{positionCity ? '当前定位 ' + positionCity : '定位服务已关闭，打开定位'}</Text>
           {!lat && <Button openType="openSetting" className="setting">去设置</Button>}
         </View>
 
