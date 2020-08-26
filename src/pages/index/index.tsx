@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem, Block } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { setUserInfo } from '@/store/actions'
-import API from '@/api/index'
+import API from '@/api'
 import './index.scss'
 
 import icon_xsqg from '@/static/img/index/icon_xsqg.png'
@@ -232,11 +232,11 @@ class Index extends Component {
               goodsList.map((item, index) => {
                 return (
                   <View className='goods-item' key={'goods'+index}>
-                    <Image src={item.img} className='goods-img' mode="aspectFill"></Image>
-                    <Text className='goods-title'>{item.name}</Text>
+                    <Image src={item.thumbImg} className='goods-img' mode="aspectFill"></Image>
+                    <Text className='goods-title'>{item.productName}</Text>
                     <View className='goods-msg'>
                       <Text className='price'>¥{item.price}</Text>
-                      <Text className='pre-price'>¥{item.prePrice}</Text>
+                      {/*<Text className='pre-price'>¥{item.prePrice}</Text>*/}
                       <Text className='buy-btn' onClick={this.toCarFood}>立即抢购</Text>
                     </View>
                   </View>
@@ -436,6 +436,7 @@ class Index extends Component {
     })
   }
 
+  // 城市列表
   getCityList = () => {
     API.Home.getCityList()
       .then(res => {
@@ -458,6 +459,7 @@ class Index extends Component {
       })
   }
 
+  // 车厢推荐商品列表
   getCarFood = () => {
     let data = {
       carriageRange: '',
@@ -466,8 +468,30 @@ class Index extends Component {
     }
     API.CarFood.getCarData(data)
       .then(res => {
+        // 小车厢
+        let frontProduct = res.data.frontTrainProducts || []
+        let  frontArr = frontProduct.map(item => {
+          return item.products
+        })
+        // 大车厢
+        let backProduct = res.data.backTrainProducts || []
+        let  backArr = backProduct.map(item => {
+          return item.products
+        })
+        let goodsList: any = []
+        frontArr.forEach(item => {
+          item.forEach(goods => {
+            goodsList.push(goods)
+          })
+        })
+        backArr.forEach(item => {
+          item.forEach(goods => {
+            goodsList.push(goods)
+          })
+        })
+
         this.setState({
-          goodsList: res.data ? res.data : GOODS_LIST
+          goodsList: goodsList.slice(0, 2)
         })
       })
   }

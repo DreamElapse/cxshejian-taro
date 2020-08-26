@@ -15,7 +15,7 @@ export default {
   reminder(data) {
     const url = `/auth`
     return request.get({ url, data })
-  },
+  }
 
 
 

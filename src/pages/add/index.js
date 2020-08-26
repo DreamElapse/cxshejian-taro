@@ -48,7 +48,7 @@ export default class Add extends Component {
   // this.path=getCurrentInstance().router.path
 
   sourcefrom = addTrip_sourcefrom_enum.momentSearch_trainSearch//默认为时刻/正晚点下车次查询
-  from_station_type = '1' //默认为城市 1       所选的出发点是城市的时候传1   所选的出发点是站的时候传2   
+  from_station_type = '1' //默认为城市 1       所选的出发点是城市的时候传1   所选的出发点是站的时候传2
   to_station_type = '1'
   is_monent_enter = true//默认时刻查询进入，否则 添加行程下进入
   basScr = 'https://www.cx9z.com'
@@ -56,7 +56,7 @@ export default class Add extends Component {
   collectPageName = ''
   // constructor(arguments) {
   //   super(...arguments)
-    
+
   // }
 
   // config = {
@@ -67,12 +67,12 @@ export default class Add extends Component {
   //   navigationBarTextStyle:'white'
   // }
 
-  componentWillMount () {
+  UNSAFE_componentWillMount () {
     let qOption = getCurrentInstance().router.params.q ? parseUrlStr2ParamsObj(decodeURIComponent(getCurrentInstance().router.params.q)) : null
     if(qOption){
       this.sourcefrom = qOption.sourcefrom
 
-      this.setState({ 
+      this.setState({
         content: qOption.content || this.state.content,
         color: qOption.content && '#323232'
       })
@@ -127,7 +127,7 @@ export default class Add extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    let that=this; 
+    let that=this;
     // let data = getCurrentInstance().page.__data__
     // data.dataC && this.setState({
     //   dateC: data.dateC,
@@ -155,7 +155,7 @@ export default class Add extends Component {
     //       let data1 = res1.data
     //       if(data1.code==0){
     //           that.setState({
-    //               activityBannerList:data1.data || [] 
+    //               activityBannerList:data1.data || []
     //           })
     //       }
     //   })
@@ -182,7 +182,7 @@ export default class Add extends Component {
     if(type == 'date'){//更新日期
       this.setState({
         dateC:data.dateC,
-        timeCC: data.timeCC,                                                                                                                                                                                                                                                                                                                     
+        timeCC: data.timeCC,
         weekDay: data.weekDay,
         toDay: data.toDay,
       })
@@ -210,7 +210,7 @@ export default class Add extends Component {
     Taro.pageScrollTo({
       scrollTop: 0,
       duration: 300
-    }) 
+    })
 
     Taro.navigateTo({
       url: '../calendar/index'
@@ -224,11 +224,11 @@ export default class Add extends Component {
     })
   }
 
-  
+
   // onReloadUser(){
   //   // 刷新授权：子组件 状态
   //   const swiperComponent = getTargetComponentByRef("swiper1");
-  //   swiperComponent && swiperComponent.reloadAuthStatus && swiperComponent.reloadAuthStatus() 
+  //   swiperComponent && swiperComponent.reloadAuthStatus && swiperComponent.reloadAuthStatus()
   // }
 
 
@@ -255,7 +255,7 @@ export default class Add extends Component {
       API.StationService.getDetailByTrainNo({date: dateC,trainNO:trainNO})
       .then(res => {
         let jump_params = {
-          sourcefrom: this.is_monent_enter ? addTrip_sourcefrom_enum.momentSearch_trainSearch : addTrip_sourcefrom_enum.addTrain_trainSearch, 
+          sourcefrom: this.is_monent_enter ? addTrip_sourcefrom_enum.momentSearch_trainSearch : addTrip_sourcefrom_enum.addTrain_trainSearch,
           trainNo:trainNO,
           dateC:dateC,
           timeCC: timeCC,
@@ -282,13 +282,13 @@ export default class Add extends Component {
         })
       })
       .catch((e) => {
-        
+
       })
     }else if(current == '1'){
        // 站站查询  -> 跳转车次选择列表页
        let source = this.is_monent_enter ? addTrip_sourcefrom_enum.momentSearch_stationSearch : addTrip_sourcefrom_enum.addTrain_stationSearch
        let jump_params = {
-        sourcefrom: source, 
+        sourcefrom: source,
         dateC:dateC,
         timeCC: timeCC,
         weekDay:weekDay,
@@ -298,7 +298,7 @@ export default class Add extends Component {
         to_station_type: that.to_station_type,
         type: source == addTrip_sourcefrom_enum.momentSearch_stationSearch ? 'time' : 'bind'
       }
-      
+
       let jumpUrl = '../findStation/index?'+queryParams(jump_params)
       Taro.navigateTo({
         url: jumpUrl
@@ -308,14 +308,14 @@ export default class Add extends Component {
         if (arry.length == 0) {
           arry.unshift(czzc)
         } else if (arry.indexOf(czzc) != -1) {
-           
+
         } else {
           arry.unshift(czzc)
           if(arry.length>=20){
             arry.pop()
           }
         }
-        
+
         Taro.setStorageSync('hZArry', arry)
       })
     }
@@ -413,7 +413,7 @@ export default class Add extends Component {
       content:name1,
     },res=>{
       that.choice()
-    })   
+    })
   }
 
   //城市历史查询
@@ -426,9 +426,9 @@ export default class Add extends Component {
       cityNameE:name2
     },res=>{
       that.choice()
-    })   
+    })
   }
- 
+
 
   showKeyBoard = (e) => {
     e.stopPropagation();
@@ -457,15 +457,15 @@ export default class Add extends Component {
 
   // 收起键盘
   onHiddenKeyBoard(e) {
-  
+
     Taro.pageScrollTo({
       scrollTop: 0,
       duration: 300
-    }) 
+    })
     if (this.state.content) {
       this.setState({
-        animations: ''          
-      }); 
+        animations: ''
+      });
     } else {
       this.setState({
         content: '例如：G9', //虚拟键盘_输入提醒文本
@@ -473,7 +473,7 @@ export default class Add extends Component {
         color: '#c3c3c3'
       });
     }
-    this.setState({       
+    this.setState({
       addPageH: 0,
       hasBoard: false,
     })
@@ -514,7 +514,7 @@ export default class Add extends Component {
     }) : null;
 
     return (
-      <View className='add' onClick={this.bodyCloseKeyboard}>    
+      <View className='add' onClick={this.bodyCloseKeyboard}>
         <View className="addBgc"></View>
         <View className="contentbox">
           <View className='checkCol'>
@@ -586,7 +586,7 @@ export default class Add extends Component {
           </View>
           {hasBoard && <Keyboard id='keyboard' onHidden={this.onHiddenKeyBoard.bind(this)} onGetCode={this.onGetCode.bind(this)} dataSet='dataSet'></Keyboard>}
 
-        </View>  
+        </View>
         {/* <Image src={getGlobalData('domain_h5') + '/h5/tarocx9z/v2.0/common/banenrsync.png'} onClick={this.sync12306} className="toSync"></Image> */}
       </View>
     )

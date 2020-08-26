@@ -29,7 +29,7 @@ class AuthButton extends Component {
     super(props);
   }
 
-  componentWillMount () {
+  UNSAFE_componentWillMount () {
   }
 
   componentDidMount () { }

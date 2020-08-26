@@ -13,7 +13,7 @@ const INITIAL_STATE = {
   num: 0,
   isShowAuthButton: false,
   userInfo: '',
-  train: 'G111',
+  train: 'D1112',
   date: moment().format('YYYY-MM-DD'),
   startStation: {
     aTime: '15:00',

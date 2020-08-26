@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { View, Image, Text } from '@tarojs/components'
 import API from '@/api'
 
-import goodsImg from '@/static/img/goodsList/noodle.jpg'
 import addIcon from '@/static/img/goodsList/add.png'
 import subIcon from '@/static/img/goodsList/sub.png'
 import shoppingCart from '@/static/img/goodsList/shopping-cart.png'
@@ -23,13 +22,18 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  addGoods: () => any
-  setTotalPrice: () => any
+  addGoods: (any) => any
+  setTotalPrice: (any) => any
 }
 
 type PageOwnProps = {}
 
-// type PageState = {}
+type PageState = {
+  topAd: any[],
+  goodsList: any[],
+  showBg: boolean,
+  cartGoods: object[]
+}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -37,26 +41,6 @@ interface CarFood {
   props: IProps;
 }
 
-const GOODS_LIST = [
-  {
-    img: goodsImg,
-    name: '方便面',
-    price: '15',
-    id: 1
-  },
-  {
-    img: goodsImg,
-    name: '方便面',
-    price: '15',
-    id: 2
-  },
-  {
-    img: goodsImg,
-    name: '方便面',
-    price: '15',
-    id: 3
-  }
-]
 
 @connect(({ counter }) => ({
   ...counter
@@ -71,86 +55,54 @@ const GOODS_LIST = [
 
 class CarFood extends Component {
 
-  state = {
-    goodsList: GOODS_LIST,
+  state: PageState = {
+    topAd: [],
+    goodsList: [],
     showBg: false,
-    cartGoods: [
-      {name: '方便面', price: 1.00, id: 1, number: 2},
-      {name: '方便面', price: 2.01, id: 2, number: 1},
-      {name: '方便面', price: 3.00, id: 3, number: 1}
-    ]
+    cartGoods: []
   }
 
   componentWillUnmount () { }
 
   componentDidShow () {
     this.getCarFood()
+    this.getAdData()
   }
 
   componentDidHide () { }
 
   render () {
-    const { goodsList, showBg, cartGoods } = this.state
+    const { goodsList, showBg, cartGoods, topAd } = this.state
     return (
       <View className='car-food'>
         <View className='content'>
-
-          <Image src='' mode='aspectFill' className='topImg'> </Image>
-          <Text className='list-title'>G500车次商品推荐</Text>
+          {topAd[0] && <Image src={topAd[0] && topAd[0].imageUrl} mode='aspectFill' className='topImg'> </Image>}
+          <Text className='list-title'>{this.props.train}车次商品推荐</Text>
           {/*-----商品列表------*/}
-          <View className='goods-box'>
-            {
-              goodsList.map((item, index) => {
-                return (
-                  <View className='goods-item' key={'goods'+index}>
-                    <Image src={item.img} className='goods-img' mode='aspectFill'> </Image>
-                    <Text className='goods-title'>{item.name}</Text>
-                    <View className='goods-msg'>
-                      <Text className='goods-price'>¥{item.price}</Text>
-                      <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
-                    </View>
+          {
+            goodsList.map((item, index) => {
+              return (
+                <View className='goods-box' key={'box'+index}>
+                  {
+                    item.map((goods, i) => {
+                      return (
+                        <View className='goods-item' key={'goods'+i}>
+                          <Image src={goods.thumbImg} className='goods-img' mode='aspectFill'> </Image>
+                          <Text className='goods-title'>{goods.productName}</Text>
+                          <View className='goods-msg'>
+                            <Text className='goods-price'>¥{goods.price}</Text>
+                            <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(goods)}></Image>
+                          </View>
 
-                  </View>
-                )
-              })
-            }
-          </View>
-          <View className='goods-box'>
-            {
-              goodsList.map((item, index) => {
-                return (
-                  <View className='goods-item' key={'goods'+index}>
-                    <Image src={item.img} className='goods-img' mode="aspectFill"></Image>
-                    <Text className='goods-title'>{item.name}</Text>
-                    <View className='goods-msg'>
-                      <Text className='goods-price'>¥{item.price}</Text>
-                      <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
-                    </View>
+                        </View>
+                      )
+                    })
+                  }
+                </View>
+              )
+            })
+          }
 
-                  </View>
-                )
-              })
-            }
-          </View>
-          <View className='goods-box'>
-            {
-              goodsList.map((item, index) => {
-                return (
-                  <View className='goods-item' key={'goods'+index}>
-                    <Image src={item.img} className='goods-img' mode="aspectFill"></Image>
-                    <Text className='goods-title'>{item.name}</Text>
-                    <View className='goods-msg'>
-                      <Text className='goods-price'>¥{item.price}</Text>
-                      <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(item)}></Image>
-                    </View>
-
-                  </View>
-                )
-              })
-            }
-          </View>
-
-        </View>
 
         {/*-----底部功能区-----*/}
         <View className='bottom-handle'>
@@ -171,7 +123,7 @@ class CarFood extends Component {
           <View className={`shopping-cart ${showBg && 'active'}`} onClick={e => e.stopPropagation()}>
             <View className='cart-title'>
               <Text className='title'>购物车</Text>
-              <View className='clear'>
+              <View className='clear' onClick={this.clearCart}>
                 <Image src={clear} className='clear-icon'></Image>
                 <Text className='clear-text'>清空</Text>
               </View>
@@ -181,7 +133,7 @@ class CarFood extends Component {
               cartGoods.map((item, index) => {
                 return (
                   <View className='cart-goods-item' key={'cart'+index}>
-                    <Text className='goods-name'>{item.name}</Text>
+                    <Text className='goods-name'>{item.productName}</Text>
                     <Text className='price'>¥{item.price}</Text>
                     <View className='number-handle'>
                       <Image src={subIcon} className='sub-icon' onClick={() => this.changeGoodsNumber(item, 'sub')}></Image>
@@ -196,8 +148,25 @@ class CarFood extends Component {
           </View>
         </View>
       </View>
+      </View>
     )
   }
+
+  getAdData = () => {
+    // 广告标识code定义
+    // 首页顶部：home-head
+    // 首页中部：home-middle
+    // 下单支付成功页面：pay-success
+    // 车厢美食：train-banner
+    API.Home.getAdData({code: 'train-banner'})
+      .then(res => {
+        let banner: [] = res.data.bannerImgList || []
+        this.setState({
+          topAd: banner,
+        })
+      })
+  }
+
   // 获取商品列表
   getCarFood = () => {
     let data = {
@@ -207,24 +176,61 @@ class CarFood extends Component {
     }
     API.CarFood.getCarData(data)
       .then(res => {
-        this.setState({
-          goodsList: res.data
+
+        // 小车厢
+        let frontProduct = res.data.frontTrainProducts || []
+        let  frontArr = frontProduct.map(item => {
+          return item.products.slice(0, 3)
         })
+        // 大车厢
+        let backProduct = res.data.backTrainProducts || []
+        let  backArr = backProduct.map(item => {
+          return item.products
+        })
+        // console.log(frontArr, 11)
+        this.setState({
+          goodsList: frontArr
+        })
+        // let goodsList: any = []
+        // goodsList = frontArr.map(item => {
+        //   return item
+        // })
+        // backArr.forEach(item => {
+        //   item.forEach(goods => {
+        //     goodsList.push(goods)
+        //   })
+        // })
+
+        // this.setState({
+        //   goodsList: goodsList.slice(0, 2)
+        // }, () => {
+        //   console.log(this.state.goodsList, 111)
+        // })
       })
   }
 
+  // 添加商品到购物车
   addGoods = (goods) => {
     let cartGoods = this.state.cartGoods
     cartGoods.push({
-      name: goods.name,
+      productName: goods.productName,
       price: goods.price,
-      id: goods.id,
+      productId: goods.productId,
       number: 1
     })
     this.setState({
       cartGoods
     })
   }
+
+  // 清空购物车
+  clearCart = () => {
+    this.setState({
+      cartGoods: []
+    })
+  }
+
+  // 显示隐藏购物车列表
   showBuy = () => {
     this.setState({
       showBg: true
@@ -235,14 +241,19 @@ class CarFood extends Component {
       showBg: false
     })
   }
+
+  // 计算总价
   totalMoney = () => {
     let total = 0
-    this.state.cartGoods.forEach(item => {
+    let goodsList: any[] = this.state.cartGoods
+    goodsList.forEach(item => {
       let price = +(item.price * 100).toFixed(2)
       total = (total*100 + item.number * price)/100
     })
     return total
   }
+
+  // 跳转到提交订单页
   toAccount = () => {
     this.props.setTotalPrice(this.totalMoney())
     this.props.addGoods(this.state.cartGoods)
@@ -250,9 +261,11 @@ class CarFood extends Component {
       url: '/pages/createOrder/index'
     })
   }
+
+  // 修改购物车商品数量
   changeGoodsNumber = (item, type) => {
     // event.stopPropagation()
-    let cartGoods = this.state.cartGoods
+    let cartGoods: any[] = this.state.cartGoods
     let index = cartGoods.findIndex(goods => {
       return goods.id === item.id
     })

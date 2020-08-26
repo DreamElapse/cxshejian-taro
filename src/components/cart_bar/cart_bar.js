@@ -17,7 +17,7 @@ class CartBar extends Component {
     super(props);
   }
 
-  componentWillMount () { }
+  UNSAFE_componentWillMount () { }
 
   componentDidMount () { }
 

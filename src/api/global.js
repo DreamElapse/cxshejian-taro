@@ -18,5 +18,11 @@ export default {
     const url = `/api/miniapp/api/login/wechatLogin`
     return request.post({ url, data, loading: false})
   },
+  // 解密手机号
+  getPhone(data) {
+    const url = `/api/miniapp/api/member/wechatBindMobile`
+    return request.post({ url, data })
+  },
+
 
 }
