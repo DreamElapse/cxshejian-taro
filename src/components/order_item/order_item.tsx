@@ -1,5 +1,5 @@
 ﻿import Taro from '@tarojs/taro'
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Image, Text, View } from '@tarojs/components'
 
 // js
@@ -15,8 +15,8 @@ interface Props {
   afterUrgeOrder(): void;
 }
 
-//订单状态 0:已下单;1:已支付;2:已接单;3:已完成;4:已取消;5:已关闭;-1:已作废
-const STATUS_TIP = ['待付款', '待收货', '待收货', '已完成', '已取消', '已关闭', '支付超时'];
+//订单状态
+const STATUS_TIP = ['未支付', '已支付', '已退款', '部分退款', '已取消', '超时取消'];
 
 const OrderItem = (props: Props): JSX.Element => {
 
@@ -25,16 +25,15 @@ const OrderItem = (props: Props): JSX.Element => {
   const TimerRef = useRef<any>();
 
   const {
-    orderId,
+    id,
     status,
     train,
     orderList,
-    totalPrice,
-    discountPrice,
-    showUrge,
+    isShowUrge,
     payStatus,
     urgeTime,
-    isUrge,
+    urged,
+    settlementAmount,
   } = props.order;
 
   useEffect(() => {
@@ -51,7 +50,7 @@ const OrderItem = (props: Props): JSX.Element => {
     return () => {
       clearInterval(TimerRef.current);
     }
-  }, [urgeTime_, status, showUrge, isUrge]);
+  }, [urgeTime_, status, isShowUrge, urged]);
 
   // 计算倒计时时间
   const calcUrgeTime = (): void => {
@@ -66,7 +65,7 @@ const OrderItem = (props: Props): JSX.Element => {
   // 跳转详情
   const toDetail = (): void => {
     Taro.navigateTo({
-      url: `/pages/order/order_detail/order_detail?orderId=${orderId}`
+      url: `/pages/orderDetail/index?orderId=${id}`
     });
   }
 
@@ -77,11 +76,11 @@ const OrderItem = (props: Props): JSX.Element => {
       Taro.showToast({ title: '催单时间未到，请在催单计时结束后催单！', icon: 'none', mask: true});
       return;
     }
-    if (isUrge === 1) {
+    if (urged) {
       Taro.showToast({ title: '你已催单，请勿重复操作！', icon: 'none', mask: true});
       return;
     }
-    API.Order.reminder(orderId.toString()).then(res => {
+    API.Order.reminder(id.toString()).then(res => {
       if (res) {
         props.afterUrgeOrder();
       }
@@ -92,7 +91,7 @@ const OrderItem = (props: Props): JSX.Element => {
     <View className='order-item' onClick={toDetail}>
       <View className='header'>
         <Text>{train}</Text>
-        <Text className='order-status'>{STATUS_TIP[status] || '支付超时'}</Text>
+        <Text className='order-status'>{STATUS_TIP[status]}</Text>
       </View>
       {
         orderList.map((item, index) => {
@@ -104,8 +103,8 @@ const OrderItem = (props: Props): JSX.Element => {
               <View className='product-info'>
                 <View className='name'>{item.productName}</View>
                 <View className='price'>
-                  <Text>￥{item.price}/份</Text>
-                  <Text>x{item.num}</Text>
+                  <Text>￥{item.price / 100}/份</Text>
+                  <Text>x{item.quantity}</Text>
                 </View>
               </View>
             </View>
@@ -114,10 +113,10 @@ const OrderItem = (props: Props): JSX.Element => {
       }
       <View className='total-price'>
         合计：
-        <Text>￥{(Math.round(totalPrice * 100) - Math.round(discountPrice * 100)) / 100}</Text>
+        <Text>￥{settlementAmount / 100}</Text>
       </View>
       {
-        status === 2 && payStatus === 1 && showUrge === 1 &&
+        status === 2 && payStatus === 1 && isShowUrge === 1 &&
         <View className='urge-container'>
           <Text className='time'>催单倒计时 {urgeTime_}</Text>
           <View
@@ -135,13 +134,13 @@ const OrderItem = (props: Props): JSX.Element => {
 
 OrderItem.defaultProps = {
   order: {
-    orderId: 1,
+    id: 1,
     status: 1,
     train: 'G101',
     orderList: [],
     totalPrice: 0.01,
     discountPrice: 0.01,
-    showUrge: false,
+    isShowUrge: false,
     payStatus: 1,
   },
   afterUrgeOrder() {}
