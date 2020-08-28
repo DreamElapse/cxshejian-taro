@@ -10,14 +10,14 @@ import API from '@/api/index'
 
 export default class LargeScreen extends Component {
 
-  config = {
-    navigationBarTitleText: '车站大屏',
-    navigationBarBackgroundColor: '#0196ff',
-    navigationBarTextStyle: 'white',    
-    enablePullDownRefresh: true, 
-    backgroundTextStyle: "dark",   // 把显示的文本颜色改成暗色调,亮色的话.你背景不改看不到,因为同色
-    backgroundColor:'#f7f7f7' // 页面的背景色
-  }
+  // config = {
+  //   navigationBarTitleText: '车站大屏',
+  //   navigationBarBackgroundColor: '#0196ff',
+  //   navigationBarTextStyle: 'white',
+  //   enablePullDownRefresh: true,
+  //   backgroundTextStyle: "dark",   // 把显示的文本颜色改成暗色调,亮色的话.你背景不改看不到,因为同色
+  //   backgroundColor:'#f7f7f7' // 页面的背景色
+  // }
 
   constructor() {
     super(...arguments)
@@ -34,11 +34,11 @@ export default class LargeScreen extends Component {
       pageArriveNum: 1, //接站页码
       pageSearchNum: 1, //搜索页码
       waitList: [],  // 乘车列表
-      arriveList: [], //接站列表 
+      arriveList: [], //接站列表
       hasBoard: false, // false不显示键盘
       isGaotie: false,//是否只查看高铁信息
       isPukuai: false,//是否只查看普快信息
-      trainType: 2, //0 是高铁动车（包括gcd,三种车）  1 是非高铁    传2查全部   
+      trainType: 2, //0 是高铁动车（包括gcd,三种车）  1 是非高铁    传2查全部
       shareData: {}, //分享数据
       isCheckG: false,//是否选择高铁
       isWaitFinish: false,
@@ -55,9 +55,9 @@ export default class LargeScreen extends Component {
     let options = getCurrentInstance().router.params
     if(options){
       if(options.station){
-        
+
         let opt_station = decodeURI(options.station)
-        
+
         Taro.setNavigationBarTitle({
           title: opt_station
         })
@@ -67,14 +67,14 @@ export default class LargeScreen extends Component {
         })
       }
     }
-    
+
     that.setState({
       isWait: options && decodeURI(options.type) === '0'? false:true //1为候车列表，0为接车列表
     })
   }
 
   componentDidMount() {
-  
+
   }
 
   componentWillUnmount() { }
@@ -86,7 +86,7 @@ export default class LargeScreen extends Component {
   componentDidHide() { }
 
   //下拉事件
-  onPullDownRefresh(){    
+  onPullDownRefresh(){
     this.initData()
     // 接口请求完毕后隐藏两个loading , 标题和下拉区域
     Taro.stopPullDownRefresh();
@@ -147,7 +147,7 @@ export default class LargeScreen extends Component {
     let newList = res.data&&res.data.data&&res.data.data.data || []
 
     if (newList == null || newList.length == 0) {
- 
+
       if (that.state.pageNum != 1) {
         that.setState({
           flag:true,
@@ -300,9 +300,9 @@ export default class LargeScreen extends Component {
       that.getserchList()
     } else {
       if (isWait) {
-        that.getWaitList()          
+        that.getWaitList()
       } else {
-        that.getArriveList()        
+        that.getArriveList()
       }
     }
   }
@@ -365,7 +365,7 @@ export default class LargeScreen extends Component {
         })
       }
     } else if (tex === 'close') {//收起
-      // that.keyboard.hideKeyBoard(); 
+      // that.keyboard.hideKeyBoard();
       if (that.state.content) {
         that.setState({
           hasBoard: false,
@@ -389,9 +389,9 @@ export default class LargeScreen extends Component {
       }, () => {
         // timer = setTimeout(() => {
         //   that.getserchList(true)
-        // }, 800) 
-      
-        that.getserchList(true)              
+        // }, 800)
+
+        that.getserchList(true)
       })
     }
   }
@@ -451,7 +451,7 @@ export default class LargeScreen extends Component {
               })
             }
           })
-        },0);        
+        },0);
       }else { //上拉加载
         that.setState({
           waitList: that.state.waitList.concat(newList),
@@ -515,7 +515,7 @@ export default class LargeScreen extends Component {
         isPukuai: false,
         trainType: 2,
         pageNum: 1,  //乘车页码
-        pageArriveNum: 1, //接站页码 
+        pageArriveNum: 1, //接站页码
         waitList: [],  // 乘车列表
         arriveList: [], //接站列表
         hasBoard: false,
@@ -538,9 +538,9 @@ export default class LargeScreen extends Component {
         isPukuai: false,
         trainType: 0,
         pageNum: 1,  //乘车页码
-        pageArriveNum: 1, //接站页码 
+        pageArriveNum: 1, //接站页码
         waitList: [],  // 乘车列表
-        arriveList: [], //接站列表 
+        arriveList: [], //接站列表
         hasBoard: false,
         isIcon: true,  //虚拟键盘_前面搜索图标
         content: '请输入要查询的车次号',  //虚拟键盘_输入提醒文本
@@ -567,9 +567,9 @@ export default class LargeScreen extends Component {
         isGaotie: false,
         trainType: 2,
         pageNum: 1,  //乘车页码
-        pageArriveNum: 1, //接站页码 
+        pageArriveNum: 1, //接站页码
         waitList: [],  // 乘车列表
-        arriveList: [], //接站列表 
+        arriveList: [], //接站列表
         hasBoard: false,
         isIcon: true,  //虚拟键盘_前面搜索图标
         content: '请输入要查询的车次号',  //虚拟键盘_输入提醒文本
@@ -587,9 +587,9 @@ export default class LargeScreen extends Component {
         isGaotie: false,
         trainType: 1,
         pageNum: 1,  //乘车页码
-        pageArriveNum: 1, //接站页码 
+        pageArriveNum: 1, //接站页码
         waitList: [],  // 乘车列表
-        arriveList: [], //接站列表 
+        arriveList: [], //接站列表
         hasBoard: false,
         isIcon: true,  //虚拟键盘_前面搜索图标
         content: '请输入要查询的车次号',  //虚拟键盘_输入提醒文本
@@ -656,7 +656,7 @@ export default class LargeScreen extends Component {
     let dataset = e.currentTarget.dataset
     let trainNo = dataset.trainNo
      let jump_params = {
-        // sourcefrom: addTrip_sourcefrom_enum.largeScreenQuery, 
+        // sourcefrom: addTrip_sourcefrom_enum.largeScreenQuery,
         trainNo: trainNo,
      }
 
@@ -762,7 +762,7 @@ export default class LargeScreen extends Component {
               {waitListItem}
               { isWaitFinish  && <View className="bottom">-我也是有底线的-</View>}
             </View>}
-          
+
             {!isWait && <View  className='tbody'>
               {arriveListItem}
               { isArriveFinish  && <View className="bottom">-我也是有底线的-</View>}

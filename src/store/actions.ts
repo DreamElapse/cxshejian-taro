@@ -6,7 +6,7 @@ import {
   ADD_GOODS,
   SET_TOTAL_PRICE,
   CHANGE_AUTH_TYPE,
-  CHANGE_TRAIN
+  SET_TRAIN_INFO
 } from './constants'
 
 export const add = () => {
@@ -63,9 +63,9 @@ export const changeAuthType = (payload) => {
   }
 }
 
-export const changeTrain = (payload) => {
+export const setTrainInfo = (payload) => {
   return {
-    type: CHANGE_TRAIN,
+    type: SET_TRAIN_INFO,
     payload
   }
 }

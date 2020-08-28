@@ -11,19 +11,21 @@ import clear from '@/static/img/goodsList/clear.png'
 
 import {
   addGoods,
-  setTotalPrice
+  setTotalPrice,
+  resetGoodsAndPrice
 } from '@/store/actions'
 
 import './index.scss'
 
 type PageStateProps = {
-  train: string,
+  trainInfo: any,
   date: string
 }
 
 type PageDispatchProps = {
   addGoods: (any) => any
   setTotalPrice: (any) => any
+  resetGoodsAndPrice: () => void
 }
 
 type PageOwnProps = {}
@@ -32,7 +34,7 @@ type PageState = {
   topAd: any[],
   goodsList: any[],
   showBg: boolean,
-  cartGoods: object[]
+  cartGoods: any[]
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -50,6 +52,9 @@ interface CarFood {
   },
   setTotalPrice(payload) {
     dispatch(setTotalPrice(payload));
+  },
+  resetGoodsAndPrice() {
+    dispatch(resetGoodsAndPrice())
   }
 }))
 
@@ -73,11 +78,12 @@ class CarFood extends Component {
 
   render () {
     const { goodsList, showBg, cartGoods, topAd } = this.state
+    const { trainInfo } = this.props
     return (
       <View className='car-food'>
         <View className='content'>
           {topAd[0] && <Image src={topAd[0] && topAd[0].imageUrl} mode='aspectFill' className='topImg'> </Image>}
-          <Text className='list-title'>{this.props.train}车次商品推荐</Text>
+          <Text className='list-title'>{trainInfo.train}车次商品推荐</Text>
           {/*-----商品列表------*/}
           {
             goodsList.map((item, index) => {
@@ -108,7 +114,7 @@ class CarFood extends Component {
         <View className='bottom-handle'>
           <View className='shopping-cart-box' onClick={this.showBuy}>
             <Image src={shoppingCart} className='shopping-cart-icon'></Image>
-            <Text className='cart-goods-num'>{cartGoods.length}</Text>
+            <Text className='cart-goods-num'>{this.cartGoodsNumber()}</Text>
           </View>
           <Text className='total-money'>
             <Text className='unit'>¥</Text>
@@ -171,53 +177,43 @@ class CarFood extends Component {
   getCarFood = () => {
     let data = {
       carriageRange: '',
-      train: this.props.train,
+      train: this.props.trainInfo.train,
       trainDate: this.props.date
     }
     API.CarFood.getCarData(data)
       .then(res => {
-
-        // 小车厢
-        let frontProduct = res.data.frontTrainProducts || []
-        let  frontArr = frontProduct.map(item => {
+        let cid = this.props.trainInfo.cid // 大小车厢标识
+        let products = (res.data && res.data[cid === 'A' ? 'frontTrainProducts' : 'backTrainProducts']) || []
+        let arr = products.map(item => {
           return item.products.slice(0, 3)
         })
-        // 大车厢
-        let backProduct = res.data.backTrainProducts || []
-        let  backArr = backProduct.map(item => {
-          return item.products
-        })
-        // console.log(frontArr, 11)
         this.setState({
-          goodsList: frontArr
+          goodsList: arr
         })
-        // let goodsList: any = []
-        // goodsList = frontArr.map(item => {
-        //   return item
-        // })
-        // backArr.forEach(item => {
-        //   item.forEach(goods => {
-        //     goodsList.push(goods)
-        //   })
-        // })
-
-        // this.setState({
-        //   goodsList: goodsList.slice(0, 2)
-        // }, () => {
-        //   console.log(this.state.goodsList, 111)
-        // })
       })
   }
 
   // 添加商品到购物车
   addGoods = (goods) => {
     let cartGoods = this.state.cartGoods
-    cartGoods.push({
-      productName: goods.productName,
-      price: goods.price,
-      productId: goods.productId,
-      number: 1
+    let index = cartGoods.findIndex(item => {
+      return item.productId === goods.productId
     })
+    if (index > -1) {
+      cartGoods[index].number++
+      if (cartGoods[index].number > goods.quantity) {
+        Taro.showToast({
+          title: '库存不足',
+          icon: 'none'
+        })
+        return
+      }
+    } else {
+      if (goods.quantity > 0) {
+        goods.number = 1
+        cartGoods.push(goods)
+      }
+    }
     this.setState({
       cartGoods
     })
@@ -225,6 +221,7 @@ class CarFood extends Component {
 
   // 清空购物车
   clearCart = () => {
+    this.props.resetGoodsAndPrice()
     this.setState({
       cartGoods: []
     })
@@ -253,10 +250,25 @@ class CarFood extends Component {
     return total
   }
 
+  // 购物车商品总数
+  cartGoodsNumber() {
+    let number = 0
+    let goodsList: any[] = this.state.cartGoods
+    goodsList.forEach(item => {
+      number += item.number
+    })
+    return number
+  }
+
   // 跳转到提交订单页
   toAccount = () => {
+    let cartGoods = this.state.cartGoods
+    cartGoods = cartGoods.filter(item => {
+      return +item.number > 0
+    })
     this.props.setTotalPrice(this.totalMoney())
     this.props.addGoods(this.state.cartGoods)
+    Taro.setStorageSync('goods', this.state.cartGoods)
     Taro.navigateTo({
       url: '/pages/createOrder/index'
     })
@@ -269,8 +281,12 @@ class CarFood extends Component {
     let index = cartGoods.findIndex(goods => {
       return goods.id === item.id
     })
-    type === 'add' && cartGoods[index].number++
-    type === 'sub' && cartGoods[index].number--
+    if (type === 'add' && item.quantity > cartGoods[index].number) {
+      cartGoods[index].number++
+    }
+    if (type === 'sub' && cartGoods[index].number > 0) {
+      cartGoods[index].number--
+    }
     this.setState({
       cartGoods
     })

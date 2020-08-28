@@ -8,7 +8,7 @@ import { addTrip_sourcefrom_enum, isEmptyObj, queryParams,parseUrlStr2ParamsObj}
 import Keyboard from '@/components/keyboard/keyboard'
 // import TrainUtil from '../../../../service/apiCommon'
 import dayjs from 'dayjs'
-import API from '@/api/index'
+import API from '@/api'
 
 export default class Add extends Component {
   state = {

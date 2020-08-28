@@ -15,8 +15,22 @@ export default {
   reminder(data) {
     const url = `/auth`
     return request.get({ url, data })
-  }
-
+  },
+  // 提交订单
+  createOrder(data) {
+    const url = `/api/miniapp/api/trainOrder/create`
+    return request.post({ url, data })
+  },
+  // 发起支付
+  createPayment(data) {
+    const url = `/api/miniapp/api/payment/pay`
+    return request.post({ url, data })
+  },
+  // 获取送餐时间列表
+  getDeliveryTime(data) {
+    const url = `/api/miniapp/api/payment/pay`
+    return request.post({ url, data })
+  },
 
 
 }

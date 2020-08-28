@@ -2,6 +2,7 @@ export default {
   pages: [
       'pages/index/index',
       'pages/add/index',
+      'pages/adPage/index',
       'pages/calendar/index',
       'pages/carFood/index',
       'pages/city/index',

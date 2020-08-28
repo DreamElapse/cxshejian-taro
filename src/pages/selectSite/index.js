@@ -50,9 +50,9 @@ export default class Index extends Component {
        this.registerType = '' //境外旅客信息流程
     }
 
-      config = {
-        navigationBarTitleText: '选择出发站'
-     }
+     //  config = {
+     //    navigationBarTitleText: '选择出发站'
+     // }
 
       UNSAFE_componentWillMount(){
 

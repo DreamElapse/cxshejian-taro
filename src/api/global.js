@@ -19,10 +19,19 @@ export default {
     return request.post({ url, data, loading: false})
   },
   // 解密手机号
-  getPhone(data) {
+  getPhoneNumber(data) {
     const url = `/api/miniapp/api/member/wechatBindMobile`
     return request.post({ url, data })
   },
+  // 会员信息添加手机号
+  addPhoneToUser(data) {
+    const url = `/api/miniapp/api/member/changeMemberInfo`
+    return request.post({ url, data })
+  },
+  getUserInfo(data) {
+    const url = `/api/miniapp/api/member/changeMemberInfo`
+    return request.get({ url, data })
+  }
 
 
 }
