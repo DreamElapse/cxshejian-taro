@@ -13,7 +13,7 @@ import './index.scss'
 import positionIcon from '@/static/img/order/position.png'
 
 // redux
-import { onCalcTotalPrice } from "@/store/actions"
+import { setTotalPrice } from "@/store/actions"
 import Order from "../../common/Order";
 
 //订单状态 0:已下单;1:已支付;2:已接单;3:已完成;4:已取消;5:已关闭;-1:已作废
@@ -28,8 +28,8 @@ interface State {
 @connect(({ reducers }) => (
   { ...reducers }
 ), (dispatch) => ({
-  onCalcTotalPrice(payload) {
-    dispatch(onCalcTotalPrice(payload));
+  setTotalPrice(payload) {
+    dispatch(setTotalPrice(payload));
   }
 }))
 export default class OrderDetail extends Component<any, > {
@@ -120,7 +120,7 @@ export default class OrderDetail extends Component<any, > {
     if (this.state.timer) {
       clearInterval(this.state.timer);
     }
-    this.props.onCalcTotalPrice(this.state.orderDetail.totalPrice);
+    this.props.setTotalPrice(this.state.orderDetail.totalPrice);
     // this.payService.pay(this.state.orderDetail, this.state.orderDetail.train);
   }
 

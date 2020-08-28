@@ -2,6 +2,7 @@ export default {
   pages: [
       'pages/index/index',
       'pages/add/index',
+      'pages/adPage/index',
       'pages/calendar/index',
       'pages/carFood/index',
       'pages/city/index',
@@ -10,6 +11,7 @@ export default {
       'pages/findStation/index',
       'pages/lateQueryResults/index',
       'pages/mall/index',
+      'pages/orderDetail/index',
       'pages/orderList/index',
       'pages/payResult/index',
       'pages/selectSite/index',

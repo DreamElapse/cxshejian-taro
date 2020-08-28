@@ -6,7 +6,7 @@ import API from '@/api'
 
 import OrderItem from "@/components/order_item/order_item";
 
-import { onChangeAuthType } from '@/store/actions'
+// import { onChangeAuthType } from '@/store/actions'
 
 import './index.scss'
 
@@ -15,7 +15,7 @@ type PageStateProps = {
 }
 
 type PageDispatchProps = {
-  onChangeAuthType: () => any
+  // onChangeAuthType: () => any
 }
 
 type PageOwnProps = {}
@@ -32,10 +32,10 @@ const STATUS = ['', 0, 1, 2, 3]; // 订单状态编码
 
 @connect(({ counter }) => ({
   ...counter
-}), (dispatch) => ({
-  onChangeAuthType(payload) {
-    dispatch(onChangeAuthType(payload))
-  }
+}), () => ({
+  // onChangeAuthType(payload) {
+  //   dispatch(onChangeAuthType(payload))
+  // }
 }))
 class OrderList extends Component {
   state = {
