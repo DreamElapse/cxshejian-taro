@@ -17,7 +17,14 @@ export default {
       'pages/selectSite/index',
       'pages/stationLargeScreen/index',
       'pages/switchStation/index',
-      'pages/user/index'
+      'pages/user/index',
+      'pages/application/index',
+      'pages/bindphone/index',
+      'pages/customer/index',
+      'pages/guide/index',
+      'pages/onlineservice/index',
+      'pages/payment/index',
+      'pages/poster/index',
   ],
   window: {
     backgroundTextStyle: 'light',
