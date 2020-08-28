@@ -1,12 +1,12 @@
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import React, { Component } from 'react'
 import { View, Text, ScrollView, Block, Image } from '@tarojs/components'
+import dayjs from 'dayjs'
 // import {get as getGlobalData } from '../../../../service/config'
 import {get_crossDatas, check_isCrossDay, addTrip_sourcefrom_enum, isNotEmptyObj, isEmptyObj, queryParams, get_stationSelect_status, select_station_status, get_date_crossDay} from '@/utils/common'
 // import TrainUtil from '../../../../service/apiCommon'
 import './index.scss'
-let today_date = new Date().getFullYear() + '-' + ((new Date().getMonth() + 1) >= 10 ? (new Date().getMonth() + 1) : '0' + (new Date().getMonth() + 1)) + '-' + ((new Date().getDate()) >= 10 ? (new Date().getDate()) : '0' + (new Date().getDate()))
-import dayjs from 'dayjs'
+let today_date = dayjs().format('YYYY-MM-DD')
 // import CustomButton from '../../../../components/customButton/customButton'
 // import {auth_need_enum, request_UserInfo} from '../../../../utils/authUtil'
 // import jumpUtil from '../../../../utils/jumpUtil'
@@ -14,45 +14,46 @@ import API from '@/api/index'
 
 export default class Index extends Component {
 // 选择出发站页面
-    constructor(){
-        super(...arguments)
-        this.state = {
-            toView: 'inToView_0',
-            stationList: [],
-            shareData: '',
-            station_list:[],
-            selectStations:[], //选择出发站点
-            is_show_crossDay_modal: false, // 是否显示跨天弹框
-            dateC: '',
-            timeCC:'',
-            weekDay:'',
+  constructor(){
+    super(...arguments)
+    this.state = {
+        toView: 'inToView_0',
+        stationList: [],
+        shareData: '',
+        station_list:[],
+        selectStations:[], //选择出发站点
+        is_show_crossDay_modal: false, // 是否显示跨天弹框
+        dateC: '',
+        timeCC:'',
+        weekDay:'',
 
-            is_send_from: false, //记录是否传入出发站
-            is_send_to: false, //记录是否传入到达站
-            do_select_click: false, //是否进行了选择操作，选择或取消选择，如：车次大屏进入，传入了武汉出发站点后，武汉前面车次不可选，若进行了到达北京选择后，进入选中两个状态，此时再取消北京，则其他就都可选状态，而不是传入时状态变化
+        is_send_from: false, //记录是否传入出发站
+        is_send_to: false, //记录是否传入到达站
+        do_select_click: false, //是否进行了选择操作，选择或取消选择，如：车次大屏进入，传入了武汉出发站点后，武汉前面车次不可选，若进行了到达北京选择后，进入选中两个状态，此时再取消北京，则其他就都可选状态，而不是传入时状态变化
 
-            bottom_btn_enable: true,
-          }
-          this.path= getCurrentInstance().router.path
-        this.collectPageName='行程确认添加页2'
-
-        this.base_img_url = "https://www.cx9z.com/h5/tarocx9z/czt_v1/chooseStation/" //图片地址
-
-        this.sourcefrom = addTrip_sourcefrom_enum.momentSearch_trainSearch //来源
-        this.trainNo = ''//车次号
-        this.from_station = '',//页面传递过来的出发站 武汉
-        this.to_station = '',//页面传递过来的到达站   北京
-        this.isload_success = false
-
-        this.is_from_currentDate = true // 默认是，选择日期7.12，true：7.12号从济南出发(算出到达时间)，false 7.12到济南(算出出发时间)
-      //  this.code= '1' //1默认行程  12接人  13送人
-       this.jumpCode = ''// 接人 送人 进站指引 出站指引code标识
-       this.registerType = '' //境外旅客信息流程
+        bottom_btn_enable: true,
     }
 
-     //  config = {
-     //    navigationBarTitleText: '选择出发站'
-     // }
+    this.path= getCurrentInstance().router.path
+    this.collectPageName='行程确认添加页2'
+
+    this.base_img_url = "https://www.cx9z.com/h5/tarocx9z/czt_v1/chooseStation/" //图片地址
+
+    this.sourcefrom = addTrip_sourcefrom_enum.momentSearch_trainSearch //来源
+    this.trainNo = ''//车次号
+    this.from_station = '',//页面传递过来的出发站 武汉
+    this.to_station = '',//页面传递过来的到达站   北京
+    this.isload_success = false
+
+    this.is_from_currentDate = true // 默认是，选择日期7.12，true：7.12号从济南出发(算出到达时间)，false 7.12到济南(算出出发时间)
+    //  this.code= '1' //1默认行程  12接人  13送人
+    this.jumpCode = ''// 接人 送人 进站指引 出站指引code标识
+    this.registerType = '' //境外旅客信息流程
+  }
+
+   //  config = {
+   //    navigationBarTitleText: '选择出发站'
+   // }
 
       UNSAFE_componentWillMount(){
 

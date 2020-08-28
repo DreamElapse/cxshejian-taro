@@ -12,6 +12,7 @@ export default {
       'pages/lateQueryResults/index',
       'pages/mall/index',
       'pages/orderList/index',
+      'pages/orderSelectSite/index',
       'pages/payResult/index',
       'pages/selectSite/index',
       'pages/stationLargeScreen/index',

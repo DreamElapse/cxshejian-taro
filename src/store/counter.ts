@@ -6,7 +6,8 @@ import {
   SET_USER_INFO,
   ADD_GOODS,
   SET_TOTAL_PRICE,
-  SET_TRAIN_INFO
+  SET_TRAIN_INFO,
+  SET_USER_STATION
 } from './constants'
 
 const INITIAL_STATE = {
@@ -16,15 +17,7 @@ const INITIAL_STATE = {
   train: 'D1112',
   trainInfo: {},
   date: moment().format('YYYY-MM-DD'),
-  startStation: {
-    aTime: '15:00',
-    station: '长沙南'
-  },
-  endStation: {
-    aTime: '18:00',
-    station: '广州南'
-  },
-  trainInfo: {},
+  userStationInfo: {},
   carriage: null,
   carriageNum: 0,
   isLink: false,
@@ -69,6 +62,11 @@ export default function counter (state = INITIAL_STATE, action) {
       return {
         ...state,
         trainInfo: action.payload
+      }
+    case SET_USER_STATION:
+      return {
+        ...state,
+        userStationInfo: action.payload
       }
      default:
        return state

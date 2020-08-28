@@ -23,16 +23,17 @@ const SEAT = ['A座', 'B座', 'C座', 'D座', 'F座', '无座'];
 const APP = Taro.getApp();
 
 type PageStateProps = {
-  train: string,
+  trainInfo: any,
+  startStation: string,
+  endStation: string,
   date: string,
-  startStation: object,
-  endStation: any,
   carriage: any,
   carriageNum: any,
   isLink: boolean,
   selectedGoodsList: any[],
   userInfo: string,
-  totalPrice: number
+  totalPrice: number,
+  userStationInfo: any
 }
 
 type PageDispatchProps = {
@@ -96,10 +97,13 @@ class CreateOrder extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    // this.setState({
-    //   requestId: Date.now()
-    // });
-    // this.beforeCreateOrder();
+    console.log(this.props, 1111)
+    if(!this.props.userStationInfo.startStation) {
+      let train = this.props.trainInfo.trainInfo
+      Taro.navigateTo({
+        url: `/pages/orderSelectSite/index?trainNo=${train}`
+      })
+    }
   }
 
   componentDidHide () { }
@@ -107,23 +111,23 @@ class CreateOrder extends Component {
   /*----render-----*/
   render () {
     const { username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex, cartGoods } = this.state
-    const { startStation, endStation, train, date, selectedGoodsList, totalPrice } = this.props
+    const { userStationInfo, trainInfo, date, selectedGoodsList, totalPrice } = this.props
     return (
       <View className="create-order">
         <View className='order-content'>
         <View className='train-info'>
           <View className='start-train'>
-            <View className='date'>{startStation.aTime}</View>
-            <View className='train-name'>{startStation.station}</View>
+            <View className='date'>{userStationInfo.startStation && userStationInfo.startStation.aTime}</View>
+            <View className='train-name'>{userStationInfo.startStation && userStationInfo.startStation.station}</View>
           </View>
           <View className='train'>
-            <View className='train-num'>{train}</View>
+            <View className='train-num'>{trainInfo.train}</View>
             <View className='train-arrow'></View>
             <View className='date'>{moment(date).format('MM月DD日')}</View>
           </View>
           <View className='end-train'>
-            <View className='date'>{endStation.aTime}</View>
-            <View className='train-name'>{endStation.station}</View>
+            <View className='date'>{userStationInfo.endStation && userStationInfo.endStation.aTime}</View>
+            <View className='train-name'>{userStationInfo.endStation && userStationInfo.endStation.station}</View>
           </View>
         </View>
         <View className='order-info-container'>
@@ -314,14 +318,15 @@ class CreateOrder extends Component {
 
   // 获取配送时间
   getDeliveryTime = () => {
+    const {userStationInfo} = this.props
     const data = {
-      cid: this.props.carriage,
-      train: this.props.train,
-      date: this.props.date,
-      ssid: this.props.startStation.id,
-      seid: this.props.endStation.id,
-      stime: this.props.startStation.aTime,
-      carriage: this.props.carriage
+      cid: userStationInfo.carriage,
+      train: userStationInfo.train,
+      date: userStationInfo.date,
+      ssid: userStationInfo.startStation.id,
+      seid: userStationInfo.endStation.id,
+      stime: userStationInfo.startStation.aTime,
+      carriage: userStationInfo.carriage
     }
     API.Order.getDeliveryTime(data).then(times => {
       this.handleMealDate(times);
