@@ -99,7 +99,6 @@ class CarFood extends Component {
                             <Text className='goods-price'>¥{goods.price}</Text>
                             <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(goods)}></Image>
                           </View>
-
                         </View>
                       )
                     })
@@ -263,6 +262,13 @@ class CarFood extends Component {
   // 跳转到提交订单页
   toAccount = () => {
     let cartGoods = this.state.cartGoods
+    if (cartGoods.length === 0) {
+      Taro.showToast({
+        title: '请添加商品',
+        icon: 'none'
+      })
+      return
+    }
     cartGoods = cartGoods.filter(item => {
       return +item.number > 0
     })

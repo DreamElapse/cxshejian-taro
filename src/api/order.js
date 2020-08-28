@@ -28,14 +28,15 @@ export default {
   },
   // 获取送餐时间列表
   getDeliveryTime(data) {
-    const url = `/api/api/train/listDeliverTime`
-    return request.post({ url, data })
+    const url = `/api/miniapp/api/train/listDeliverTime`
+    return request.get({ url, data })
   },
   // 获取车次途径站点列表
   getStations(data) {
     const url = `/api/miniapp/api/train/listStation`
     return request.get({ url, data })
   }
+
 
 
 

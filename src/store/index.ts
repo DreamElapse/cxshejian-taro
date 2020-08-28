@@ -55,12 +55,18 @@ const enhancer = composeEnhancers(
 //   }
 // })
 // console.log(123)
+// Taro.getUserInfo({
+//   success: (res) => {
+//     console.log(res, 21)
+//   }
+// })
+
 Taro.checkSession({
   success: () => {
     Taro.login({
       success: val => {
         let code = val.code
-        console.log(code, 1)
+        console.log(val, 1)
         API.Global.login({code})
           .then(res => {
             Taro.setStorageSync('token', res.data)
@@ -75,7 +81,7 @@ Taro.checkSession({
     Taro.login({
       success: val => {
         let code = val.code
-        console.log(code, 2)
+        console.log(val, 2)
         API.Global.login({code})
           .then(res => {
             Taro.setStorageSync('token', res.data)

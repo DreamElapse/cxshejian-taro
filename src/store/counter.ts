@@ -7,7 +7,8 @@ import {
   ADD_GOODS,
   SET_TOTAL_PRICE,
   SET_TRAIN_INFO,
-  SET_USER_STATION
+  SET_USER_STATION,
+  SET_TICKET_LIST
 } from './constants'
 
 const INITIAL_STATE = {
@@ -22,7 +23,8 @@ const INITIAL_STATE = {
   carriageNum: 0,
   isLink: false,
   selectedGoodsList: [],
-  totalPrice: 0
+  totalPrice: 0,
+  ticketList: []
 }
 
 export default function counter (state = INITIAL_STATE, action) {
@@ -67,6 +69,11 @@ export default function counter (state = INITIAL_STATE, action) {
       return {
         ...state,
         userStationInfo: action.payload
+      }
+    case SET_TICKET_LIST:
+      return {
+        ...state,
+        ticketList: action.payload
       }
      default:
        return state

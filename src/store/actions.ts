@@ -7,7 +7,8 @@ import {
   SET_TOTAL_PRICE,
   CHANGE_AUTH_TYPE,
   SET_TRAIN_INFO,
-  SET_USER_STATION
+  SET_USER_STATION,
+  SET_TICKET_LIST
 } from './constants'
 
 export const add = () => {
@@ -74,6 +75,14 @@ export const setTrainInfo = (payload) => {
 export const setUserStation = (payload) => {
   return {
     type: SET_USER_STATION,
+    payload
+  }
+}
+
+
+export const setTicketList = (payload) => {
+  return {
+    type: SET_TICKET_LIST,
     payload
   }
 }

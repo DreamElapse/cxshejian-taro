@@ -298,9 +298,14 @@ class Index extends Component {
             })
           }
         </View>
+        {/*<Button openType='getUserInfo' onGetUserInfo={this.getUserInfo}>用户信息</Button>*/}
       </View>
     )
   }
+
+  // getUserInfo = (res) => {
+  //   console.log(res, 123)
+  // }
 
   // 获取车次信息
   getTrain = () => {

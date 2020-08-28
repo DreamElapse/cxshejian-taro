@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import {get_crossDatas, check_isCrossDay, addTrip_sourcefrom_enum, isNotEmptyObj, isEmptyObj, queryParams, get_stationSelect_status, select_station_status} from '@/utils/common'
 
 import { connect } from 'react-redux'
-import { setUserStation } from '@/store/actions'
+import { setUserStation, setTicketList } from '@/store/actions'
 // import TrainUtil from '../../../../service/apiCommon'
 import './index.scss'
 import API from '@/api/index'
@@ -285,6 +285,7 @@ class OrderSelectSite extends Component {
         API.Order.getStations({train: this.props.trainInfo.train || 'D1112'})
           .then(res => {
             // Taro.setStorageSync('dateC', dateC)
+            this.props.setTicketList(res.data)
             let data = res.data || []
             let list  = data.map((item, index) => {
               item.stationIndex = index
@@ -419,9 +420,12 @@ class OrderSelectSite extends Component {
               startStation: list[0],
               endStation: list[1]
             })
-            Taro.navigateTo({
-              url: `/pages/createOrder/index`
+            Taro.navigateBack({
+              delta: 1
             })
+            // Taro.navigateTo({
+            //   url: `/pages/createOrder/index`
+            // })
           }else{
               Taro.showToast({
                 title: '请选择出发站',
@@ -799,8 +803,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setUserStation(ownProps) {
-      dispatch(setUserStation(ownProps))
+    setUserStation(state) {
+      dispatch(setUserStation(state))
+    },
+    setTicketList(state) {
+      dispatch(setTicketList(state))
     }
   }
 }

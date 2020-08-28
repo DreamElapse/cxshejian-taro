@@ -3,7 +3,7 @@ import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import { View, Image, Text, Input, Picker, Button, PickerView, PickerViewColumn } from '@tarojs/components'
 import CartBar from '@/components/cart_bar/cart_bar'
-import moment from 'dayjs'
+import dayjs from 'dayjs'
 import Utils from '@/utils/utils'
 import arrow from '@/static/img/createOrder/arrow.png'
 import API from '@/api'
@@ -33,7 +33,8 @@ type PageStateProps = {
   selectedGoodsList: any[],
   userInfo: string,
   totalPrice: number,
-  userStationInfo: any
+  userStationInfo: any,
+  ticketList: any[]
 }
 
 type PageDispatchProps = {
@@ -97,13 +98,15 @@ class CreateOrder extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    console.log(this.props, 1111)
-    if(!this.props.userStationInfo.startStation) {
-      let train = this.props.trainInfo.trainInfo
+    let startStation = this.props.userStationInfo.startStation
+    if(!startStation) {
+      let train = this.props.trainInfo.train
       Taro.navigateTo({
         url: `/pages/orderSelectSite/index?trainNo=${train}`
       })
     }
+    startStation && this.getDeliveryTime()
+
   }
 
   componentDidHide () { }
@@ -111,23 +114,23 @@ class CreateOrder extends Component {
   /*----render-----*/
   render () {
     const { username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex, cartGoods } = this.state
-    const { userStationInfo, trainInfo, date, selectedGoodsList, totalPrice } = this.props
+    const { userStationInfo, trainInfo, selectedGoodsList, totalPrice } = this.props
     return (
       <View className="create-order">
-        <View className='order-content'>
+        {userStationInfo.startStation && <View className='order-content'>
         <View className='train-info'>
           <View className='start-train'>
-            <View className='date'>{userStationInfo.startStation && userStationInfo.startStation.aTime}</View>
-            <View className='train-name'>{userStationInfo.startStation && userStationInfo.startStation.station}</View>
+            <View className='date'>{this.dateHandle(userStationInfo.startStation.leaveTime, 2)}</View>
+            <View className='train-name'>{userStationInfo.startStation.stationName}</View>
           </View>
           <View className='train'>
             <View className='train-num'>{trainInfo.train}</View>
             <View className='train-arrow'></View>
-            <View className='date'>{moment(date).format('MM月DD日')}</View>
+            <View className='date'>{this.dateHandle(userStationInfo.startStation.arrivalTime, 3)}</View>
           </View>
           <View className='end-train'>
-            <View className='date'>{userStationInfo.endStation && userStationInfo.endStation.aTime}</View>
-            <View className='train-name'>{userStationInfo.endStation && userStationInfo.endStation.station}</View>
+            <View className='date'>{this.dateHandle(userStationInfo.endStation.leaveTime, 2)}</View>
+            <View className='train-name'>{userStationInfo.endStation.stationName}</View>
           </View>
         </View>
         <View className='order-info-container'>
@@ -186,7 +189,7 @@ class CreateOrder extends Component {
             isShowCartIcon={false}
             totalPrice={totalPrice}
             totalNum={this.totalProNum()}
-            toCreateOrder={this.requestPayment}
+            toCreateOrder={this.createOrder}
           />
         </View>
 
@@ -216,7 +219,7 @@ class CreateOrder extends Component {
             </PickerView>
           </View>
         </View>
-      </View>
+      </View>}
       </View>
     )
   }
@@ -264,49 +267,7 @@ class CreateOrder extends Component {
     return number
   }
 
-  requestPayment = () => {
-    let data = {
-      orderId: 1,
-      tradeType: 'WX_JSAPI',
-      userId: ''
-    }
-    API.Order.createPayment(data)
-      .then(res => {
-        let data = {
-          timeStamp: res.data.timeStamp,
-          nonceStr: res.data.nonceStr,
-          package: res.data.packages,
-          signType: res.data.signType,
-          paySign: res.data.paySign,
-        }
-        console.log(data, 111)
-        Taro.requestPayment({
-          timeStamp: res.data.timeStamp,
-          nonceStr: res.data.nonceStr,
-          package: res.data.packages,
-          signType: res.data.signType,
-          paySign: res.data.paySign,
-          success () {
-            console.log('-----success------')
-            Taro.redirectTo({
-              url: `/pages/payResult/index`
-            })
-          },
-          fail () {
-            console.log('-----fail------')
-            // let search: string[] = []
-            // for (let key in data) {
-            //   search.push(`${key}=${data[key]}`)
-            // }
-            Taro.redirectTo({
-              url: `/pages/payResult/index?orderId=${data.orderId}`
-            })
-          }
-        })
-      })
-  }
-
-  // // 调用预下单信息
+  // 调用预下单信息
   // beforeCreateOrder = () => {
   //   this.orderService.beforeCreateOrder().then(info => {
   //     this.setState({ beforeCreateOrderInfo: info });
@@ -315,33 +276,56 @@ class CreateOrder extends Component {
   //   this.getUserInfo();
   // }
 
-
   // 获取配送时间
   getDeliveryTime = () => {
-    const {userStationInfo} = this.props
-    const data = {
-      cid: userStationInfo.carriage,
-      train: userStationInfo.train,
-      date: userStationInfo.date,
-      ssid: userStationInfo.startStation.id,
-      seid: userStationInfo.endStation.id,
-      stime: userStationInfo.startStation.aTime,
-      carriage: userStationInfo.carriage
+    const {userStationInfo, trainInfo} = this.props
+    let data = {
+      downStationId: userStationInfo.endStation.stationId,
+      train: trainInfo.train,
+      // trainDate: dayjs(userStationInfo.startStation.arrivalTime).format('YYYY-MM-DD'),
+      trainDate: this.dateHandle(userStationInfo.startStation.arrivalTime, 1),
+      upStationId: userStationInfo.startStation.stationId
     }
-    API.Order.getDeliveryTime(data).then(times => {
-      this.handleMealDate(times);
-    })
+    API.Order.getDeliveryTime(data)
+      .then(res => {
+        let value: Array<any> = res.data
+        let arr = [
+          {
+            deliverEndTime: '22:10',
+            deliverStartTime: '22:40'
+          }
+        ]
+        value = value.length > 0 ? value : arr
+        this.handleMealDate(value)
+      })
   }
+
+  // 获取配送时间
+  // getDeliveryTime = () => {
+  //   const {userStationInfo} = this.props
+  //   const data = {
+  //     cid: userStationInfo.carriage,
+  //     train: userStationInfo.train,
+  //     date: userStationInfo.date,
+  //     ssid: userStationInfo.startStation.id,
+  //     seid: userStationInfo.endStation.id,
+  //     stime: userStationInfo.startStation.aTime,
+  //     carriage: userStationInfo.carriage
+  //   }
+  //   API.Order.getDeliveryTime(data).then(times => {
+  //     this.handleMealDate(times);
+  //   })
+  // }
 
   // 处理配送时间数组数据
   handleMealDate = (mealsDate) => {
-    let newMealsDate = [];
+    let newMealsDate: Array<any> = [];
     mealsDate.forEach(data => {
-      if (data.length > 1) {
-        newMealsDate.push(`${data[0]}-${data[1]}`);
-      } else {
-        newMealsDate.push(`${data[0]}`);
-      }
+      let start: any = data.deliverStartTime
+      let end: any = data.deliverEndTime
+      // let startTime: string = `${start.hour}:${start.minute}:${start.second}`
+      // let endTime: string = `${end.hour}:${end.minute}:${end.second}`
+      newMealsDate.push(`${start} - ${end}`)
     });
     this.setState({ mealsDate: [...newMealsDate] });
   }
@@ -395,8 +379,70 @@ class CreateOrder extends Component {
     this.setState({ mealsDateIndex: e.detail.value });
   }
 
+  requestPayment = (orderId) => {
+    let value = {
+      orderId,
+      tradeType: 'WX_JSAPI',
+      userId: ''
+    }
+    API.Order.createPayment(value)
+      .then(res => {
+        let data = {
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+        }
+        console.log(data, 111)
+        Taro.requestPayment({
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+          success () {
+            console.log('-----success------')
+            Taro.redirectTo({
+              url: `/pages/payResult/index`
+            })
+          },
+          fail () {
+            console.log('-----fail------')
+            // let search: string[] = []
+            // for (let key in data) {
+            //   search.push(`${key}=${data[key]}`)
+            // }
+            Taro.redirectTo({
+              url: `/pages/payResult/index?orderId=${value.orderId}`
+            })
+          }
+        })
+      })
+  }
+
+  dateHandle(time, type) {
+    switch(+type) {
+      case 1: // YYYY-MM-DD
+        return `${time.slice(0, 4)}-${time.slice(4, 6)}-${time.slice(6, 8)}`
+      case 2: // hh:mm
+        return `${time.slice(8, 10)}:${time.slice(10, 12)}`
+      case 3: // MM月DD日
+        return `${time.slice(4, 6)}月${time.slice(6, 8)}日`
+    }
+  }
+
+  timeHandle(time) {
+    return `${time.slice(0, 4)}-${time.slice(4, 6)}-${time.slice(6, 8)} ${time.slice(8, 10)}:${time.slice(10, 12)}:${time.slice(12, 14)}`
+  }
+
   // 创建订单
   createOrder = () => {
+    Taro.getUserInfo({
+      success: (res) => {
+        console.log(res, 21)
+      }
+    })
     // 验证用户名
     if (!this.state.username) {
       Taro.showToast({ title: '请输入姓名', icon: 'none', duration: 1500, mask: true });
@@ -426,20 +472,22 @@ class CreateOrder extends Component {
       return;
     }
     // 处理商品信息
-    let order = {
-      totalPrice: this.props.totalPrice,
-      child: []
-    };
-    this.props.selectedGoodsList.forEach(goods => {
-      order.child.push({
-        proId: goods.id,
-        proName: goods.proName,
-        num: goods.selectedNum,
-        price: goods.price
-      });
+    // let order: any = {
+    //   totalPrice: this.props.totalPrice,
+    //   child: []
+    // };
+    let products = this.props.selectedGoodsList.map(goods => {
+      goods.quantity = goods.number
+      return goods
+      // order.child.push({
+      //   proId: goods.id,
+      //   proName: goods.proName,
+      //   num: goods.selectedNum,
+      //   price: goods.price
+      // });
     });
     // 处理车厢信息
-    let carriage = this.state.seat[0][this.state.seatIdx[0]];
+    let carriage: string = this.state.seat[0][this.state.seatIdx[0]];
     // 处理座位信息
     let site = '无座';
     let row = ROW[this.state.seatIdx[1]];
@@ -447,25 +495,45 @@ class CreateOrder extends Component {
     if (this.state.seatIdx[2] !== SEAT.length - 1) {
       site = `${row.substr(0, row.length - 1)}${seat.substr(0, seat.length - 1)}`;
     }
+    let mealsData: string = this.state.mealsDate[this.state.mealsDateIndex]
+    const { userStationInfo, trainInfo, ticketList } = this.props
+    console.log(this.state.mealsDate[this.state.mealsDateIndex], ticketList, 'meals')
+
     const data = {
-      totalPrice: this.props.totalPrice,
-      train: this.props.train,
-      seid: this.props.endStation.id,
       carriage: carriage.substr(0, carriage.length - 1),
-      site: site,
+      deliverStartTime: mealsData.split('-')[0].replace(' ', ''),
+      deliverEndTime: mealsData.split('-')[1],
+      downStationName: userStationInfo.endStation.stationName,
+      downStationId: userStationInfo.endStation.stationId,
+      // downTrainTime: dayjs(userStationInfo.endStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
+      downTrainTime: this.timeHandle(userStationInfo.endStation.arrivalTime),
+      endStationId: ticketList[ticketList.length-1].statinId,
+      memo: this.state.memo,
       mobile: this.state.mobile,
-      mpId: this.commonService.getMpId(),
-      dbTime: this.state.mealsDate[this.state.mealsDateIndex],
-      order,
-      username: this.state.username || this.props.userInfo.nickname || this.props.userInfo.nickName,
-      memo: this.state.memo
+      products,
+      receiver: this.state.username,
+      receiverNum: 1,
+      site,
+      startStationId: ticketList[0].statinId,
+      startStationName: ticketList[0].statinName,
+      totalAmount: this.props.totalPrice,
+      train: trainInfo.train,
+      // trainStartTime: dayjs(ticketList[0].leaveTime).format('YYYY-MM-DD hh:mm:ss'),
+      // trainEndTime: dayjs(ticketList[1].arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
+      trainStartTime: this.timeHandle(ticketList[0].leaveTime),
+      trainEndTime: this.timeHandle(ticketList[1].arrivalTime),
+      upStationId: userStationInfo.startStation.stationId,
+      upStationName: userStationInfo.startStation.stationName,
+      // upTrainTime: dayjs(userStationInfo.startStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
+      upTrainTime: this.timeHandle(userStationInfo.startStation.arrivalTime),
+      userId: ''
     }
-    API.Order.createOrder(data, this.state.requestId.toString()).then(res => {
+    API.Order.createOrder(data).then(res => {
       if (res) {
         // 创建订单成功，开始调起支付接口 res.data.bid/order_id/protype
-        this.requestPayment(res.data)
+        this.requestPayment(res.data.id)
         // 发送统计数据
-        this.sendEventAfterThis();
+        // this.sendEventAfterThis();
       }
     });
   }
