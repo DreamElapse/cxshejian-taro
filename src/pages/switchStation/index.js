@@ -34,12 +34,12 @@ export default class SwitchStation extends Component {
     this.fromSource = ''
   }
 
-  config = {
-    navigationBarTitleText: '切换站点'
-  }
+  // config = {
+  //   navigationBarTitleText: '切换站点'
+  // }
 
   componentWillMount () { // fromSource=chezhanditu
-    
+
     let params = getCurrentInstance().router.params
     if(params){
       if(params.updateRef){
@@ -67,7 +67,7 @@ export default class SwitchStation extends Component {
   componentDidShow () {
     this.getLocaTrues()
   }
-  componentDidHide () { 
+  componentDidHide () {
   }
 
   getLocaTrues = () => { //获取定位权限
@@ -80,7 +80,7 @@ export default class SwitchStation extends Component {
             if (res.authSetting['scope.userLocation'] || res.authSetting['location'] || res.authSetting['scope.location']) {
               that.getMyCity(data)
             }else {
-              that.setState({ 
+              that.setState({
                 scoped_loca:false
               })
             }
@@ -98,7 +98,7 @@ export default class SwitchStation extends Component {
             showCancel:false
           })
         }
-        that.setState({ 
+        that.setState({
           scoped_loca:false
         })
       }
@@ -121,7 +121,7 @@ export default class SwitchStation extends Component {
       that.setState({
         scoped_loca:true
       })
- 
+
       let thisCity = data.data.nearStation
       let thisCityid = data.data.stationId
       that.setState({
@@ -200,13 +200,13 @@ export default class SwitchStation extends Component {
   }
   //选择车站
   Choice = (e) => {
-    
+
     let data = e.currentTarget.dataset//回退页面后：返回数据 -> id: 2625 name: "长春站"
     let jump_params = {
-      'station': data.name, 
+      'station': data.name,
       'stationId': data.id
     }
-      
+
     let jumpUrl = '../stationLargeScreen/index?'+queryParams(jump_params)
     Taro.navigateTo({
       url: jumpUrl
@@ -221,11 +221,11 @@ export default class SwitchStation extends Component {
         this.setState({
           isShowSearchAllStation: true,
           seach: []
-        }) 
+        })
       }
     }
   }
-   
+
   //输入
   change = (e) => {
     const value = e.detail.value
@@ -240,7 +240,7 @@ export default class SwitchStation extends Component {
         isShowSearchAllStation: !hasData, // 有数据 不显示筛选所有站点，没有数据 显示筛选
         seach: updata ? updata : [],
       })
-      
+
       if(!hasData){
         Taro.showToast({
           title: '未搜索到，请重新搜索',
@@ -289,7 +289,7 @@ serach = () => {
       seach: [],
     })
   }
-} 
+}
 
   //失去焦点
 blur = (e) => {
@@ -316,12 +316,12 @@ blur = (e) => {
 searchPyFunc = (pyFirstChar) => {
     var updata = []
     var kongList = []
-  
+
     var py_all = pinyin.getFullChars(pyFirstChar)
     var first_py = py_all && py_all != "" ? py_all.substr(0,1) : ""
     if(first_py != ""){
       first_py = first_py.toUpperCase()
-     
+
       for(var i = 0; i<stationData.stationList.length; i++){
         var item = stationData.stationList[i]
         if(item.name == first_py){
@@ -329,9 +329,9 @@ searchPyFunc = (pyFirstChar) => {
           break;
         }
       }
-   
+
       var reg = new RegExp(pyFirstChar);
-      for (let i = 0; i < kongList.length; i++) { 
+      for (let i = 0; i < kongList.length; i++) {
         if (kongList[i].stationName.match(reg) || kongList[i].stationEn.match(reg)) {
           updata.push(kongList[i])
         }
@@ -360,15 +360,15 @@ searchPyFunc = (pyFirstChar) => {
       toView:''
     })
   }
-  
+
   render () {
     let env = Taro.getEnv()
     let {thisCityid,thisCity,hotStation, seach, toView, isShowSearchAllStation, value,scoped_loca,bigChar} = this.state
     const navRight = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "W","X", "Y", "Z"]
-   
+
   var HS =hotStation.length>0 ? hotStation.map((item,index) => {
     return <View class="hotCity-item" key={"hotStationIndex_"+index} onClick={this.Choice} data-name={item.stationName} data-id={item.id} data-mapurl={item.newMiniMapUrl||''} >{item.stationName}</View>
-  }): null  
+  }): null
   var SEA = seach.map((item, index) => {
     return <View class="filter-item" key={index} onClick={this.Choice} data-id={item.id} data-name={item.stationName}>{item.stationName}</View>
   })
@@ -380,21 +380,21 @@ searchPyFunc = (pyFirstChar) => {
         <View className="bigChar1">{this.bigChar}</View>
       }
       <View className={this.bigChar==item?'newletter cur':'newletter'}>{item}</View>
-      
+
     </View>
   })
 
   var section_stationHtml = process.env.TARO_ENV  == 'weapp' ? stationData.stationList.map((item,index) => {
     const ACL = item.list.map((x, index1) => {
       return <View class="cityName" key={"stationItemIndex_"+index1} onClick={this.Choice} data-name={x.stationName} data-id={x.id}>{x.stationName}</View>
-    })  
+    })
     return <View key={"stationSectionIndex_"+index} data-id={'inToView'+item.name}>
           <View class="type"  data-id={'inToView'+item.name} id={'inToView'+item.name}>{item.name}</View>
           {ACL}
         </View>
   }) : null
 
-    const display_show_all_section_station = (value == "" && !isShowSearchAllStation) ? "block": "none" 
+    const display_show_all_section_station = (value == "" && !isShowSearchAllStation) ? "block": "none"
     const showHot = value == "" && seach.length == 0 ? "block":"none"
     return (
       <View>
@@ -406,34 +406,34 @@ searchPyFunc = (pyFirstChar) => {
               value.length>0 &&
               <Image className="cImg" onClick={this.detel} src={'https://imgczt.weitaikeji.com/h5/taroVega/czt_v1/stationChange/icon_kdetele.png'}></Image>
             }
-            
+
             {/* <View class='sSousuo'onClick={this.serach}>搜索</View> */}
           </View>
 
-          <View style={'position:absolute; top:50px;left:0px; display:'+showHot}> 
+          <View style={'position:absolute; top:50px;left:0px; display:'+showHot}>
               {/* 所在城市站点/热门站点 */}
               <View class="allCity">
                 <View class="location" id="topost">定位站点</View>
                 <View className="location-list">
                 {scoped_loca == true?<View className="location-item" data-name={thisCity} data-id={thisCityid} onClick={this.Choice}>
-                    <Image src={this.basScr+'/h5/taroVega/czt_v1/stationChange/icon_location_n.png'}></Image> 
+                    <Image src={this.basScr+'/h5/taroVega/czt_v1/stationChange/icon_location_n.png'}></Image>
                     {thisCity}
                   </View>
                   :<View className="no_scoped">定位服务已关闭，打开定位<Text onClick={this.openSetting}>去设置</Text></View>
                 }
-                  
+
               </View>
               {hotStation.length>0 && <Block><View class="hotCity" id="hotCity">热门站点</View>
               <View class="hotCity-list">
                 {HS}
               </View></Block>}
-            
+
              </View>
-                  
+
 
                {/* 分组 所有城市列表 */}
               <View style={'display:'+display_show_all_section_station}>
-               {process.env.TARO_ENV  == 'weapp' 
+               {process.env.TARO_ENV  == 'weapp'
                ? section_stationHtml
                :<SearchSwitchStation Choice={this.Choice} isSection={true}/>
               }
@@ -451,7 +451,7 @@ searchPyFunc = (pyFirstChar) => {
             {hotStation.length>0 && <View className="text" onClick={this.toHot}>热门</View>}
           </View>
           {NR}
-        </View>      
+        </View>
       </View>
     )
   }

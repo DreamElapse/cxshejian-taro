@@ -37,7 +37,8 @@ class API {
     }
 
     // 用户token
-    // let Authorization = Taro.getStorageSync('token') || ''
+    let Authorization: string = Taro.getStorageSync('token')
+
     let _this = this
     return new Promise((resolve, reject) => {
       request({
@@ -46,6 +47,7 @@ class API {
         method,
         header: {
           'content-type': contentType,
+          Authorization,
           'X-Authorization': 'Bearer 06764f6f3f9098c31979ab6e6a837267',
           // Authorization,
         },

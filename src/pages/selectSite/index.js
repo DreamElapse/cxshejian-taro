@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { View, Text, ScrollView, Block, Image } from '@tarojs/components'
 // import {get as getGlobalData } from '../../../../service/config'
 import {get_crossDatas, check_isCrossDay, addTrip_sourcefrom_enum, isNotEmptyObj, isEmptyObj, queryParams, get_stationSelect_status, select_station_status, get_date_crossDay} from '@/utils/common'
-// import TrainUtil from '../../../../service/apiCommon' 
+// import TrainUtil from '../../../../service/apiCommon'
 import './index.scss'
 let today_date = new Date().getFullYear() + '-' + ((new Date().getMonth() + 1) >= 10 ? (new Date().getMonth() + 1) : '0' + (new Date().getMonth() + 1)) + '-' + ((new Date().getDate()) >= 10 ? (new Date().getDate()) : '0' + (new Date().getDate()))
 import dayjs from 'dayjs'
@@ -30,10 +30,10 @@ export default class Index extends Component {
             is_send_from: false, //记录是否传入出发站
             is_send_to: false, //记录是否传入到达站
             do_select_click: false, //是否进行了选择操作，选择或取消选择，如：车次大屏进入，传入了武汉出发站点后，武汉前面车次不可选，若进行了到达北京选择后，进入选中两个状态，此时再取消北京，则其他就都可选状态，而不是传入时状态变化
-      
+
             bottom_btn_enable: true,
           }
-          this.path= getCurrentInstance().router.path 
+          this.path= getCurrentInstance().router.path
         this.collectPageName='行程确认添加页2'
 
         this.base_img_url = "https://www.cx9z.com/h5/tarocx9z/czt_v1/chooseStation/" //图片地址
@@ -50,12 +50,12 @@ export default class Index extends Component {
        this.registerType = '' //境外旅客信息流程
     }
 
-      config = {
-        navigationBarTitleText: '选择出发站'
-     }
+     //  config = {
+     //    navigationBarTitleText: '选择出发站'
+     // }
 
-      componentWillMount(){
-  
+      UNSAFE_componentWillMount(){
+
         let params = getCurrentInstance().router.params
         if(params){
           if(params.sourcefrom){
@@ -96,14 +96,14 @@ export default class Index extends Component {
       }
 
       componentDidMount(){
-    
+
       }
 
       componentDidShow () {
-    
+
         const {dateC, stationList} = this.state
         if(!this.isload_success && isNotEmptyObj(dateC) && (isEmptyObj(stationList) || stationList.length == 0)){
-          
+
           this.getTicket(dateC)
         }
       }
@@ -117,11 +117,11 @@ export default class Index extends Component {
         var stationList = station_list ? station_list : []
         var is_from_station = isNotEmptyObj(that.from_station)//传入出发站
         var is_to_station = isNotEmptyObj(that.to_station) //传入到达站
-        var is_send_from = false 
+        var is_send_from = false
         var is_send_to = false
 
         this.is_from_currentDate = true // 重置为当前日期出发，若有弹框，从新选择后赋值更新
-     
+
         let timeCC = dayjs(date).format('MM月DD日')
         let weekDay = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"][new Date(date).getDay()]
 
@@ -168,7 +168,7 @@ export default class Index extends Component {
               nowTrainNo_text = '车次号：'+item.nowTrainNo
             }
           }else{
-            var preItem = stationList[index-1] 
+            var preItem = stationList[index-1]
             if(preItem && preItem.nowTrainNo != item.nowTrainNo){
               nowTrainNo_text = '车次变更：'+item.nowTrainNo
             }
@@ -188,7 +188,7 @@ export default class Index extends Component {
            state_obj.is_send_from = is_send_from
            state_obj.is_send_to = is_send_to
 
-           let to_view_distance = 3 
+           let to_view_distance = 3
            if(selects.length > 0){
              to_view_flag = 'inToView_'+selects[0].stationIndex
 
@@ -294,14 +294,14 @@ export default class Index extends Component {
       /**
        *  显示 跨天底部弹框选择，
        */
-      show_crossDayModal = () => { 
+      show_crossDayModal = () => {
         if(this.state.is_show_crossDay_modal == false){
           this.setState({
               is_show_crossDay_modal: true
           })
         }
       }
- 
+
       /**
        *  隐藏 跨天底部弹框选择，
        */
@@ -332,7 +332,7 @@ export default class Index extends Component {
         let to_name = crossData.from.to_name
         let sourcefrom = this.sourcefrom
         let depDate = this.is_from_currentDate ? crossData.from.depDate : crossData.to.depDate
-         
+
         //车次号，选择日期，到达站名字 到达站到达时间 （yyyy-MM-dd HH:mm）
         let arrTime_ = dayjs(endTime).format('YYYY-MM-DD HH:mm')//到达站到达时间
 
@@ -344,23 +344,23 @@ export default class Index extends Component {
         Taro.hideLoading()
 
         let jump_params = {
-          'sourcefrom': that.sourcefrom, 
+          'sourcefrom': that.sourcefrom,
           'trainNo':trainNo,
           'dateC':depDate,
           'from_station':from_name,
           'to_station':to_name,
-          'check_status':'1' // 1: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail  
+          'check_status':'1' // 1: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail
         }
-          
+
         let jumpUrl = '../lateQueryResults/index?'+queryParams(jump_params)
 
           Taro.navigateTo({
             url: jumpUrl
           })
 
-                             
+
       }
-     
+
       /**
        * 返回，出发站选择是否 完成
        */
@@ -373,14 +373,14 @@ export default class Index extends Component {
        * 选择车次 完成 后的处理： 跨天 、 是否结束与绑定判断
        */
       toHandle_selectStationsComplete = () => {
-        
+
         var that = this
-        //  时刻查询下 车次查询 、添加行程下 车次查询  、 车站大屏  
+        //  时刻查询下 车次查询 、添加行程下 车次查询  、 车站大屏
         // 非 （时刻查询下 站站查询 或  添加行程下 站站查询, 扫描车次） ，都要进行跨天判断
-        if(that.sourcefrom == addTrip_sourcefrom_enum.momentSearch_trainSearch || 
+        if(that.sourcefrom == addTrip_sourcefrom_enum.momentSearch_trainSearch ||
           that.sourcefrom == addTrip_sourcefrom_enum.addTrain_trainSearch ||
           that.sourcefrom == addTrip_sourcefrom_enum.largeScreenQuery){
-          let is_cross_day = check_isCrossDay(that.state.selectStations)  
+          let is_cross_day = check_isCrossDay(that.state.selectStations)
           if(is_cross_day){
             that.show_crossDayModal()//显示跨天弹框
             return
@@ -392,7 +392,7 @@ export default class Index extends Component {
 
        /**
        * 点击事件：跨天选择
-       * @param {*} e 
+       * @param {*} e
        */
       onClick_crossDay_select = (e) => {
         e &&  e.stopPropagation &&  e.stopPropagation()
@@ -402,9 +402,9 @@ export default class Index extends Component {
         this.hide_crossDayModal()
         this.handle_check_tripisEndorBinded()
      }
-   
+
       /**
-       * 点击事件：确认添加 
+       * 点击事件：确认添加
        */
       onClick_add = (e) => {
           e &&  e.stopPropagation &&  e.stopPropagation()
@@ -439,16 +439,16 @@ export default class Index extends Component {
       }
 
       /**
-       * 点击事件：后一天 
+       * 点击事件：后一天
        * */
       nextDate = (e) => {
 
         e &&  e.stopPropagation &&  e.stopPropagation()
         let dateC = dayjs(this.state.dateC).add(1, 'day').format('YYYY-MM-DD')//加一天
-        
+
         this.getTicket(dateC)
       }
-    
+
       onClick_chooseStation = (selectItem) => {
         var that = this
         var selects = this.state.selectStations ? this.state.selectStations : []
@@ -460,17 +460,17 @@ export default class Index extends Component {
           if(selects.length == 1){
             // is_contain = selects[0].stationIndex == selectItem.stationIndex
             if(selects[0].stationIndex == selectItem.stationIndex){
-              is_contain = true 
-              selects.splice(0, 1); 
+              is_contain = true
+              selects.splice(0, 1);
             }
           }else if(selects.length == 2){
             // is_contain = selects[0].stationIndex == selectItem.stationIndex || selects[1].stationIndex == selectItem.stationIndex
             if(selects[0].stationIndex == selectItem.stationIndex){
-              is_contain = true 
-              selects.splice(0, 1); 
+              is_contain = true
+              selects.splice(0, 1);
             }else  if(selects[1].stationIndex == selectItem.stationIndex){
-              is_contain = true 
-              selects.splice(1, 1); 
+              is_contain = true
+              selects.splice(1, 1);
             }
           }
 
@@ -526,8 +526,8 @@ export default class Index extends Component {
       render(){
         var that = this
         const {dateC, stationList,  do_select_click, is_send_from, is_send_to, is_show_crossDay_modal} = this.state
-        let date_pre_enable = false 
-  
+        let date_pre_enable = false
+
         if(isNotEmptyObj(dateC)){
           if(dayjs(today_date).isBefore(dateC)) {//今天 2019-7-4 比 选择日期早 2019-7-5
             date_pre_enable = true
@@ -539,7 +539,7 @@ export default class Index extends Component {
         var selects = this.state.selectStations
         var tip_start =  "出发站"
         var tip_end =  "到达站"
-        var is_selected_from = false // 选中起点 
+        var is_selected_from = false // 选中起点
         var is_selected_to =  false // 选中终点
 
         let current_status = get_stationSelect_status(this.state.selectStations, is_send_from, is_send_to, do_select_click)
@@ -579,12 +579,12 @@ export default class Index extends Component {
           is_selected_from = true
           is_selected_to = true
         }
-       
+
        var line_list = []
        let html_1 = null
         // 线条
         let html_2 = null
-    
+
        if(this.state.stationList && this.state.stationList.length > 0){
           html_1 = this.state.stationList.map((item, index) => {
             // 跨天显示
@@ -601,11 +601,11 @@ export default class Index extends Component {
             var  isbefore = false // 之前 select_one_startStation
             var  isafter = false  // 之后 select_one_endStation
             var is_enable = false //是否可以点击 灰色不可点击
-    
+
             if(index != stationList.length-1){ //去掉最后一个元素，最后一个无需line线条
               line_list.push(index)
             }
-          
+
             if(current_status == select_station_status.select_no || current_status == select_station_status.select_one){
               is_selected = current_status == select_station_status.select_one ? select_index_one == index  : false
                 // no 与 one : no所有都可选，one：当前选中，其他可选
@@ -613,14 +613,14 @@ export default class Index extends Component {
               cicle_class = is_selected ? 'circleImage_blue_large' : 'circleImage_blue'
               box_class = is_selected ? 'box_blue' : 'box_light_blue'
               is_enable = true
-          
+
             }else if(current_status == select_station_status.select_two){
-              
+
               // select_two:  select_item1_index选中状态而之前索引都为灰色, select_item2_index选中状态而之后都为灰色，两者之间为途径站点
               is_selected = (select_item1_index == index) || (select_item2_index == index) // 选中状态
               circle_content_class = is_selected ? 'circle_content_large' : ''
-    
-              is_middele_station = !(index < select_item1_index || index > select_item2_index) 
+
+              is_middele_station = !(index < select_item1_index || index > select_item2_index)
               cicle_class = is_selected ? 'circleImage_blue_large' : (is_middele_station ? 'circleImage_middle_bgblue':'circleImage_gray')
               box_class = is_selected ? 'box_blue' : (is_middele_station ? 'box_middle_lightbg_blue' : 'box_gray')
               is_enable = is_selected // is_selected || is_middele_station
@@ -628,15 +628,15 @@ export default class Index extends Component {
               if(is_selected || is_middele_station){
                 time_class = 'time time_select'
               }
-    
+
             }else if(current_status == select_station_status.select_one_startStation || current_status == select_station_status.select_one_endStation){
               // select_one_startStation: select_index_one 之前全不可行，之后都可选
               // select_one_endStation: select_index_one   之后全不可行，之前都可选
-              is_selected = select_index_one == index 
+              is_selected = select_index_one == index
               isbefore = index < select_index_one // 之前
               isafter = index > select_index_one // 之后
               circle_content_class = is_selected ? 'circle_content_large':''
-    
+
               if(current_status == select_station_status.select_one_startStation){
                 cicle_class = is_selected ? 'circleImage_blue_large' : (isbefore ? 'circleImage_gray':'circleImage_blue')
                 box_class = is_selected ? 'box_blue' : (isafter ? 'box_light_blue' : 'box_gray')
@@ -647,15 +647,15 @@ export default class Index extends Component {
                 is_enable = is_selected || isbefore
               }
             }
-    
+
             var time_text = ''
             if((!is_send_from && !is_send_to) || is_send_from){// //未传入 或 只传入出发站 或 传入出发与到达站 ：显示出发时间
-              time_text = (index == stationList.length -1) ? item.arrTime : item.depTime 
+              time_text = (index == stationList.length -1) ? item.arrTime : item.depTime
             }else if(is_send_to){// 只传入到达站：显示到达时间
               time_text = (index == 0) ? item.depTime : item.arrTime
             }
             var station_text = item.stationName //+ " - " + item.dayType
-            
+
               //  时间 圆 站点
               return (
                 <View className='th' key={"th_"+index} id={'inToView_'+index}>
@@ -698,9 +698,9 @@ export default class Index extends Component {
             return (
               <View key={"line_"+index} className={line_class}></View>
             )
-          }) 
+          })
        }
-       
+
        station_html = (
         <View className='list_content'>
               { html_1}
@@ -713,7 +713,7 @@ export default class Index extends Component {
         var is_show_bottomBtn = this.sourcefrom != addTrip_sourcefrom_enum.momentSearch_trainSearch
         let is_bottomBtn_enable = this.state.bottom_btn_enable && this.state.selectStations && this.state.selectStations.length >= 2
         let top_time = this.state.timeCC +' '+this.state.weekDay
-        
+
         let crossData = null
         var from_title = ""
         var to_title = ""
@@ -734,7 +734,7 @@ export default class Index extends Component {
                     </View>
                     <View className='nextDay' onClick={this.nextDate}>后一天</View>
                 </View>
-           
+
                 <View className='m_station_tipView' >
                     <Text className='tip'>请选择出发站和到达站</Text>
                     <View className='station_text_view'>
@@ -752,7 +752,7 @@ export default class Index extends Component {
                        </View>
                   </ScrollView>
                 </View>
-              
+
                 {/* {is_show_bottomBtn && <View className='m_bottom'>
                    <View className='tipWrap'>
                     <Image className='tipImg' src={getGlobalData('domain_h5')+"/h5/tarocx9z/czt_v1/searchResult/icon_tishi.png"}></Image>
@@ -762,7 +762,7 @@ export default class Index extends Component {
                      {!is_bottomBtn_enable && <View className='add add_diable'>确定添加</View>}
                      </View>
                 </View>} */}
-             
+
                 {is_show_crossDay_modal && <View className="cross_modal">
                   <View className="bottom">
                        <View className='tip'>您查询的线路跨天，请选择具体出发/到达日期</View>
@@ -771,10 +771,10 @@ export default class Index extends Component {
                         </View>
                         <View className="item" data-type='to' onClick={this.onClick_crossDay_select}>
                           {to_title}
-                        </View>   
+                        </View>
                         <View className="cancel" onClick={this.hide_crossDayModal}>
                            取消
-                        </View>       
+                        </View>
                   </View>
                 </View>
               }

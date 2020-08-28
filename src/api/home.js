@@ -27,7 +27,19 @@ export default {
   getAdData(data) {
     const url = `/api/miniapp/api/banner/list`
     return request.get({ url, data })
+  },
+  // 获取车次信息
+  getTrain(data) {
+    const url = `/api/miniapp/api/train/getByQrcode`
+    return request.get({ url, data, toast: false })
+  },
+  // 获取车次途径站点列表
+  getStation(data) {
+    const url = `/api/miniapp/api/train/listStation`
+    return request.get({ url, data })
   }
+
+
 
 
 

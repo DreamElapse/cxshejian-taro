@@ -11,12 +11,12 @@ import API from '@/api/index'
 let today_date = new Date().getFullYear() + '-' + ((new Date().getMonth() + 1) >= 10 ? (new Date().getMonth() + 1) : '0' + (new Date().getMonth() + 1)) + '-' + ((new Date().getDate()) >= 10 ? (new Date().getDate()) : '0' + (new Date().getDate()))
 export default class FindStation extends Component {
 
-  config = {
-    navigationBarTitleText: '选择车次',
-    enablePullDownRefresh: true, 
-    backgroundTextStyle: "dark",   // 把显示的文本颜色改成暗色调,亮色的话.你背景不改看不到,因为同色
-    backgroundColor:'#f7f7f7' // 页面的背景色
-  }
+  // config = {
+  //   navigationBarTitleText: '选择车次',
+  //   enablePullDownRefresh: true,
+  //   backgroundTextStyle: "dark",   // 把显示的文本颜色改成暗色调,亮色的话.你背景不改看不到,因为同色
+  //   backgroundColor:'#f7f7f7' // 页面的背景色
+  // }
 
   constructor(){//bind
     super(...arguments)
@@ -51,7 +51,7 @@ export default class FindStation extends Component {
     this.registerType = ''
   }
 
-  componentWillMount () { 
+  UNSAFE_componentWillMount () {
     let params = getCurrentInstance().router.params
     if(params){
       if(params.sourcefrom){
@@ -160,10 +160,10 @@ export default class FindStation extends Component {
           list: list,
           num: list.length
         },function(){
-      
+
         })
       }else{
-        
+
         that.setState({
           thisPage:false,
           noPageText:res.data.msg
@@ -171,7 +171,7 @@ export default class FindStation extends Component {
       }
     })
     .catch((e) => {
-      
+
       that.setState({
         thisPage:false,
         noPageText:e.errorText || e
@@ -207,7 +207,7 @@ export default class FindStation extends Component {
       })
     }
   }
-  
+
   onChange = e=> {
     this.setState({
       selectorChecked: this.state.selector[e.detail.value]
@@ -228,7 +228,7 @@ export default class FindStation extends Component {
   }
 
   tobindready = (e) => {
-   
+
     var that = this
     //时刻查询下站站查询
     let dataset = e.currentTarget.dataset
@@ -258,12 +258,12 @@ export default class FindStation extends Component {
       // 2、 未结束与绑定 -> 跳转车次结果页，其他:toast提示
 
       let jump_params = {
-        'sourcefrom': that.sourcefrom, 
+        'sourcefrom': that.sourcefrom,
         'trainNo':trainNo,
         'dateC':dateC,
         'from_station':from_name,
         'to_station':to_name,
-        'check_status':'1' //  0 可绑定 2已经绑定 3已结束 2/3: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail  
+        'check_status':'1' //  0 可绑定 2已经绑定 3已结束 2/3: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail
       }
       let jumpUrl = '../lateQueryResults/index?'+queryParams(jump_params)
       Taro.navigateTo({
@@ -275,7 +275,7 @@ export default class FindStation extends Component {
   render () {
     let {list, timeCC, weekDay, choseindex,noPageText,thisPage, num,type,where,dateC}=this.state;
     let top_time = timeCC +' '+weekDay
-    
+
     const lists = list.map((item, index)=>{
       //跨天天数计算
       let daysNum = get_date_crossDay(item.dptDate, item.arrDate)
@@ -283,7 +283,7 @@ export default class FindStation extends Component {
       return <View id={'ATfind5_' + index} key={index} className={classNames('trip-list', choseindex == index ? 'bodershow' : '')} data-status={item.trainStatus} data-valid={item.valid} data-index={index} data-to-arrtime={item.arrDate+" "+item.arrTime} data-depDate={item.dptDate} data-sdate={item.dptDate+" "+item.dptTime} data-edate={item.arrDate+" "+item.arrTime} data-s={item.dptStationName} data-e={item.arrStationName} data-num={item.trainNo}>
         {
           choseindex==index &&
-          <Image className="bingstaTion" src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_yixuan2.png'}></Image> 
+          <Image className="bingstaTion" src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_yixuan2.png'}></Image>
         }
         <View className="trip-content">
           <View className="t-t">
@@ -303,7 +303,7 @@ export default class FindStation extends Component {
               <View className={classNames("end", item.valid == 0 || item.trainStatus == 1?'traveColr':'')}>{item.arrStationName}</View>
               <View className={classNames("end-time",item.valid==0 || item.trainStatus ==1?'traveColr':'')}>
                 {item.arrTime}
-                {daysNum && <View className={item.valid == 0 || item.trainStatus == 1? 'daysNum daysNumAlp':'daysNum' }>{daysNumTip}</View>} 
+                {daysNum && <View className={item.valid == 0 || item.trainStatus == 1? 'daysNum daysNumAlp':'daysNum' }>{daysNumTip}</View>}
               </View>
             </View>
           </View>

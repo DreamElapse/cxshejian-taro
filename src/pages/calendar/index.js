@@ -18,7 +18,7 @@ export default class Calendar extends Component {
     navigationBarTitleText: '选择日期'
   }
 
-  componentWillMount () {
+  UNSAFE_componentWillMount () {
     let params = getCurrentInstance().router.params
     if(params){
       if(params.updateRef){
@@ -34,8 +34,8 @@ export default class Calendar extends Component {
 
   componentWillUnmount () { }
 
-  componentDidShow () { 
-    
+  componentDidShow () {
+
   }
 
   componentDidHide () { }
@@ -62,7 +62,7 @@ export default class Calendar extends Component {
     for (let i = 0; i < daysCount / 365 + 2; i++) {
       yearList.push(year + i + 1)
     }
-    let leapYear = function (Year) {//判断是否闰年 
+    let leapYear = function (Year) {//判断是否闰年
       if (((Year % 4) == 0) && ((Year % 100) != 0) || ((Year % 400) == 0)) {
         return (true);
       } else { return (false); }
@@ -143,18 +143,18 @@ export default class Calendar extends Component {
       dateData: dataAll2,
       weeks: weeks
     })
-    
+
   }
 
   //选择日期
   selectday = (e) => {
-    
+
     let DATE = this.state.dateData;
     let monthArray = e.currentTarget.dataset.index;
     let dateArray = e.currentTarget.dataset.indexs;
-    
+
     let toDay = new Date().getFullYear() + '-' +(new Date().getMonth()+1) + '-' + new Date().getDate();
-  
+
     let weekDay = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"][new Date(DATE[monthArray][dateArray].re).getDay()];
     let dateC = DATE[monthArray][dateArray].year + '-' + (DATE[monthArray][dateArray].month >= 10 ? DATE[monthArray][dateArray].month : '0' + DATE[monthArray][dateArray].month) + '-' + (DATE[monthArray][dateArray].day >= 10 ? DATE[monthArray][dateArray].day : '0' + DATE[monthArray][dateArray].day);
 
@@ -172,7 +172,7 @@ export default class Calendar extends Component {
     // let page = getCurrentInstance()
     // $component $$refs
     if (pages.length >1) {
-      
+
         var beforePage = pages[pages.length- 2];//获取上一个页面实例对象
         // beforePage.updateBackPageData()
         let data = {
@@ -196,11 +196,11 @@ export default class Calendar extends Component {
         setTimeout(() => {
           Taro.navigateBack({delta: 1})
         })
-        
-     
+
+
       //  if(this.updateRef != ''){
       //     let refs = beforePage.$component.$$refs
-          
+
       //     if(refs && refs.length > 0){
       //       for(var i = 0; i<refs.length; i++){
       //         let item = refs[i]
@@ -225,13 +225,13 @@ export default class Calendar extends Component {
     const HaveDay = ({dated,index}) => {
       return (
         dated.map((item, idx) => {
-          
+
           return <View className={`day ${+item.selected === 1 ? 'bc' : ''} ${+idx === 0 && +index === 0 ? 'todaySty' : ''}`} key={idx} data-index={index} data-indexs={idx} onClick={this.selectday}>
             <View className={"actname {{item.selected == 1 ? 'bc2' : ''}}"}></View>
             {(idx == 0 && index==0) && <Text>今天</Text>}
             {!(idx == 0 && index==0) && <Text> {dated[idx].day}</Text>}
           </View>
-        })  
+        })
       )
     }
     const dates = dateData.map((dated, index) => {
@@ -250,8 +250,8 @@ export default class Calendar extends Component {
       </View>
     })
 
-   
-    
+
+
     return (
       <View className='calendar'>
         <View className="headbox2">

@@ -2,7 +2,7 @@ import Taro, { getCurrentInstance } from '@tarojs/taro'
 import React, { Component } from 'react'
 import { View, Text, ScrollView, Block, Image} from '@tarojs/components'
 import {addTrip_sourcefrom_enum, isNotEmptyObj, isEmptyObj, select_station_status,queryParams, getRandomColor} from '@/utils/common'
-// import TrainUtil from '../../../../service/apiCommon' 
+// import TrainUtil from '../../../../service/apiCommon'
 import './index.scss'
 import dayjs from 'dayjs'
 import API from '@/api/index'
@@ -22,7 +22,7 @@ export default class Index extends Component {
             show_arriveOntimeRate: false,//是否显示正点率
             train_check_status: -1,
         }
-        this.path=getCurrentInstance().router.path 
+        this.path=getCurrentInstance().router.path
         this.collectPageName='行程确认添加页'
 
         this.dateC = ''
@@ -30,14 +30,14 @@ export default class Index extends Component {
         this.trainNo = ''//车次号 Z384 上海关 佛山
         this.from_station ='',//页面传递过来的出发站 长春
         this.to_station ='',//页面传递过来的到达站   北京
-        this.check_status = -1 // 是否结束与绑定状态 ,  0 可绑定(未结束或未绑定) 2已经绑定 3已结束   -1: fail 
+        this.check_status = -1 // 是否结束与绑定状态 ,  0 可绑定(未结束或未绑定) 2已经绑定 3已结束   -1: fail
         // this.arriveOntimeRate =''//到达正点率
         this.toast = ''
       }
 
-      config = {
-         navigationBarTitleText: '选择出发站'
-      }
+      // config = {
+      //    navigationBarTitleText: '选择出发站'
+      // }
 
       loadData(params=null){
         if(params && (isEmptyObj(this.trainNo) || isEmptyObj(this.dateC))){
@@ -121,7 +121,7 @@ export default class Index extends Component {
             from_index = i
           }
           if(is_to){
-            to_index = i 
+            to_index = i
           }
         }
 
@@ -184,12 +184,12 @@ export default class Index extends Component {
           // if(i!=list.length-1){//车次终点无出站(发车)时间
           //   list[i].depDate = deptDate.format('YYYY-MM-DD')
           // }
-          
+
           // 2.2 日期分组
           list[i].sectionTitle = ''//分组：默认标题
           list[i].section = false //分组：默认不分组
           if(i == from_index){//出发站默认 分组
-            //  section = true 
+            //  section = true
             //  section_num++
           }else if(i > from_index && i <= to_index){ //计算 出发站与到达站 之间 是否有分组
 
@@ -210,7 +210,7 @@ export default class Index extends Component {
                 let depWeekDay = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"][deptDate.toDate().getDay()]
                 crossDayTip = depTimeCC+" "+depWeekDay
               }
-           
+
               list[i].sectionTitle = is_crossDay ? (is_diff_trianNo ? (crossDayTip+"   |   "+diffTrianNoTip) : crossDayTip) : diffTrianNoTip
             }
           }
@@ -234,8 +234,8 @@ export default class Index extends Component {
           let rate = list[to_index].arriveOntimeRate
           if(rate != '--' && rate != '0' && rate != 0){
             arriveOntimeRate = rate+"%"
-          } 
-        } 
+          }
+        }
         // let befort_status_expant = false
         // if(from_index != -1 && from_index == 0){//有出发站，且选择第一个, 展开
         //   befort_status_expant = true
@@ -288,10 +288,10 @@ export default class Index extends Component {
           that.init_data(res.data.data, dateC)
         })
         .catch((e) => {
-    
+
         })
       }
-     
+
       /**
        * 返回，出发站选择是否 完成
        */
@@ -299,7 +299,7 @@ export default class Index extends Component {
         var selectStations = this.state.selectStations ? this.state.selectStations : []
         return selectStations && selectStations.length >=2
       }
-   
+
       /**
        * 处理完，跨天后，-> 立即判断是否结束与绑定(api)
        */
@@ -318,7 +318,7 @@ export default class Index extends Component {
       }
 
       /**
-       * 点击事件：正点率 
+       * 点击事件：正点率
        */
       jump_ontimeRate = (e) => {
         var that = this
@@ -337,7 +337,7 @@ export default class Index extends Component {
         if(p == 'before' && selectStations[0].stationIndex == 0){//选择起点
           return
         }
-        
+
         if(p == 'before'){
          this.setState({
            befort_status_expant: !this.state.befort_status_expant
@@ -348,7 +348,7 @@ export default class Index extends Component {
           })
         }
       }
-    
+
   // nextDay， 选择前一天 修复，日期比较不对
   // 前一天：今天时，不可选前一天，样式调整
       render(){
@@ -370,7 +370,7 @@ export default class Index extends Component {
         var tip_after = ''//2个后序站
 
         var sectionNum = 0 //分组数量
-        var is_show_section = false 
+        var is_show_section = false
 
         if(is_two){
           if(selects[0].stationIndex > selects[1].stationIndex){ // 0 终点，1起点，交换位置
@@ -399,19 +399,19 @@ export default class Index extends Component {
             is_show_section = true
           }
         }
-       
+
        var befort_status_expant = this.state.befort_status_expant
        let is_section_date_line_img = (index) => {
         return  is_show_section && this.state.stationList[index].section
        }
-       
+
        let html_1 = this.state.stationList.map((item, index) => {
             var is_selected = false // 选中状态
             var is_middele_station = false // 是否为途径站点 select_two
             var circle_content_class = ''
             var cicle_class = ''
             var th_right_class = ''
-            
+
             //前序未展开，收起时 、 后序未展开，收起时
             let display = (index < select_item1_index && !befort_status_expant) || (index > select_item2_index && !this.state.after_status_expant) ? false:true
             if(current_status == select_station_status.select_two){
@@ -419,7 +419,7 @@ export default class Index extends Component {
               is_selected = (select_item1_index == index) || (select_item2_index == index) // 选中状态
               circle_content_class = is_selected ? 'circle_content_large' : ''
 
-              is_middele_station = !(index < select_item1_index || index > select_item2_index) 
+              is_middele_station = !(index < select_item1_index || index > select_item2_index)
               cicle_class = is_selected ? 'circleImage_blue_large' : (is_middele_station ? 'circleImage_blue':'circleImage_gray')
               th_right_class = is_selected ? 'th_right_select' : (is_middele_station ? 'th_right_middele':'th_right_gray')
             }
@@ -458,7 +458,7 @@ export default class Index extends Component {
               tip_style += ' color: #f95353;'
             }
 
-            
+
 
             var line_class = ''
             if(index == 0){
@@ -482,7 +482,7 @@ export default class Index extends Component {
                           {is_show_line ?  <View key={"line_"+index} className='line_split'>
                              <View className={line_class}></View>
                            </View> : null
-                          } 
+                          }
                           <View className={(is_section_date)?'th th_large_h':'th'}>
                             <View className='th_circle'>
                               <View  className={'circle_content '+circle_content_class}>
@@ -497,12 +497,12 @@ export default class Index extends Component {
                               <View className='tip' style={tip_style+' width:28%;'}>
                                   {item.status_text}
                               </View>
-                              
+
                           </View>
                           </View>
                          {is_section_date ? <View className='section_date'>
                                 {item.sectionTitle}
-                          </View> : null} 
+                          </View> : null}
                     </Block>}
                   </View>
               </Block>
@@ -515,7 +515,7 @@ export default class Index extends Component {
           </View>
         );
 
-        //0 可绑定(未结束或未绑定) 2已经绑定 3已结束   -1: fail 
+        //0 可绑定(未结束或未绑定) 2已经绑定 3已结束   -1: fail
         var is_show_bottomBtn = true
         let is_monment_enter = (this.sourcefrom == addTrip_sourcefrom_enum.addTrain_scanTicket) || (this.sourcefrom == addTrip_sourcefrom_enum.momentSearch_scanTicket) || (this.sourcefrom == addTrip_sourcefrom_enum.momentSearch_trainSearch) || (this.sourcefrom == addTrip_sourcefrom_enum.momentSearch_stationSearch)
         if(is_monment_enter){//扫描或时刻查询进入
@@ -538,7 +538,7 @@ export default class Index extends Component {
                           <Image className='arr_right' src={base_img_url+"icon_xiangyou.png"}></Image>
                         </View>
                       </View> : null
-                    } 
+                    }
                     <View className={'content2' + (show_rate ? '' : ' content2_noRate')}>
                         <View className='wrap'>
                           <Text className='tip'>站名</Text>

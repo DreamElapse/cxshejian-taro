@@ -1,18 +1,15 @@
 import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
-import { View, Image, Text, Input, Picker, PickerView, PickerViewColumn, ScrollView } from '@tarojs/components'
+import { View, Image, Text, Input, Picker, Button, PickerView, PickerViewColumn } from '@tarojs/components'
 import CartBar from '@/components/cart_bar/cart_bar'
 import moment from 'dayjs'
 import Utils from '@/utils/utils'
 import arrow from '@/static/img/createOrder/arrow.png'
-// import { add, minus, asyncAdd } from '../../store/actions'
+import API from '@/api'
 
 import {
-  // resetGoodsAndPrice,
-  setUserInfo,
-  addGoods,
-  setTotalPrice
+
 } from '@/store/actions'
 
 import './index.scss'
@@ -33,17 +30,13 @@ type PageStateProps = {
   carriage: any,
   carriageNum: any,
   isLink: boolean,
-  selectedGoodsList: object,
+  selectedGoodsList: any[],
   userInfo: string,
-  totalPrice: number,
-  totalProNum: number
+  totalPrice: number
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any,
-  resetGoodsAndPrice: () => void
+
 }
 
 type PageOwnProps = {}
@@ -59,19 +52,8 @@ interface CreateOrder {
 
 @connect(({ counter }) => ({
   ...counter
-}), (dispatch) => ({
-  // onResetGoodsAndPriece(payload) {
-  //   dispatch(resetGoodsAndPrice(payload));
-  // },
-  setUserInfo(payload) {
-    dispatch(setUserInfo(payload));
-  },
-  addGoods(payload) {
-    dispatch(addGoods(payload));
-  },
-  setTotalPrice(payload) {
-    dispatch(setTotalPrice(payload));
-  }
+}), () => ({
+
 }))
 
 class CreateOrder extends Component {
@@ -86,9 +68,7 @@ class CreateOrder extends Component {
     mobile: '',
     memo: '',
     isOpenMulitSeletor: false,
-    isShowRecommended: false,
-    recommendedGoodsList: [],
-    beforeCreateOrderInfo: {}
+    cartGoods: []
   }
 
   UNSAFE_componentWillMount() {
@@ -106,6 +86,7 @@ class CreateOrder extends Component {
 
      this.setState({
        seat: [carriage, ROW, SEAT],
+       cartGoods: Taro.getStorageSync('goods')
        // selectedSeat: `${carriage[0]} - ${ROW[0]} - ${SEAT[0]}`
      });
      // this.getDeliveryTime();
@@ -125,11 +106,11 @@ class CreateOrder extends Component {
 
   /*----render-----*/
   render () {
-    const { recommendedGoodsList, username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex } = this.state
-    const { startStation, endStation, train, date, selectedGoodsList, totalProNum, totalPrice } = this.props
+    const { username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex, cartGoods } = this.state
+    const { startStation, endStation, train, date, selectedGoodsList, totalPrice } = this.props
     return (
       <View className="create-order">
-        <View className='content'>
+        <View className='order-content'>
         <View className='train-info'>
           <View className='start-train'>
             <View className='date'>{startStation.aTime}</View>
@@ -153,7 +134,13 @@ class CreateOrder extends Component {
             </View>
             <View className='form-item'>
               <Text>手机号</Text>
-              <Input placeholderClass='input-placeholder' placeholder='请输入手机号' type='number' data-name='mobile' value={mobile} onInput={this.setFormValue} />
+              <Input placeholderClass='input-placeholder' placeholder='请输入手机号' type='number' maxlength={11} data-name='mobile' value={mobile} onInput={this.setFormValue} />
+              {/*<View className="get-phone" onClick={this.getPhone}>获取手机号</View>*/}
+              <Button
+                className='get-phone'
+                openType='getPhoneNumber'
+                onGetPhoneNumber={this.getPhoneNumber}
+              >微信手机号</Button>
             </View>
             <View className='form-item selection'>
               <Text>送餐至</Text>
@@ -176,12 +163,12 @@ class CreateOrder extends Component {
               selectedGoodsList.map((goods, idx) => {
                 return (
                   <View className='order-item' key={idx}>
-                    <Image className='pro-pic' src={goods.pics} mode='aspectFit' />
-                    <View className='content'>
-                      <Text className='name'>{goods.proName}</Text>
+                    <Image className='pro-pic' src={goods.thumbImg} mode='aspectFill' />
+                    <View className='goods-msg'>
+                      <View className='name'>{goods.productName}</View>
                       <View className='price-container'>
-                        <Text className='price'>￥{goods.price}/份</Text>
-                        <Text className='num'>x{goods.selectedNum}</Text>
+                        <Text className='price'>¥{goods.price}/份</Text>
+                        <Text className='num'>x{goods.number}</Text>
                       </View>
                     </View>
                   </View>
@@ -194,60 +181,10 @@ class CreateOrder extends Component {
           <CartBar
             isShowCartIcon={false}
             totalPrice={totalPrice}
-            totalNum={totalProNum}
-            toCreateOrder={this.createOrder}
+            totalNum={this.totalProNum()}
+            toCreateOrder={this.requestPayment}
           />
         </View>
-
-        {
-          // 美味推荐
-          this.state.isShowRecommended &&
-          <View className='recommended-container' catchtouchmove='preventTouchMove'>
-            <View className='mask' />
-            <View className='recommended'>
-              <View className='header'>
-                <View className='title'>美味享不停</View>
-                <View className='desc'>我们建议您多加一份以下美食</View>
-              </View>
-              <ScrollView scrollY className='content'>
-                  {
-                    recommendedGoodsList.map((goods, i) => {
-                      return (
-                        <View className='pro-item' key={i}>
-                          <Image className='pro-pic' src={goods.productImg} mode='aspectFit' />
-                          <View className='item-content'>
-                            <View className='pro-name'>{goods.proname}</View>
-                            <View className='num'>剩余{goods.number}份</View>
-                            <View className='price-container'>
-                              <View className='price'>￥{goods.price}/份</View>
-                              <View className='btn-container'>
-                                {
-                                  goods.selectedNum > 0 &&
-                                  <View className='btn subtract-btn' onClick={e => this.subtractGoods(e, goods)} />
-                                }
-                                {
-                                  goods.selectedNum > 0 &&
-                                  <Text className='select-num'>{goods.selectedNum}</Text>
-                                }
-                                {
-                                  goods.number > 0 &&
-                                  <View className='btn add-btn' onClick={e => this.addGoods(e, goods)} />
-                                }
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                      )
-                    })
-                  }
-                </ScrollView>
-              <View className='footer'>
-                <View className='btn cancel' onClick={this.closeRecommended}>不，谢谢</View>
-                <View className='btn confirm' onClick={this.selectedRecommendedGoods}>选好了</View>
-              </View>
-            </View>
-          </View>
-        }
 
         <View className={`float-layout-bg ${this.state.isOpenMulitSeletor && 'active'}`} onClick={this.closeMulitSeletor}>
           <View className={`float-layout ${this.state.isOpenMulitSeletor && 'active'}`} onClick={e => e.stopPropagation()}>
@@ -280,11 +217,30 @@ class CreateOrder extends Component {
     )
   }
 
+  // 获取用户手机号
+  getPhoneNumber = e => {
+    console.log(e)
+    if (e.detail.errMsg === 'getPhoneNumber:ok') {
+      let data = {
+        encryptedData: e.detail.encryptedData,
+        iv: e.detail.iv
+      }
+      API.Global.getPhoneNumber(data)
+        .then(res => {
+          if (res.data) {
+            Taro.setStorageSync('phone', res.data)
+            this.setState({
+              mobile: res.data
+            })
+          }
+        })
+    }
+  }
 
   /*----自定义函数-----*/
   // 获取用户信息
   getUserInfo = () => {
-    this.userService.getUserInfo().then(user => {
+    API.Global.getUserInfo().then(user => {
       let userInfo = {
         avatar: user.avatar,
         mobile: user.mobile,
@@ -295,32 +251,66 @@ class CreateOrder extends Component {
     });
   }
 
-  // 调用预下单信息
-  beforeCreateOrder = () => {
-    this.orderService.beforeCreateOrder().then(info => {
-      this.setState({ beforeCreateOrderInfo: info });
-      this.calcSelectedGoodsTotalPrice(info.status);
-    });
-    this.getUserInfo();
+  totalProNum() {
+    let number = 0
+    let goodsList: any[] = this.props.selectedGoodsList
+    goodsList.forEach(item => {
+      number += item.number
+    })
+    return number
   }
 
-  // 获取美味推荐列表
-  getProductionRecList = () => {
-    const data = {
-      cid: this.props.carriage,
-      thisday: moment().format('YYYY-MM-DD'),
-      train: this.props.train
+  requestPayment = () => {
+    let data = {
+      orderId: 1,
+      tradeType: 'WX_JSAPI',
+      userId: ''
     }
-
-    this.goodsService.getProductionRecList(data).then(prods => {
-      if (prods && prods.length) {
-        this.setState({
-          recommendedGoodsList: prods,
-          isShowRecommended: true,
-        });
-      }
-    });
+    API.Order.createPayment(data)
+      .then(res => {
+        let data = {
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+        }
+        console.log(data, 111)
+        Taro.requestPayment({
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+          success () {
+            console.log('-----success------')
+            Taro.redirectTo({
+              url: `/pages/payResult/index`
+            })
+          },
+          fail () {
+            console.log('-----fail------')
+            // let search: string[] = []
+            // for (let key in data) {
+            //   search.push(`${key}=${data[key]}`)
+            // }
+            Taro.redirectTo({
+              url: `/pages/payResult/index?orderId=${data.orderId}`
+            })
+          }
+        })
+      })
   }
+
+  // // 调用预下单信息
+  // beforeCreateOrder = () => {
+  //   this.orderService.beforeCreateOrder().then(info => {
+  //     this.setState({ beforeCreateOrderInfo: info });
+  //     this.calcSelectedGoodsTotalPrice(info.status);
+  //   });
+  //   this.getUserInfo();
+  // }
+
 
   // 获取配送时间
   getDeliveryTime = () => {
@@ -333,7 +323,7 @@ class CreateOrder extends Component {
       stime: this.props.startStation.aTime,
       carriage: this.props.carriage
     }
-    this.orderService.getDeliveryTime(data).then(times => {
+    API.Order.getDeliveryTime(data).then(times => {
       this.handleMealDate(times);
     })
   }
@@ -398,111 +388,6 @@ class CreateOrder extends Component {
   // 选择送餐时间
   changeMealsDatePicker = (e) => {
     this.setState({ mealsDateIndex: e.detail.value });
-  }
-
-  // 减去美味推荐商品
-  subtractGoods = (e, goods) => {
-    let goodsList = this.state.recommendedGoodsList;
-    goodsList.forEach(item => {
-      if (goods.id === item.id) {
-        item['selectedNum'] -= 1;
-      }
-    });
-    this.setState({ recommendedGoodsList: goodsList });
-  }
-
-  // 添加美味推荐商品
-  addGoods = (e, goods) => {
-    let goodsList = this.state.recommendedGoodsList;
-    goodsList.forEach(item => {
-      if (goods.id === item.id) {
-        if (item.selectedNum && item.selectedNum > 0) {
-          if (item.selectedNum < item.number) {
-            item.selectedNum += 1;
-          } else {
-            Taro.showToast({title: '商品数量已达上限', icon: 'none', mask: true});
-          }
-        } else {
-          item['selectedNum'] = 1;
-        }
-      }
-    });
-    this.setState({ recommendedGoodsList: goodsList });
-  }
-
-  // 确定选择美味推荐商品
-  selectedRecommendedGoods = () => {
-    // 是否选择了美味推荐商品
-    let isSelected = false;
-    let selectedRecommendGoodsList = [];
-    const productionList = JSON.parse(Taro.getStorageSync('productionList'));
-
-    // 讲美味推荐和商品列表中的商品数量合并
-    this.state.recommendedGoodsList.forEach(item => {
-      productionList.forEach(cate => {
-        cate.child.forEach(good => {
-          // 判断 item.selectedNum 是否大于0
-          if (item.selectedNum && item.selectedNum > 0) {
-            isSelected = true;
-            // 找到商品列表里对应的商品
-            if (item.id === good.pro_id) {
-              // 判断原有商品是否已选择，是在原有数量上添加，否新增数量
-              if (good.selectedNum && good.selectedNum > 0) {
-                good.selectedNum += item.selectedNum;
-              } else {
-                good['selectedNum'] = item.selectedNum;
-              }
-            }
-          }
-        });
-      });
-    });
-
-    if (!isSelected) {
-      Taro.showToast({ title: '不要急，您还未添加商品呢', icon: 'none', mask: true });
-      return;
-    }
-
-    // 查出商品列表中选择数量大于0的
-    productionList.forEach(cate => {
-      cate.child.forEach(good => {
-        if (good.selectedNum && good.selectedNum > 0) {
-          selectedRecommendGoodsList.push(good);
-        }
-      });
-    });
-
-    this.props.addGoods([...selectedRecommendGoodsList]);
-    this.calcSelectedGoodsTotalPrice(this.state.beforeCreateOrderInfo.status);
-    this.closeRecommended();
-  }
-
-  // 计算商品总价格
-  calcSelectedGoodsTotalPrice = isDiscount => {
-    let total = 0; // 商品总价
-    let discountPrice = 0; // 折扣价
-    if (this.props.selectedGoodsList.length) {
-      this.props.selectedGoodsList.forEach(item => {
-        discountPrice = (Math.round(discountPrice * 100) + Math.round(+item.discountSettlementPrice * 100) * item.selectedNum) / 100;
-        total = (Math.round(total * 100) + Math.round(+item.price * 100) * item.selectedNum) / 100;
-      });
-    }
-    // 如果享受折扣
-    if (isDiscount) {
-      // 如果优惠价高于5元，则为5，低于5元按实际计算
-      let diffCount = (Math.round(total * 100) - Math.round(discountPrice * 100)) / 100;
-      if (diffCount > 5) {
-        total = (Math.round(total * 100) - 5 * 100) / 100;
-      } else {
-        total = (Math.round(total * 100) - Math.round(diffCount * 100)) / 100;
-      }
-    }
-    this.props.setTotalPrice(total);
-  }
-
-  // 关闭美味推荐窗口
-  closeRecommended = () => {
-    this.setState({ isShowRecommended: false });
   }
 
   // 创建订单
@@ -570,10 +455,10 @@ class CreateOrder extends Component {
       username: this.state.username || this.props.userInfo.nickname || this.props.userInfo.nickName,
       memo: this.state.memo
     }
-    this.orderService.createOrder(data, this.state.requestId.toString()).then(order => {
-      if (order) {
+    API.Order.createOrder(data, this.state.requestId.toString()).then(res => {
+      if (res) {
         // 创建订单成功，开始调起支付接口 res.data.bid/order_id/protype
-        this.payService.pay(order, this.props.train);
+        this.requestPayment(res.data)
         // 发送统计数据
         this.sendEventAfterThis();
       }
