@@ -1,5 +1,5 @@
 interface OrderItem {
-  num: number;
+  quantity: number;
   price: number;
   productId: number;
   productName: string;
@@ -11,10 +11,9 @@ export default interface Order {
   comId: number;
   comName: string;
   discountPrice: number;
-  dsmode: number;
   isUrge: number;
   memo: string;
-  orderId: number;
+  id: number;
   orderList: OrderItem[];
   orderNumber: string;
   orderType: number;
@@ -22,7 +21,7 @@ export default interface Order {
   proType: number;
   refundFee: number;
   reserveDate: string
-  showUrge: number;
+  isShowUrge: number;
   status: number;
   totalPrice: number;
   train: string;
@@ -34,4 +33,8 @@ export default interface Order {
   address: string;
   orderTime: string;
   isShowInvoice: boolean;
+  urged: boolean;
+  settlementAmount: number;
+  endTime: Date;
+  receiver: string;
 }
