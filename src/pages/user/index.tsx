@@ -36,7 +36,7 @@ class User extends Component {
 
   render () {
     return (
-      <WebView src='https://www.baidu.com/' />
+      <WebView src='http://testm.lvyoupdd.com:8083/user?siteId=6' />
     )
   }
 }
