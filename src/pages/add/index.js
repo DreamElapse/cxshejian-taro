@@ -128,13 +128,27 @@ export default class Add extends Component {
 
   componentDidShow () {
     let that=this;
-    // let data = getCurrentInstance().page.__data__
-    // data.dataC && this.setState({
-    //   dateC: data.dateC,
-    //   timeCC: data.timeCC,
-    //   weekDay: data.weekDay,
-    //   toDay: data.toDay,
-    // })
+
+    // 选择日期或城市后获取数据
+    let data = getCurrentInstance().page.data
+    if (data.dateC) {
+      this.setState({
+        dateC: data.dateC,
+        timeCC: data.timeCC,
+        weekDay: data.weekDay,
+        toDay: data.toDay,
+      })
+    } else if(data.from_station_type){//更新出发站
+      this.setState({
+        cityNameS: data.station,
+      })
+      this.from_station_type = data.from_station_type
+    }else if(data.to_station_type){//更新到达站
+      this.setState({
+        cityNameE: data.station,
+      })
+      this.to_station_type =  data.to_station_type
+    }
     Taro.getStorage({key:'hCArry'}).then(res=>{
       that.setState({
         historyCC: res.data,

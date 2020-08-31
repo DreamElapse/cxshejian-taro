@@ -169,7 +169,6 @@ export default class Calendar extends Component {
     }
 
     let pages = getCurrentPages();//当前页面栈
-    // let page = getCurrentInstance()
     // $component $$refs
     if (pages.length >1) {
 
@@ -181,6 +180,7 @@ export default class Calendar extends Component {
           weekDay:weekDay, //星期五
           toDay: toDay // ''/今天
         }
+        beforePage.setData(data)
 
         // beforePage.setData({
         //   // dateC:data.dateC,

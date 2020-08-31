@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View } from "@tarojs/components";
-import Taro from '@tarojs/taro'
+import Taro, { getCurrentPages } from '@tarojs/taro'
 import "./index.scss";
 import API from '@/api'
 export default class Payment extends Component {
@@ -33,7 +33,6 @@ export default class Payment extends Component {
           prevPage.setState({
             webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
           })
-          console.log(prevPage.data.webViewUrl)
           Taro.navigateBack()
         }
       },
@@ -50,12 +49,10 @@ export default class Payment extends Component {
         prevPage.setState({
           webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
         })
-        console.log(prevPage.state.webViewUrl)
         // Taro.navigateBack()
       }
     })
     //页面加载调取微信支付（原则上应该对options的携带的参数进行校验）
-    console.log(options)
     // this.requestPayment(options);
   }
   //根据 obj 的参数请求wx 支付
@@ -76,7 +73,7 @@ export default class Payment extends Component {
         var pages = getCurrentPages();
         //当前页面 (wxpay page)
         var currPage = pages[pages.length - 1];
-        //上一个页面 （index page） 
+        //上一个页面 （index page）
         var prevPage = pages[pages.length - 2];
         //通过page.setState方法使index的webview 重新加载url  有点类似于后台刷新页面
         //此处有点类似小程序通过加载URL的方式回调通知后端 该订单支付成功。后端逻辑不做赘述。
@@ -84,7 +81,6 @@ export default class Payment extends Component {
         prevPage.setState({
           webViewUrl: `${webviewUrl}paystatus?orderId=${orderId}&payfrom=pay`,
         })
-        console.log(prevPage.data.webViewUrl)
         //小程序主动返回到上一个页面。即从wxpay page到index page。此时index page的webview已经重新加载了url 了
         //微信小程序的page 也有栈的概念navigateBack 相当于页面出栈的操作
         Taro.navigateBack();

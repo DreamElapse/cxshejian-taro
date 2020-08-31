@@ -122,8 +122,8 @@ export default class SwitchStation extends Component {
         scoped_loca:true
       })
 
-      let thisCity = data.data.nearStation
-      let thisCityid = data.data.stationId
+      let thisCity = res.nearStation
+      let thisCityid = res.stationId
       that.setState({
         thisCity:thisCity,
         thisCityid:thisCityid,
@@ -189,7 +189,7 @@ export default class SwitchStation extends Component {
     let that = this
     API.StationService.getHotStation({},true)
     .then(res => {
-      let hot = res.data.data
+      let hot = res.data
       that.setState({
         hotStation: hot,
       })

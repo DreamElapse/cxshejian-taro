@@ -17,7 +17,8 @@ import scroll from '@/static/img/index/scroll.png'
 
 type PageStateProps = {
   date: string,
-  trainInfo: any
+  trainInfo: any,
+  userStationInfo: any
 }
 type PageDispatchProps = {
   setTrainInfo: (any) => any
@@ -54,11 +55,10 @@ const BUTTON_LIST = [
   {
     img: icon_czdp,
     name: '车站大屏',
-    url: '/pages/stationLargeScreen/index'
+    url: '/pages/switchStation/index'
   }
 ]
 
-const CITY_LIST = ['上海', '武汉', '长沙']
 @connect(({ counter }) => ({
   ...counter
 }), (dispatch) => ({
@@ -80,7 +80,8 @@ class Index extends Component {
   state = {
     buttonList: BUTTON_LIST,
     goodsList: [],
-    cityList: CITY_LIST,
+    cityList: [],
+    cityIndex: 0,
     recommendList: [],
     positionCity: '', // 用户定位
     areaId: '',
@@ -101,7 +102,6 @@ class Index extends Component {
   }
 
   UNSAFE_componentWillMount() {
-
   }
 
   componentWillUnmount () { }
@@ -114,9 +114,9 @@ class Index extends Component {
       this.getTrain()
     })
 
-    !this.state.areaId && this.getLocation()
-    this.state.areaId && this.getListData()
     this.getAdData()
+    !this.state.areaId && this.getLocation()
+    this.state.areaId && this.getListData(this.state.tabIndex)
 
   }
 
@@ -127,11 +127,11 @@ class Index extends Component {
     this.setState({
       startIndex: this.state.startIndex + 1
     })
-    this.getListData()
+    this.getListData(this.state.tabIndex)
   }
 
   render () {
-    const { cityList, buttonList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, week } = this.state
+    const { cityList, cityIndex, buttonList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, week } = this.state
     const { trainInfo } = this.props
     return (
       <View className='home-page'>
@@ -140,7 +140,7 @@ class Index extends Component {
             hasDistance && <View className='ticket'>
               <View className='top-msg'>
                 <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>
-                <Text className='tip-text'>到达口:C1</Text>
+                {/*<Text className='tip-text'>到达口:C1</Text>*/}
               </View>
               <View className='bottom-msg'>
                 <View className='left-msg'>
@@ -167,8 +167,9 @@ class Index extends Component {
             })
           }
         </View>
+
         {/*------按钮------*/}
-        {hasDistance || <View className='inter-list'>
+        <View className='inter-list'>
           {
             buttonList.map((item, i) => {
               return (
@@ -179,8 +180,7 @@ class Index extends Component {
               )
             })
           }
-
-        </View>}
+        </View>
         {/*------免费试吃/开卡------*/}
         <View className='sec-middle'>
           <View className='foretaste'>
@@ -191,7 +191,7 @@ class Index extends Component {
           </View>
 
           <View className='open-card'>
-            <Navigator url="/page/adPage/index?url=">
+            <Navigator url="/pages/adPage/index?url=https://sj-pre.yishizongheng.com/activate-card">
               <Text className='text'>建行信用卡开卡送现金</Text>
               <Image src={jhkk} className='card-img' mode="aspectFill" />
             </Navigator>
@@ -203,12 +203,12 @@ class Index extends Component {
         {/*------轮播------*/}
         <Swiper
           className='scroll-box'
-          autoplay
+          vertical={false}
         >
           {
             middleAd.map((item, index) => {
               return (
-                <SwiperItem key={'scroll'+index}>
+                <SwiperItem key={'scr'+index}>
                   <Image src={item.imageUrl} className='scroll-img' mode="aspectFill" onClick={() => {this.toAdPage(item)}}></Image>
                 </SwiperItem>
               )
@@ -217,20 +217,20 @@ class Index extends Component {
         </Swiper>
 
         {/*------乘务美食------*/}
-        {hasDistance && goodsList.length > 0 && <View className='crew-food'>
-          <View className='title'>
+        {hasDistance && <View className='crew-food'>
+          {goodsList.length > 0 && <View className='title'>
             <Text className='name'>{trainInfo.train}乘务员美食推荐</Text>
             <View className='icon' onClick={this.toCarFood}>更多</View>
-          </View>
+          </View>}
           <View className='goods-box'>
             {
               goodsList.map((item, index) => {
                 return (
-                  <View className='goods-item' key={'goods'+index} onClick={this.toCarFood}>
+                  <View className='goods-item' key={'goo'+index} onClick={this.toCarFood}>
                     <Image src={item.thumbImg} className='goods-img' mode="aspectFill"></Image>
                     <Text className='goods-title'>{item.productName}</Text>
                     <View className='goods-msg'>
-                      <Text className='price'>¥{item.price}</Text>
+                      <Text className='price'>¥{(item.price/100).toFixed(2)}</Text>
                       {/*<Text className='pre-price'>¥{item.prePrice}</Text>*/}
                       <Text className='buy-btn'>立即抢购</Text>
                     </View>
@@ -247,7 +247,7 @@ class Index extends Component {
           <View className='city-list'>
             {
               cityList.map((item, index) => {
-                return <Text className={`city ${index === 1 && 'active'}`} key={'city'+index}>{item}</Text>
+                return <Text className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>{item.cityName}</Text>
               })
             }
           </View>
@@ -315,7 +315,7 @@ class Index extends Component {
         this.setState({
           hasDistance: !!res.data
         })
-        res.data && this.getCityList(res.data.train)
+        // res.data && this.getCityList(res.data.train)
         res.data && this.getCarFood(res.data)
       })
   }
@@ -390,14 +390,15 @@ class Index extends Component {
       .then(res => {
         this.setState({
           positionCity: res.data.areaName,
-          areaId: res.data.areaId
+          areaId: res.data.areaId + ''
         })
-        this.getListData()
+        this.getListData(this.state.tabIndex)
+        this.getCityList(this.props.trainInfo.train)
       })
   }
 
   // 请求推荐商品列表
-  getListData = () => {
+  getListData = (index) => {
     let loading = this.state.startIndex > 1
     let data = {
       resultNum: 5,
@@ -411,6 +412,9 @@ class Index extends Component {
       let list = res.data && res.data.results || []
       // let recList = this.state.recommendList.concat(res.data && res.data.results)
       let recList = [...this.state.recommendList, ...list]
+      if (this.state.tabIndex !== index) {
+        recList = []
+      }
       let length = res.data ? res.data.results.length : 0
       this.setState({
         noMoreData: length < 5,
@@ -421,7 +425,7 @@ class Index extends Component {
 
   // 广告页跳转
   toAdPage = (ad) => {
-    if (+ad.linkType === 1) {
+    if (+ad.linkType === 1 && ad.toUrl) {
       ad.toUrl && Taro.navigateTo({
         url: `/pages/adPage/index?url=${ad.toUrl}`
       })
@@ -435,10 +439,22 @@ class Index extends Component {
       Taro.navigateTo({
         url: page.url
       })
-    } else {
+    } else if (page.url) {
       Taro.navigateTo({
         url: `/pages/adPage/index?url=${page.url}`
       })
+    } else {
+      var query: any = Taro.createSelectorQuery()
+      query.selectViewport().scrollOffset()
+      query.select(".tab-list").boundingClientRect()
+      query.exec(function (res: any): void {
+        // console.log(res, 123)
+        var miss: number = res[0].scrollTop + res[1].top - 10
+        Taro.pageScrollTo({
+          scrollTop: miss,
+          duration: 200
+        });
+      });
     }
   }
 
@@ -451,15 +467,34 @@ class Index extends Component {
       recommendList: [],
       startIndex: 1
     })
-    this.getListData()
+    this.getListData(index)
   }
 
   // 城市列表
   getCityList = (train) => {
     API.Home.getCityList({train})
       .then(res => {
-        console.log(res.data.areaList, 'getCityList')
+        let id = this.state.areaId
+        let index: number = res.data.findIndex(item => {
+          return item.zwyCityId === id
+        })
+        this.setState({
+          positionCity: res.data[index].cityName,
+          cityList: res.data,
+          cityIndex: index
+        })
       })
+  }
+
+  // 选择城市
+  selectCity(city, index) {
+    this.setState({
+      positionCity: city.cityName,
+      areaId: city.zwyCityId,
+      cityIndex: index
+    }, () => {
+      this.getListData(this.state.tabIndex)
+    })
   }
 
   // 广告
@@ -523,7 +558,15 @@ class Index extends Component {
     ]
     this.props.setTotalPrice(item.salePrice)
     this.props.addGoods(goods)
-    Taro.setStorageSync('goods', this.state.cartGoods)
+    // Taro.setStorageSync('goods', goods)
+    let startStation = this.props.userStationInfo.startStation
+    if(!startStation) {
+      let train = this.props.trainInfo.train
+      Taro.navigateTo({
+        url: `/pages/orderSelectSite/index?trainNo=${train}`
+      })
+      return
+    }
     Taro.navigateTo({
       url: '/pages/createOrder/index'
     })

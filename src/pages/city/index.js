@@ -1,4 +1,4 @@
-import Taro, { getCurrentInstance } from '@tarojs/taro'
+import Taro, { getCurrentInstance, getCurrentPages } from '@tarojs/taro'
 import React, { Component } from 'react'
 import { View, Text, ScrollView, Input, Image, Block} from '@tarojs/components'
 import './city.scss'
@@ -39,7 +39,7 @@ export default class City extends Component {
     navigationBarTitleText: ''
   }
 
-  componentWillMount () { 
+  componentWillMount () {
     const res = Taro.getSystemInfoSync()
     this.setState({
       sHeight: res.windowHeight
@@ -88,7 +88,7 @@ export default class City extends Component {
             if (res.authSetting['scope.userLocation'] || res.authSetting['location']  || res.authSetting['scope.location']) {
               that.getMyCity(data)
             }else {
-              that.setState({ 
+              that.setState({
                 scoped_loca:false
               })
             }
@@ -104,7 +104,7 @@ export default class City extends Component {
             showCancel:false
           })
         }
-        that.setState({ 
+        that.setState({
           scoped_loca:false
         })
       }
@@ -147,11 +147,11 @@ export default class City extends Component {
   }
 
   //获取所有城市
-  getAllCity = () => { 
+  getAllCity = () => {
     API.StationService.getAllCityAndStation({},true)
     .then(res => {
-      if(res.data.code ==0){
-        let array = res.data.data
+      if(res.code == 0){
+        let array = res.data
         let navRight =[]
         for(var i =0;i<array.length;i++){
           if(array[i].list.length!=0){
@@ -166,7 +166,7 @@ export default class City extends Component {
         })
       }else{
         Taro.showToast({
-          title:res.data.msg,
+          title:res.msg,
           icon:'none'
         })
       }
@@ -186,7 +186,7 @@ export default class City extends Component {
     API.StationService.getHotCity()
     .then(res => {
       this.setState({
-        hotCity: res.data.hotCity
+        hotCity: res.hotCity
       })
     })
     .catch((e) => {
@@ -200,18 +200,18 @@ export default class City extends Component {
     let latitude = res.latitude
     let longitude = res.longitude
     API.StationService.getCityForLngLat({lnglat:latitude + ',' + longitude})
-    .then(res => {
+    .then(value => {
       if(Taro.getStorageSync("settinging")){
         Taro.removeStorage({
           key:'settinging'
         })
       }
       that.setState({
-        thisCity: data.data.cityname.split('市')[0],
+        thisCity: value.cityname.split('市')[0],
         scoped_loca:true
       })
     })
-    .catch((e) => {
+    .catch(() => {
 
     })
   }
@@ -247,7 +247,7 @@ export default class City extends Component {
       bok2: true,
       bok3: false
     })
-    
+
   }
 
   // 点击 搜索
@@ -270,7 +270,7 @@ export default class City extends Component {
         seach: [],
       })
     }
-  } 
+  }
 
   //输入
   change = (e) => {
@@ -292,7 +292,7 @@ export default class City extends Component {
         bok2: true,
         bok3: false
       })
-      
+
       if(!hasData){
         Taro.showToast({
           title: '未搜索到，请重新搜索',
@@ -330,10 +330,10 @@ export default class City extends Component {
       for (var i = 0; i < kongList.length; i++) {
         if (kongList[i].cityName.match(reg)  || kongList[i].cityAllPin.match(reg)  || kongList[i].citySimplePin.match(reg)) {
           updata.push(kongList[i])
-       
+
         }
       }
-      
+
         for(var i=0;i<arrlist.length;i++){
 
           for(var j=0;j<arrlist[i].list.length;j++){
@@ -344,7 +344,7 @@ export default class City extends Component {
                 let stinglist = arrlist[i].list[j].stationList
                 //arrlist[i].list[j].stationList = stinglist.slice(k,k+1)
                 if(arrlist[i].list[j].cityName.match(pyFirstChar) && arrlist[i].list[j].stationList[k].stationName.match(pyFirstChar) && updata.length>0){
-                  
+
                 }else{
                   updata.push({'cityName':arrlist[i].list[j].cityName,'stationList':stinglist.slice(k,k+1)})
                 }
@@ -365,7 +365,7 @@ export default class City extends Component {
     //   Taro.setStorageSync('cityNameS', city)
     //   Taro.setStorageSync('cityNameStype', type)
     //   Taro.setStorageSync('cityNameEtype', 1)
-     
+
     //   Taro.navigateBack({delta: 1})
     // }else if(se == 'end'){
     //   Taro.setStorageSync('cityNameE', city)
@@ -394,27 +394,29 @@ export default class City extends Component {
             to_station_type: dataset.type//类型
           }
         }
-        if(this.updateRef != ''){
-          let refs = beforePage.$component.$$refs
-          if(refs && refs.length > 0){
-            for(var i = 0; i<refs.length; i++){
-              let item = refs[i]
-              if(item.refName == this.updateRef){//item.refName == 'tripCard'
-                let target_component = item.target
-                //触发父页面中 子组件的方法
-                target_component && target_component.updateBackPageData && target_component.updateBackPageData(this.type,data)
-                Taro.navigateBack({delta: 1})
-                return
-              }
-            }
-          }
-        }else{
-          beforePage.$component.updateBackPageData && beforePage.$component.updateBackPageData(this.type,data)
-          Taro.navigateBack({delta: 1})
-       }
+        beforePage.setData(data)
+        Taro.navigateBack({delta: 1})
+        // if(this.updateRef != ''){
+        //   let refs = beforePage.$component.$$refs
+        //   if(refs && refs.length > 0){
+        //     for(var i = 0; i<refs.length; i++){
+        //       let item = refs[i]
+        //       if(item.refName == this.updateRef){//item.refName == 'tripCard'
+        //         let target_component = item.target
+        //         //触发父页面中 子组件的方法
+        //         target_component && target_component.updateBackPageData && target_component.updateBackPageData(this.type,data)
+        //         Taro.navigateBack({delta: 1})
+        //         return
+        //       }
+        //     }
+        //   }
+        // }else{
+          // beforePage.$component.updateBackPageData && beforePage.$component.updateBackPageData(this.type,data)
+
+       // }
     }
   }
-  
+
   //显示大写字母
   disBigChar = (e) => {
     e.stopPropagation();
@@ -444,7 +446,7 @@ export default class City extends Component {
       toView:''
     })
   }
-  
+
   //清空搜索内容
   detel = (e) => {
     e.stopPropagation()
@@ -472,11 +474,11 @@ export default class City extends Component {
 
   render () {
     let {hotCity,allCity,navRight,seach,sHeight,thisCity,value,bok1,bok2,bok3,scoped_loca}=this.state;
-   
+
     const hotCitys = hotCity.map((item, index) => {
       return <View className='hotCity-item' key={index} data-type="1" data-name={item} onClick={this.choiceCity}>{item}</View>
-    })  
-    
+    })
+
     const AllCityList = ({item}) => {
       return (
         item.list.map((x, index) => {
@@ -493,7 +495,7 @@ export default class City extends Component {
     })
 
     const navRights = navRight.map((item, index) => {
-      return <View className='letter' key={index} onClick={this.scrollToViewFn} data-id={item}> 
+      return <View className='letter' key={index} onClick={this.scrollToViewFn} data-id={item}>
                 {
                   this.bigChar == item &&
                   <View className="bigChar1">{this.bigChar}</View>
@@ -501,7 +503,7 @@ export default class City extends Component {
                 <View className={this.bigChar==item?'newletter cur':'newletter'}>{item}</View>
             </View>
     })
-    
+
     const Search_Item = ({item}) => {
         return (
           item.stationList.map((x, index) => {
@@ -534,21 +536,21 @@ export default class City extends Component {
         // return <View className='filter-item' key={index} data-name={item.cityName} onClick={this.choiceCity}  ><View>城市</View>{item.cityName}</View>
      return (<Block key={index}>
        {
-         item.cityName && 
+         item.cityName &&
           <View className='filter-item'   data-name={item.cityName} data-type="1" onClick={this.choiceCity}>
             <Block><View className="city">城市</View><Text>{item.cityName}</Text><View className="clour">（包含：{SearchItm}）</View></Block>
           </View>
        }
-                     
+
         <Search_Item item={item} />
       </Block>)
     })
     return (
-      <View className='city'> 
+      <View className='city'>
         <ScrollView scrollY scrollIntoView={this.toView}  onScroll={this.onScroll} style={'height:' + sHeight + 'px'}>
           <View className="sCs">
             <Image className="sImg" src={this.basScr+'/h5/tarocx9z/czt_v1/stationChange/icon_sous1.png'}></Image>
-            <Input id='ATcity1' className="serach" placeholder="中文  /  英文  /  首字母" value={value} onInput={this.change}></Input>  
+            <Input id='ATcity1' className="serach" placeholder="中文  /  英文  /  首字母" value={value} onInput={this.change}></Input>
             <Image id='ATcity2' className="cImg" onClick={this.detel} src={this.basScr+'/h5/tarocx9z/czt_v1/stationChange/icon_kdetele.png'}></Image>
           </View>
 
@@ -556,12 +558,12 @@ export default class City extends Component {
             <View className="location" id="topost">定位城市</View>
             <View className="location-list">
             {scoped_loca == true?<View className="location-item" data-type="1" data-name={thisCity} onClick={this.choiceCity}>
-                <Image src={this.basScr+'/h5/tarocx9z/czt_v1/stationChange/icon_location_n.png'}></Image> 
+                <Image src={this.basScr+'/h5/tarocx9z/czt_v1/stationChange/icon_location_n.png'}></Image>
                 {thisCity}
               </View>
               :<View className="no_scoped">定位服务已关闭，打开定位<Text onClick={this.openSetting}>去设置</Text></View>
             }
-              
+
             </View>
 
             {hotCity.length>0 && <Block>
@@ -570,7 +572,7 @@ export default class City extends Component {
                 {hotCitys}
               </View>
             </Block>}
-            
+
             {allCitys}
           </View>}
 
@@ -583,7 +585,7 @@ export default class City extends Component {
               <View className="text" onClick={this.positing}>定位</View>
               {hotCity.length>0 && <View className="text" onClick={this.toHot}>热门</View>}
             </View>
-            <View>{navRights}</View>           
+            <View>{navRights}</View>
           </View>}
         </ScrollView>
       </View>

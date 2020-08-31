@@ -122,9 +122,12 @@ class PayResult extends Component {
   }
 
   toAd = () => {
-    let adUrl = this.state.pageAd ? this.state.pageAd.toUrl : ''
-    // if (this.state.pageAd)
-    console.log(adUrl, 1)
+    let ad = this.state.pageAd
+    if (+ad.linkType === 1 && ad.toUrl) {
+      ad.toUrl && Taro.navigateTo({
+        url: `/pages/adPage/index?url=${ad.toUrl}`
+      })
+    }
   }
 
   toOrderList = () => {

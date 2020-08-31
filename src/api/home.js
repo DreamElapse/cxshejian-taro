@@ -13,7 +13,7 @@ export default {
   },
   // 获取城市列表
   getCityList(data) {
-    const url = `/ziwoyou/mtourists-api/pddapi/index/allcities`
+    const url = `/api/miniapp/api/train/listCity`
     return request.get({ url, data })
   },
   // 广告管理

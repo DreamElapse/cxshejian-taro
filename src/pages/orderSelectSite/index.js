@@ -420,12 +420,12 @@ class OrderSelectSite extends Component {
               startStation: list[0],
               endStation: list[1]
             })
-            Taro.navigateBack({
-              delta: 1
-            })
-            // Taro.navigateTo({
-            //   url: `/pages/createOrder/index`
+            // Taro.navigateBack({
+            //   delta: 1
             // })
+            Taro.redirectTo({
+              url: `/pages/createOrder/index`
+            })
           }else{
               Taro.showToast({
                 title: '请选择出发站',

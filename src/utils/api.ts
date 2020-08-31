@@ -82,8 +82,12 @@ class API {
         apiUrl: process.env.API_URL
       },
       {
-        code: '/wetaikeji', // 武汉威泰行程接口
+        code: '/wtkj', // 武汉威泰行程接口
         apiUrl: process.env.API_VEGA_STATION
+      },
+      {
+        code: '/weitaikeji', // 武汉威泰行程接口
+        apiUrl: process.env.API_WEITAIKEJI
       },
       {
         code: '/ziwoyou', // 自我游接口
@@ -104,7 +108,7 @@ class API {
           let code = val.code
           HTTP.Global.login({code})
             .then(() => {
-              let page = getCurrentInstance().page
+              let page: any = getCurrentInstance().page
               page.onShow()
               // toast && showToast({title: '操作失败，请从新操作'})
             })
@@ -113,7 +117,7 @@ class API {
     } else if (+res.status === 400) {
       toast && showToast({title: '接口请求失败', icon: 'none'})
     } else if (+res.code !== 1 && +res.state !== 1) {
-      toast && showToast({title: res.message, icon: 'none'})
+      toast && res.message && showToast({title: res.message, icon: 'none'})
     }
 
     return res

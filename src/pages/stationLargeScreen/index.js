@@ -136,7 +136,7 @@ export default class LargeScreen extends Component {
 
     API.StationService.getScreenListNew(url,params,true)
     .then(res => {
-      if(res.data.code!=997 && res.data.code != '0'){// 997:查询数据中心接口无数据返回
+      if(res.code!=997 && res.code != '0'){// 997:查询数据中心接口无数据返回
         Taro.showToast({
           title:'搜索失败',
           icon:'none',
@@ -144,7 +144,7 @@ export default class LargeScreen extends Component {
         })
         return
     }
-    let newList = res.data&&res.data.data&&res.data.data.data || []
+    let newList = res.data&&res.data.data || []
 
     if (newList == null || newList.length == 0) {
 
@@ -422,7 +422,7 @@ export default class LargeScreen extends Component {
 
     API.StationService.getScreenList(params,true)
     .then(res => {
-      if(res.data.code!=997&&res.data.code != '0'){//997:查询数据中心接口无数据返回
+      if(res.code!=997&&res.code != '0'){//997:查询数据中心接口无数据返回
         Taro.hideLoading()
         Taro.showToast({
           title:'搜索失败',
@@ -432,7 +432,7 @@ export default class LargeScreen extends Component {
         return
       }
 
-      let newList = res.data&&res.data.data&&res.data.data.data || []
+      let newList = res.data&&res.data.data || []
       if (p) { //第一页
         setTimeout(()=>{ //用定时器解决连续快速输入搜索的时候，setState数据错乱的问题 https://www.imooc.com/wenda/detail/402528（个人理解是多次发起setState 并不是依次执行-zj）
           that.setState({
@@ -687,11 +687,11 @@ export default class LargeScreen extends Component {
             </View>
             {/* <View className='td w15 hui'>{item.route[0]}</View> */}
             {/* <View className='td w15 hui'>{item.route[1]}</View> */}
-            <View className='td w15 hui'>{item.endStation}</View>
-            <View className='td w15 hui'>{item.normalStartTime}</View>
+            <View className='td w15 hui'>{item.endStation || '--'}</View>
+            <View className='td w15 hui'>{item.normalStartTime || '--'}</View>
             <View className='td w15 hui'>{item.ticketCheck || '--'}</View>
             {/* {(item.departLateType === 0 || item.departLateType === 1) && <View className='td w22' style='color:#333333'>{item.status}</View>} */}
-            {(item.departLateType === 0) && <View className='td w22' style='color:#333333'>--</View>}
+            {(item.departLateType === 0 || !item.departLateTyp) && <View className='td w22' style='color:#333333'>--</View>}
             {(item.departLateType === 1) && <View className='td w22' style='color:#333333'>正点</View>}
             {(item.departLateType === 2) && <View className='td w22' style='color:#23eaa4'>{item.departLateInfo == '0' ? '早点' : '早点'+ item.departLateInfo +"'"}</View>}
             {(item.departLateType === 3) && <View className='td w22' style='color:#ff6b69'>{item.departLateInfo == '0' ? '晚点' : '晚点'+ item.departLateInfo +"'"}</View>}

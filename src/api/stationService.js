@@ -3,33 +3,33 @@ import request from '@/utils/api'
 export default {
     // 获取车次整体数据
     getDetailByTrainNo(data,loading) {
-        const url = `/vega-station/schedule/detailByTrainNo`
+        const url = `/wtkj/vega-station/schedule/detailByTrainNo`
         return request.get({ url, data,loading })
     },
 
     // 获取站站数据
     getStationToStationByTrainNo(data,loading) {
-        const url = `/vega-station/schedule/detailByTrainNoMiniApp`
+        const url = `/wtkj/vega-station/schedule/detailByTrainNoMiniApp`
         return request.post({ url, data ,loading})
     },
     // 获取所有城市数据
     getAllCityAndStation(data,loading) {
-        const url = `/vega-station/dicChina/getAllCityAndStation`
+        const url = `/wtkj/vega-station/dicChina/getAllCityAndStation`
         return request.get({ url, data,loading })
     },
     // 获取热门城市数据
     getHotCity(data,loading) {
-        const url = `/vega-station/dicChina/getHotCity`
+        const url = `/wtkj/vega-station/dicChina/getHotCity`
         return request.get({ url, data,loading })
     },
     // 获取所在城市数据
     getCityForLngLat(data,loading) {
-        const url = `/vega-station/Gaode/getCityForLngLat`
+        const url = `/wtkj/vega-station/Gaode/getCityForLngLat`
         return request.get({ url, data,loading })
     },
     // 获取站站数据
     getTrainsDetailListMiniApp(data,loading) {
-        const url = `/vega-station/schedule/getTrainsDetailListMiniApp`
+        const url = `/wtkj/vega-station/schedule/getTrainsDetailListMiniApp`
         return request.post({ url, data,loading })
     },
     // 获取最近站点
@@ -42,17 +42,14 @@ export default {
         const url = `/weitaikeji/vega-station/Station/getHotStation`
         return request.get({ url, data,loading })
     },
-    // 获取乘车列表
-    getScreenListNew(url,data,loading) {
-        return request.get({ url, data,loading })
-    },
     // 获取搜索列表数据
     getScreenList(data,loading) {
-        const url = `/vega-station/vehiclenavigation/getScreenListNew`
+        const url = `/wtkj/vega-station/vehiclenavigation/getScreenListNew`
         return request.get({ url, data,loading })
     },
     // 获取乘车列表
-    getScreenListNew(url,data,loading) {
-        return request.get({ url, data,loading })
+    getScreenListNew(URL,data,loading) {
+      let url = `/wtkj${URL}`
+      return request.get({ url, data,loading })
     },
 }

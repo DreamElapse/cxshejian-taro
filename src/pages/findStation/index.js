@@ -106,6 +106,14 @@ export default class FindStation extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
+    let data = getCurrentInstance().page.data
+    if (data.dateC) {
+      this.setState({
+        dateC: data.dateC,
+        timeCC: data.timeCC,
+        weekDay: data.weekDay
+      })
+    }
     this.setState({
       rail:false, //选择高铁动车
       choseindex:-1,
@@ -149,21 +157,26 @@ export default class FindStation extends Component {
     }
     API.StationService.getTrainsDetailListMiniApp(params,true)
     .then(res => {
-      if(res.data.code=='0'){
-        let list = (res.data.data.onlineTrains).concat(res.data.data.timeoutTrain)
-        for(var i=0;i<list.length;i++){
-          if (list[i].interval && parseInt(list[i].interval)>0){
-            list[i].interval = that.timeStamp(list[i].interval)
+      if(+res.code === 0){
+        if (res.data) {
+          let list = (res.data.onlineTrains).concat(res.data.timeoutTrain)
+          for(var i=0;i<list.length;i++){
+            if (list[i].interval && parseInt(list[i].interval)>0){
+              list[i].interval = that.timeStamp(list[i].interval)
+            }
           }
+          that.setState({
+            list: list,
+            num: list.length
+          },function(){
+
+          })
         }
-        that.setState({
-          list: list,
-          num: list.length
-        },function(){
-
-        })
       }else{
-
+        Taro.showToast({
+          title: '无此数据',
+          icon: 'none'
+        })
         that.setState({
           thisPage:false,
           noPageText:res.data.msg
@@ -171,7 +184,6 @@ export default class FindStation extends Component {
       }
     })
     .catch((e) => {
-
       that.setState({
         thisPage:false,
         noPageText:e.errorText || e
@@ -319,7 +331,7 @@ export default class FindStation extends Component {
           <View className="tripdate">
               <View id='ATfind1' className="calendar" onClick={this.toCalendar}>
                 <Text>{top_time}</Text>
-                <Image src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_date.png'}></Image>
+                {/*<Image src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_date.png'}></Image>*/}
               </View>
           </View>
           <View id='ATfind3' className="topTitle">

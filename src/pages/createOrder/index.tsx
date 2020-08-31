@@ -69,8 +69,7 @@ class CreateOrder extends Component {
     username: '',
     mobile: '',
     memo: '',
-    isOpenMulitSeletor: false,
-    cartGoods: []
+    isOpenMulitSeletor: false
   }
 
   UNSAFE_componentWillMount() {
@@ -88,7 +87,7 @@ class CreateOrder extends Component {
 
      this.setState({
        seat: [carriage, ROW, SEAT],
-       cartGoods: Taro.getStorageSync('goods')
+       // cartGoods: Taro.getStorageSync('goods')
        // selectedSeat: `${carriage[0]} - ${ROW[0]} - ${SEAT[0]}`
      });
      // this.getDeliveryTime();
@@ -101,9 +100,10 @@ class CreateOrder extends Component {
     let startStation = this.props.userStationInfo.startStation
     if(!startStation) {
       let train = this.props.trainInfo.train
-      Taro.navigateTo({
+      Taro.redirectTo({
         url: `/pages/orderSelectSite/index?trainNo=${train}`
       })
+      return
     }
     startStation && this.getDeliveryTime()
 
@@ -113,7 +113,7 @@ class CreateOrder extends Component {
 
   /*----render-----*/
   render () {
-    const { username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex, cartGoods } = this.state
+    const { username, mobile, selectedSeat, memo, mealsDate, mealsDateIndex } = this.state
     const { userStationInfo, trainInfo, selectedGoodsList, totalPrice } = this.props
     return (
       <View className="create-order">
@@ -226,7 +226,6 @@ class CreateOrder extends Component {
 
   // 获取用户手机号
   getPhoneNumber = e => {
-    console.log(e)
     if (e.detail.errMsg === 'getPhoneNumber:ok') {
       let data = {
         encryptedData: e.detail.encryptedData,
@@ -394,7 +393,6 @@ class CreateOrder extends Component {
           signType: res.data.signType,
           paySign: res.data.paySign,
         }
-        console.log(data, 111)
         Taro.requestPayment({
           timeStamp: res.data.timeStamp,
           nonceStr: res.data.nonceStr,
@@ -402,17 +400,11 @@ class CreateOrder extends Component {
           signType: res.data.signType,
           paySign: res.data.paySign,
           success () {
-            console.log('-----success------')
             Taro.redirectTo({
               url: `/pages/payResult/index`
             })
           },
           fail () {
-            console.log('-----fail------')
-            // let search: string[] = []
-            // for (let key in data) {
-            //   search.push(`${key}=${data[key]}`)
-            // }
             Taro.redirectTo({
               url: `/pages/payResult/index?orderId=${value.orderId}`
             })
@@ -438,11 +430,6 @@ class CreateOrder extends Component {
 
   // 创建订单
   createOrder = () => {
-    Taro.getUserInfo({
-      success: (res) => {
-        console.log(res, 21)
-      }
-    })
     // 验证用户名
     if (!this.state.username) {
       Taro.showToast({ title: '请输入姓名', icon: 'none', duration: 1500, mask: true });
@@ -497,7 +484,6 @@ class CreateOrder extends Component {
     }
     let mealsData: string = this.state.mealsDate[this.state.mealsDateIndex]
     const { userStationInfo, trainInfo, ticketList } = this.props
-    console.log(this.state.mealsDate[this.state.mealsDateIndex], ticketList, 'meals')
 
     const data = {
       carriage: carriage.substr(0, carriage.length - 1),
@@ -516,7 +502,7 @@ class CreateOrder extends Component {
       site,
       startStationId: ticketList[0].statinId,
       startStationName: ticketList[0].statinName,
-      totalAmount: this.props.totalPrice,
+      totalAmount: this.props.totalPrice * 100,
       train: trainInfo.train,
       // trainStartTime: dayjs(ticketList[0].leaveTime).format('YYYY-MM-DD hh:mm:ss'),
       // trainEndTime: dayjs(ticketList[1].arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
@@ -528,14 +514,13 @@ class CreateOrder extends Component {
       upTrainTime: this.timeHandle(userStationInfo.startStation.arrivalTime),
       userId: ''
     }
-    API.Order.createOrder(data).then(res => {
-      if (res) {
+    API.Order.createOrder(data)
+      .then(res => {
         // 创建订单成功，开始调起支付接口 res.data.bid/order_id/protype
         this.requestPayment(res.data.id)
         // 发送统计数据
         // this.sendEventAfterThis();
-      }
-    });
+      })
   }
 
   // 发送统计数据-由推广二维码进入

@@ -19,7 +19,8 @@ import './index.scss'
 
 type PageStateProps = {
   trainInfo: any,
-  date: string
+  date: string,
+  userStationInfo: any
 }
 
 type PageDispatchProps = {
@@ -96,7 +97,7 @@ class CarFood extends Component {
                           <Image src={goods.thumbImg} className='goods-img' mode='aspectFill'> </Image>
                           <Text className='goods-title'>{goods.productName}</Text>
                           <View className='goods-msg'>
-                            <Text className='goods-price'>¥{goods.price}</Text>
+                            <Text className='goods-price'>¥{(goods.price/100).toFixed(2)}</Text>
                             <Image src={addIcon} className='add-icon' mode="aspectFill" onClick={() => this.addGoods(goods)}></Image>
                           </View>
                         </View>
@@ -139,7 +140,7 @@ class CarFood extends Component {
                 return (
                   <View className='cart-goods-item' key={'cart'+index}>
                     <Text className='goods-name'>{item.productName}</Text>
-                    <Text className='price'>¥{item.price}</Text>
+                    <Text className='price'>¥{(item.price/100).toFixed(2)}</Text>
                     <View className='number-handle'>
                       <Image src={subIcon} className='sub-icon' onClick={() => this.changeGoodsNumber(item, 'sub')}></Image>
                       <Text className='number'>{item.number}</Text>
@@ -240,13 +241,13 @@ class CarFood extends Component {
 
   // 计算总价
   totalMoney = () => {
-    let total = 0
+    let total: number = 0
     let goodsList: any[] = this.state.cartGoods
     goodsList.forEach(item => {
-      let price = +(item.price * 100).toFixed(2)
-      total = (total*100 + item.number * price)/100
+      let price: number = item.price * 1
+      total = total + item.number * price
     })
-    return total
+    return (total / 100).toFixed(2)
   }
 
   // 购物车商品总数
@@ -275,6 +276,14 @@ class CarFood extends Component {
     this.props.setTotalPrice(this.totalMoney())
     this.props.addGoods(this.state.cartGoods)
     Taro.setStorageSync('goods', this.state.cartGoods)
+    let startStation = this.props.userStationInfo.startStation
+    if(!startStation) {
+      let train = this.props.trainInfo.train
+      Taro.navigateTo({
+        url: `/pages/orderSelectSite/index?trainNo=${train}`
+      })
+      return
+    }
     Taro.navigateTo({
       url: '/pages/createOrder/index'
     })
@@ -285,7 +294,7 @@ class CarFood extends Component {
     // event.stopPropagation()
     let cartGoods: any[] = this.state.cartGoods
     let index = cartGoods.findIndex(goods => {
-      return goods.id === item.id
+      return goods.productId === item.productId
     })
     if (type === 'add' && item.quantity > cartGoods[index].number) {
       cartGoods[index].number++

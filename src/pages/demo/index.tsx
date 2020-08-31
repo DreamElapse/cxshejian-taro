@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Button, Text } from '@tarojs/components'
+import { View, Swiper, SwiperItem } from '@tarojs/components'
 
 import { add, minus, asyncAdd } from '../../store/actions'
 
@@ -55,11 +55,17 @@ class Demo extends Component {
   render () {
     return (
       <View className='demo'>
-        <Button className='add_btn' onClick={this.props.add}>11+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
-        <View><Text>Hello, World</Text></View>
+        <Swiper
+          className='scroll-box'
+          vertical={false}
+        >
+          <SwiperItem>
+            1
+          </SwiperItem>
+          <SwiperItem>
+            2
+          </SwiperItem>
+        </Swiper>
       </View>
     )
   }

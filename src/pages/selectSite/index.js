@@ -26,7 +26,6 @@ export default class Index extends Component {
         dateC: '',
         timeCC:'',
         weekDay:'',
-
         is_send_from: false, //记录是否传入出发站
         is_send_to: false, //记录是否传入到达站
         do_select_click: false, //是否进行了选择操作，选择或取消选择，如：车次大屏进入，传入了武汉出发站点后，武汉前面车次不可选，若进行了到达北京选择后，进入选中两个状态，此时再取消北京，则其他就都可选状态，而不是传入时状态变化
@@ -101,10 +100,17 @@ export default class Index extends Component {
       }
 
       componentDidShow () {
-
+        let data = getCurrentInstance().page.data
+        if (data.dateC) {
+          this.setState({
+            dateC: data.dateC,
+            timeCC: data.timeCC,
+            weekDay: data.weekDay
+          })
+          this.getTicket(data.dateC)
+        }
         const {dateC, stationList} = this.state
         if(!this.isload_success && isNotEmptyObj(dateC) && (isEmptyObj(stationList) || stationList.length == 0)){
-
           this.getTicket(dateC)
         }
       }
@@ -279,15 +285,22 @@ export default class Index extends Component {
         this.isload_success = false
         API.StationService.getStationToStationByTrainNo({strokeTime:dateC,trainNo:that.trainNo})
         .then(res => {
-          Taro.setStorageSync('dateC', dateC)
-          let list  = res.data.data
-          for(var i=0;i<list.length;i++){
-            list[i].stationIndex = i
+          if (res.data) {
+            Taro.setStorageSync('dateC', dateC)
+            let list  = res.data
+            for(var i=0;i<list.length;i++){
+              list[i].stationIndex = i
+            }
+            that.init_data(list, dateC)
+          } else {
+            Taro.showToast({
+              title: '无此数据',
+              icon: 'none'
+            })
           }
-          that.init_data(list, dateC)
           that.isload_success = true
         })
-        .catch((e) => {
+        .catch(() => {
           that.isload_success = false
         })
       }
