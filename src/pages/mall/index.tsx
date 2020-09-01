@@ -141,14 +141,14 @@ class Mall extends Component {
         this.state.webviewParam['custId'] = paramsArr[2]
         this.state.webviewParam['shareId'] = paramsArr[3]
         this.state.webviewParam['page'] = `productdynamic/${paramsArr[1]}`
-        this.state.webviewParam['siteId'] = paramsArr[4]
+        this.state.webviewParam['siteId'] = 6
       } else if(paramsArr[0] === 'H') {
        
         this.state.webviewParam['environmental'] = paramsArr[paramsArr.length - 2]
         this.state.webviewParam['custId'] = paramsArr[2]
         this.state.webviewParam['shareId'] = paramsArr[3]
         this.state.webviewParam['page'] = `home`
-        this.state.webviewParam['siteId'] = paramsArr[4]
+        this.state.webviewParam['siteId'] = 6
       }
        else {
         if (paramsArr[paramsArr.length - 1] === 'p') {
@@ -163,7 +163,7 @@ class Mall extends Component {
             this.state.webviewParam['page'] = pages['u']
           }
           if (paramsArr[3] !== 't') {
-            this.state.webviewParam['siteId'] = paramsArr[3]
+            this.state.webviewParam['siteId'] = 6
           }
           setTimeout(()=>{
             console.log(this.state.webviewParam,'++++++++++')
@@ -184,7 +184,7 @@ class Mall extends Component {
       let baseUrl = config[this.state.webviewParam.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
-      let currentUrl = `${baseUrl}${routePage}/${infoId}?v=${Timestamp}&${urlParams}`
+      let currentUrl = `${baseUrl}${routePage}/${infoId}?v=${Timestamp}&siteId=6&${urlParams}`
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -195,7 +195,7 @@ class Mall extends Component {
       let baseUrl = config[this.state.webviewParam.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
-      let currentUrl = `${baseUrl}${routePage}/${activityId}?v=${Timestamp}&${urlParams}`
+      let currentUrl = `${baseUrl}${routePage}/${activityId}?v=${Timestamp}&siteId=6&${urlParams}`
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -205,7 +205,7 @@ class Mall extends Component {
       let baseUrl = config[this.state.webviewParam.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
-      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&${urlParams}`
+      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -215,7 +215,7 @@ class Mall extends Component {
       let baseUrl = config[this.state.webviewParam.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
-      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&${urlParams}`
+      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -233,7 +233,7 @@ class Mall extends Component {
       let baseUrl = config[this.state.webviewParam.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
-      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&${urlParams}`
+      let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -246,11 +246,8 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       console.log(Timestamp)
       this.setState({
-        webViewUrl: `${webviewlink}home?v=${Timestamp}&${urlParams}`
+        webViewUrl: `${webviewlink}home?v=${Timestamp}&siteId=6&${urlParams}`
       })
-      setTimeout(()=>{
-        console.log(this.state.webViewUrl,'else')
-      },1000)
     }
     setTimeout(()=>{
       console.log(this.state.webViewUrl,'----------------------')
