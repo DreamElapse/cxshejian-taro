@@ -36,7 +36,7 @@ class Mall extends Component {
   componentDidShow () {
     let infoId = Taro.getStorageSync('infoId')
     infoId && this.setState({
-      params: `siteId=6&page=product&infoId${infoId}`
+      params: `siteId=6&environmental=t&page=product&infoId${infoId}`
     })
     Taro.removeStorageSync('infoId')
   }
@@ -52,7 +52,7 @@ class Mall extends Component {
   render () {
     const { params } = this.state
     return (
-      <WebView src={`http://testm.lvyoupdd.com:8083/home?${params}`} />
+      <WebView src={`https://testm.lvyoupdd.com:8083/home?${params}`} />
     )
   }
 }
