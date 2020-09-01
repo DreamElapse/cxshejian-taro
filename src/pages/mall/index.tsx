@@ -94,7 +94,6 @@ class Mall extends Component {
     if (query && query.scene) {
       // 扫描商品详情二维码进入的情况或者扫码直播间海报
       const scene = decodeURIComponent(query.scene)
-      console.log(scene,'=============')
       let paramsArr = scene.split('/')
       if (paramsArr[0] === 'R') {
         // 直播间海报
@@ -178,7 +177,6 @@ class Mall extends Component {
     }
 
     // 上面一直是处理app.globalData.webviewParam的方法
-    console.log(this.state.webviewParam, '------=============')
     let currentUrl = ''
     
     if (this.state.webviewParam && this.state.webviewParam.infoId) {
@@ -187,8 +185,6 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}/${infoId}?v=${Timestamp}&${urlParams}`
-      // this.state.webViewUrl = currentUrl
-      // console.log('================')
       this.setState({
         webViewUrl: currentUrl
       }, () => {
