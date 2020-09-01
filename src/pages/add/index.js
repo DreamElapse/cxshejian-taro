@@ -138,14 +138,16 @@ export default class Add extends Component {
         weekDay: data.weekDay,
         toDay: data.toDay,
       })
-    } else if(data.from_station_type){//更新出发站
+    }
+    if(data.from_station_type){//更新出发站
       this.setState({
-        cityNameS: data.station,
+        cityNameS: data.cityNameS,
       })
       this.from_station_type = data.from_station_type
-    }else if(data.to_station_type){//更新到达站
+    }
+    if(data.to_station_type){//更新到达站
       this.setState({
-        cityNameE: data.station,
+        cityNameE: data.cityNameE,
       })
       this.to_station_type =  data.to_station_type
     }
@@ -268,6 +270,13 @@ export default class Add extends Component {
       // 车次查询 -> 跳转车次出发站选择页  selectSite/index
       API.StationService.getDetailByTrainNo({date: dateC,trainNO:trainNO})
       .then(res => {
+        if (+res.state === 2) {
+          Taro.showToast({
+            title: '无此车次信息',
+            icon: 'none'
+          })
+          return
+        }
         let jump_params = {
           sourcefrom: this.is_monent_enter ? addTrip_sourcefrom_enum.momentSearch_trainSearch : addTrip_sourcefrom_enum.addTrain_trainSearch,
           trainNo:trainNO,
@@ -278,7 +287,7 @@ export default class Add extends Component {
         let jumpUrl = '../selectSite/index?'+queryParams(jump_params)
         Taro.navigateTo({
           url: jumpUrl
-        }).then(res=>{
+        }).then(()=>{
           that.onHiddenKeyBoard()
           let arry = Taro.getStorageSync('hCArry') || []
           let cc = trainNO
@@ -295,7 +304,7 @@ export default class Add extends Component {
           Taro.setStorageSync('hCArry', arry)
         })
       })
-      .catch((e) => {
+      .catch(() => {
 
       })
     }else if(current == '1'){
@@ -438,7 +447,7 @@ export default class Add extends Component {
     this.setState({
       cityNameS:name1,
       cityNameE:name2
-    },res=>{
+    }, ()=>{
       that.choice()
     })
   }
@@ -500,7 +509,7 @@ export default class Add extends Component {
   }
 
   render () {
-    let {current,activityBannerList,activityBanner, historyCC, historyZZ,content,timeCC,weekDay,toDay,hasBoard,cityNameS,animationData,cityNameE} = this.state
+    let {current,activityBannerList,activityBanner, historyCC, historyZZ,content,timeCC,weekDay,toDay,hasBoard,cityNameS,animationData,cityNameE, color, animations} = this.state
     const history1 = historyCC.map((item, index)=>{
       return <View className='hisC' key={index} data-num={item} onClick={this.hop}>{item}</View>
     })
@@ -540,7 +549,7 @@ export default class Add extends Component {
             <View className='trainNo'>
               <View className='leftBox'>
                 <View className='textC'>车次号</View>
-                <View id='ATadd1' className={"inputCol {{animations}}"} onClick={this.showKeyBoard} style={"color:{{color}}"}>{content}</View>
+                <View id='ATadd1' className={`inputCol ${animations}`} onClick={this.showKeyBoard} style={`color: ${color}`}>{content}</View>
               </View>
               <View className='rightBox' id='ATadd2'>
                 {/* <View className="scanbgc">

@@ -174,9 +174,8 @@ export default class SwitchStation extends Component {
     that.setState({
       toView: 'inToView' + _id,
       bigChar:_id
-    },res=>{
-      let stim = null
-      stim = setTimeout(() => {
+    }, ()=>{
+      setTimeout(() => {
         this.setState({
           bigChar:0,
         })
@@ -376,10 +375,10 @@ searchPyFunc = (pyFirstChar) => {
   var NR = navRight.map((item, index) => {
     return <View class='letter' key={index} className='letter' onClick={this.scrollToViewFn} data-id={item}>
       {
-        this.bigChar == item &&
-        <View className="bigChar1">{this.bigChar}</View>
+        bigChar == item &&
+        <View className="bigChar1">{bigChar}</View>
       }
-      <View className={this.bigChar==item?'newletter cur':'newletter'}>{item}</View>
+      <View className={bigChar==item?'newletter cur':'newletter'}>{item}</View>
 
     </View>
   })

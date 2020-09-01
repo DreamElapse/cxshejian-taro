@@ -50,6 +50,6 @@ export default {
     // 获取乘车列表
     getScreenListNew(URL,data,loading) {
       let url = `/wtkj${URL}`
-      return request.get({ url, data,loading })
+      return request.get({ url, data, loading })
     },
 }

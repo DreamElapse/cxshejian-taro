@@ -45,7 +45,7 @@ const BUTTON_LIST = [
   {
     img: icon_thsc,
     name: '特惠商城',
-    url: ''
+    url: '/tab/pages/mall/index'
   },
   {
     img: icon_cccx,
@@ -93,7 +93,8 @@ class Index extends Component {
     themeId: '101098',
     excludeThemeId: '',
     isGetLocation: false,
-    hasDistance: false,
+    hasDistance: true,
+    hideModal: true,
     topAd: [],
     middleAd: [],
     noMoreData: false,
@@ -110,7 +111,7 @@ class Index extends Component {
     // 扶手码code
     let router: any = getCurrentInstance().router
     let code = router.params.code || 9999
-    this.setState({code}, () => {
+    code && this.setState({code}, () => {
       this.getTrain()
     })
 
@@ -131,38 +132,38 @@ class Index extends Component {
   }
 
   render () {
-    const { cityList, cityIndex, buttonList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, week } = this.state
+    const { cityList, cityIndex, hideModal, buttonList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, week } = this.state
     const { trainInfo } = this.props
     return (
       <View className='home-page'>
         <View className='top-sec'>
-          {
-            hasDistance && <View className='ticket'>
-              <View className='top-msg'>
-                <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>
-                {/*<Text className='tip-text'>到达口:C1</Text>*/}
-              </View>
-              <View className='bottom-msg'>
-                <View className='left-msg'>
-                  <Text className='name'>{trainInfo.startStation}</Text>
-                  <Text className='time'>{trainInfo.startTime}</Text>
-                </View>
-                <View className='center-msg'>
-                  <Text className='train'>{trainInfo.train}</Text>
-                  <Text className='icon'></Text>
-                  <Text className='long-time'>{trainInfo.duration}</Text>
-                </View>
-                <View className='right-msg'>
-                  <Text className='name'>{trainInfo.endStation}</Text>
-                  <Text className='time'>{trainInfo.endTime}</Text>
-                </View>
+          {/*{*/}
+          {/*  hasDistance && <View className='ticket'>*/}
+          {/*    <View className='top-msg'>*/}
+          {/*      <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>*/}
+          {/*      /!*<Text className='tip-text'>到达口:C1</Text>*!/*/}
+          {/*    </View>*/}
+          {/*    <View className='bottom-msg'>*/}
+          {/*      <View className='left-msg'>*/}
+          {/*        <Text className='name'>{trainInfo.startStation}</Text>*/}
+          {/*        <Text className='time'>{trainInfo.startTime}</Text>*/}
+          {/*      </View>*/}
+          {/*      <View className='center-msg'>*/}
+          {/*        <Text className='train'>{trainInfo.train}</Text>*/}
+          {/*        <Text className='icon'></Text>*/}
+          {/*        <Text className='long-time'>{trainInfo.duration}</Text>*/}
+          {/*      </View>*/}
+          {/*      <View className='right-msg'>*/}
+          {/*        <Text className='name'>{trainInfo.endStation}</Text>*/}
+          {/*        <Text className='time'>{trainInfo.endTime}</Text>*/}
+          {/*      </View>*/}
 
-              </View>
-              <Text className='bottom-space'></Text>
-            </View>
-          }
+          {/*    </View>*/}
+          {/*    <Text className='bottom-space'></Text>*/}
+          {/*  </View>*/}
+          {/*}*/}
           {
-            hasDistance || topAd.map((item, index) => {
+            hasDistance && topAd.map((item, index) => {
               return <Image src={item.imageUrl} mode="aspectFill" className='topImg' key={'img'+index} onClick={() => {this.toAdPage(item)}}></Image>
             })
           }
@@ -183,19 +184,15 @@ class Index extends Component {
         </View>
         {/*------免费试吃/开卡------*/}
         <View className='sec-middle'>
-          <View className='foretaste'>
-            <Navigator url="/page/adPage/index?url=">
-              <Text className='text'>车厢食品免费试吃</Text>
-              <Image src={mfsc} className='taste-img' mode="aspectFill" />
-            </Navigator>
-          </View>
+          <Navigator className='foretaste' url="/page/adPage/index?url=">
+            <Text className='text'>车厢食品免费试吃</Text>
+            <Image src={mfsc} className='taste-img' mode="aspectFill" />
+          </Navigator>
 
-          <View className='open-card'>
-            <Navigator url="/pages/adPage/index?url=https://sj-pre.yishizongheng.com/activate-card">
-              <Text className='text'>建行信用卡开卡送现金</Text>
-              <Image src={jhkk} className='card-img' mode="aspectFill" />
-            </Navigator>
-          </View>
+          <Navigator className='open-card' url="/pages/adPage/index?url=https://sj-pre.yishizongheng.com/activate-card">
+            <Text className='text'>建行信用卡开卡送现金</Text>
+            <Image src={jhkk} className='card-img' mode="aspectFill" />
+          </Navigator>
 
         </View>
 
@@ -217,7 +214,7 @@ class Index extends Component {
         </Swiper>
 
         {/*------乘务美食------*/}
-        {hasDistance && <View className='crew-food'>
+        {hideModal && <View className='crew-food'>
           {goodsList.length > 0 && <View className='title'>
             <Text className='name'>{trainInfo.train}乘务员美食推荐</Text>
             <View className='icon' onClick={this.toCarFood}>更多</View>
@@ -242,17 +239,18 @@ class Index extends Component {
         </View>}
 
         {/*------途径城市-------*/}
-        {hasDistance && <View className='road-city'>
-          <View className='name'>途经城市好物推荐</View>
-          <View className='city-list'>
-            {
-              cityList.map((item, index) => {
-                return <Text className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>{item.cityName}</Text>
-              })
-            }
-          </View>
-        </View>}
+        {/*{hasDistance && <View className='road-city'>*/}
+        {/*  <View className='name'>途经城市好物推荐</View>*/}
+        {/*  <View className='city-list'>*/}
+        {/*    {*/}
+        {/*      cityList.map((item, index) => {*/}
+        {/*        return <Text className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>{item.cityName}</Text>*/}
+        {/*      })*/}
+        {/*    }*/}
+        {/*  </View>*/}
+        {/*</View>}*/}
         {/*<Swiper>*/}
+
         {/*  {*/}
         {/*    cityList.map((item, index) => {*/}
         {/*      return (*/}
@@ -281,7 +279,7 @@ class Index extends Component {
           {
             recommendList.map((item, index) => {
               return (
-                <View className='recommend-item' key={'re'+index} onClick={() => {this.toAccount(item)}}>
+                <View className='recommend-item' key={'re'+index} onClick={() => {this.toMall(item)}}>
                   <Image src={item.signImg} className='recommend-img' mode="aspectFill"></Image>
                   <Text className='recommend-title'>{item.infoTitle}</Text>
                   <View className='recommend-msg'>
@@ -312,9 +310,9 @@ class Index extends Component {
     API.Home.getTrain({qrcode: this.state.code})
       .then(res => {
         res.data && this.props.setTrainInfo(res.data)
-        this.setState({
-          hasDistance: !!res.data
-        })
+        // this.setState({
+        //   hasDistance: !!res.data
+        // })
         // res.data && this.getCityList(res.data.train)
         res.data && this.getCarFood(res.data)
       })
@@ -393,7 +391,7 @@ class Index extends Component {
           areaId: res.data.areaId + ''
         })
         this.getListData(this.state.tabIndex)
-        this.getCityList(this.props.trainInfo.train)
+        // this.getCityList(this.props.trainInfo.train)
       })
   }
 
@@ -435,7 +433,11 @@ class Index extends Component {
   // 跳转页面
   toPage = (page) => {
     // 跳小程序页面和h5页面
-    if (page.url.includes('/pages')) {
+    if (page.url.includes('/tab')) {
+      Taro.switchTab({
+        url: page.url.replace('/switch', '')
+      })
+    } else if (page.url.includes('/pages')) {
       Taro.navigateTo({
         url: page.url
       })
@@ -443,19 +445,20 @@ class Index extends Component {
       Taro.navigateTo({
         url: `/pages/adPage/index?url=${page.url}`
       })
-    } else {
-      var query: any = Taro.createSelectorQuery()
-      query.selectViewport().scrollOffset()
-      query.select(".tab-list").boundingClientRect()
-      query.exec(function (res: any): void {
-        // console.log(res, 123)
-        var miss: number = res[0].scrollTop + res[1].top - 10
-        Taro.pageScrollTo({
-          scrollTop: miss,
-          duration: 200
-        });
-      });
     }
+    // else {
+    //   var query: any = Taro.createSelectorQuery()
+    //   query.selectViewport().scrollOffset()
+    //   query.select(".tab-list").boundingClientRect()
+    //   query.exec(function (res: any): void {
+    //     // console.log(res, 123)
+    //     var miss: number = res[0].scrollTop + res[1].top - 10
+    //     Taro.pageScrollTo({
+    //       scrollTop: miss,
+    //       duration: 200
+    //     });
+    //   });
+    // }
   }
 
   // 切换商品推荐列表
@@ -478,7 +481,7 @@ class Index extends Component {
         let index: number = res.data.findIndex(item => {
           return item.zwyCityId === id
         })
-        this.setState({
+        index > -1 && this.setState({
           positionCity: res.data[index].cityName,
           cityList: res.data,
           cityIndex: index
@@ -569,6 +572,15 @@ class Index extends Component {
     }
     Taro.navigateTo({
       url: '/pages/createOrder/index'
+    })
+  }
+
+  // 跳转商城提交订单
+  toMall = (item) => {
+    let infoId = item.infoId
+    Taro.setStorageSync('infoId', infoId)
+    Taro.switchTab({
+      url: `/pages/mall/index`
     })
   }
 }

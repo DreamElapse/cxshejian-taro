@@ -30,12 +30,12 @@ export default {
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: '畅行舌尖',
+    navigationBarTitleText: '12306.舌尖上的旅途',
     navigationBarTextStyle: 'black'
   },
   tabBar: {
     color: '#999999',
-    selectedColor: "#f8b02a",
+    selectedColor: "#2cb1fc",
     borderStyle: "black",
     backgroundColor: "#ffffff",
     list: [

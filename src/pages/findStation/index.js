@@ -315,7 +315,7 @@ export default class FindStation extends Component {
               <View className={classNames("end", item.valid == 0 || item.trainStatus == 1?'traveColr':'')}>{item.arrStationName}</View>
               <View className={classNames("end-time",item.valid==0 || item.trainStatus ==1?'traveColr':'')}>
                 {item.arrTime}
-                {daysNum && <View className={item.valid == 0 || item.trainStatus == 1? 'daysNum daysNumAlp':'daysNum' }>{daysNumTip}</View>}
+                {daysNum > 0 && <View className={item.valid == 0 || item.trainStatus == 1? 'daysNum daysNumAlp':'daysNum'}>{daysNumTip}</View>}
               </View>
             </View>
           </View>
