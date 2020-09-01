@@ -33,18 +33,21 @@ class Mall extends Component {
     params: 'siteId=6'
   }
 
-  componentWillUnmount () { }
-
   componentDidShow () {
     let infoId = Taro.getStorageSync('infoId')
     infoId && this.setState({
       params: `siteId=6&page=product&infoId${infoId}`
     })
     Taro.removeStorageSync('infoId')
-    console.log(this.state.params, 12)
   }
 
+  UNSAFE_componentWillUnmount () { }
+
   componentDidHide () { }
+
+  onLoad () {
+    localStorage.setItem('zowoyooToken','2222222222')
+  }
 
   render () {
     const { params } = this.state

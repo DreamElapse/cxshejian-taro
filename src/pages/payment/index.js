@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { View } from "@tarojs/components";
-import Taro, { getCurrentPages } from '@tarojs/taro'
+import Taro, { getCurrentPages,showToast,getStorageSync,requestPayment } from '@tarojs/taro'
 import "./index.scss";
 import API from '@/api'
 export default class Payment extends Component {
   onLoad (options) {
     const token = options['X-Authorization']
-    const interiorAppId = 109
+    const interiorAppId = `wx18f8259aecab011a`
     Taro.request({
-      url: `${config.target}/mtourists-core/order/minapp/payInfo/${options.oderId}?interiorAppId=${interiorAppId}&openid=${getApp().globalData.openId}`,
+      url: `${config.target}/mtourists-core/order/minapp/AllinPayInfo/${options.oderId}?appId=${interiorAppId}&openid=${Taro.getStorageSync('token')}`,
       method: 'POST',
       header: {
         'X-Authorization': `Bearer ${token}`,
-        'siteId': options.siteId
+        'siteId': 6
       },
       success: res => {
         console.log('wo request'+JSON.stringify(res))

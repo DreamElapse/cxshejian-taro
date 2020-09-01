@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View,Button,Image,Text } from "@tarojs/components";
-import Taro from '@tarojs/taro'
+import Taro,{request,getStorageSync} from '@tarojs/taro'
+import config from '../../utils/config'
 import "./index.scss";
 import API from '@/api'
 import firstStep from '@/static/img/zowoyoo/first-step.png'
@@ -22,79 +23,79 @@ export default class Onlineservice extends Component {
         titleType: options.titleType,
         siteId: options.siteId
       })
-      API.Zowoyoo.attentionCode({
-        sceneId: 334
-      }).then(res=>{
-        if (res.data.state === 1) {
-          // 未关注公众号
-          this.setState({
-            isAttent: false
-          })
-        } else {
-          // 已关注公众号
-          this.setState({
-            isAttent: true
-          })
-        }
-      }).catch(()=>{
-        this.setState({
-          isAttent: false
-        })
-      })
-      // Taro.request({
-      //   url: `${config.target}/mtourists-api/pddapi/user/attentionCode?sceneId=334`,
-      //   method: 'GET',
-      //   header: {
-      //     'X-Authorization': `Bearer ${token}`
-      //   },
-      //   success: res => {
-      //     if (res.data.state === 1) {
-      //       // 未关注公众号
-      //       this.setState({
-      //         isAttent: false
-      //       })
-      //     } else {
-      //       // 已关注公众号
-      //       this.setState({
-      //         isAttent: true
-      //       })
-      //     }
-      //   },
-      //   fail: err => {
+      // API.Zowoyoo.attentionCode({
+      //   sceneId: 334
+      // }).then(res=>{
+      //   if (res.data.state === 1) {
+      //     // 未关注公众号
       //     this.setState({
       //       isAttent: false
       //     })
+      //   } else {
+      //     // 已关注公众号
+      //     this.setState({
+      //       isAttent: true
+      //     })
       //   }
+      // }).catch(()=>{
+      //   this.setState({
+      //     isAttent: false
+      //   })
       // })
-      API.Zowoyoo.savaLink({
-        content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
-          minappOpenid: getApp().globalData.openId,
-          url: 'url',
-          isFollow: 1,
-          siteId: this.state.siteId
-      }).then(res=>{
-        console.log(res)
+      Taro.request({
+        url: `${config.target}/mtourists-api/pddapi/user/attentionCode?sceneId=334`,
+        method: 'GET',
+        header: {
+          'X-Authorization': `Bearer ${token}`
+        },
+        success: res => {
+          if (res.data.state === 1) {
+            // 未关注公众号
+            this.setState({
+              isAttent: false
+            })
+          } else {
+            // 已关注公众号
+            this.setState({
+              isAttent: true
+            })
+          }
+        },
+        fail: err => {
+          this.setState({
+            isAttent: false
+          })
+        }
       })
-      // Taro.request({
-      //   url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
-      //   method: 'POST',
-      //   data: {
-      //     content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
+      // API.Zowoyoo.savaLink({
+      //   content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
       //     minappOpenid: getApp().globalData.openId,
       //     url: 'url',
       //     isFollow: 1,
       //     siteId: this.state.siteId
-      //   },
-      //   header: {
-      //     'X-Authorization': `Bearer ${token}`
-      //   },
-      //   success: res => {
-      //     console.log(res)
-      //   },
-      //   fail: err => {
-      //     console.log(err)
-      //   }
+      // }).then(res=>{
+      //   console.log(res)
       // })
+      Taro.request({
+        url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
+        method: 'POST',
+        data: {
+          content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
+          minappOpenid: Taro.getStorageSync('token'),
+          url: 'url',
+          isFollow: 1,
+          siteId: 6
+        },
+        header: {
+          'X-Authorization': `Bearer ${token}`
+        },
+        success: res => {
+          console.log(res)
+        },
+        fail: err => {
+          console.log(err)
+        }
+      })
     }
   }
   accountLoad() {

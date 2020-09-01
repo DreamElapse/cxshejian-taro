@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View, Button, Image, Text } from "@tarojs/components";
-import Taro from '@tarojs/taro'
+import Taro,{showToast} from '@tarojs/taro'
 import "./index.scss";
 
 export default class Poster extends Component {
@@ -79,15 +79,15 @@ export default class Poster extends Component {
           Taro.saveImageToPhotosAlbum({
             filePath: this.state.localPath,
             success: () => {
-              if (getApp().globalData.systemInfo.platform === 'android') {
-                console.log(getApp().globalData.systemInfo)
-              } else {
+              // if (getApp().globalData.systemInfo.platform === 'android') {
+              //   console.log(getApp().globalData.systemInfo)
+              // } else {
                 Taro.showToast({
                   title: '保存成功',
                   icon: 'none',
                   duration: 2000
                 })
-              }
+              // }
             },
             fail: () => {
               console.log(this.state.posterUrl)
@@ -117,17 +117,17 @@ export default class Poster extends Component {
       onShareImg = this.state.shareImg
     }
     if (this.state.third === 'union') {
-      console.log(`/pages/index/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=${this.state.siteId}`)
+      console.log(`/pages/mall/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=6`)
       return {
         title: this.state.shareTitle,
         imageUrl: onShareImg,
-        path: `/pages/index/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=${this.state.siteId}`
+        path: `/pages/mall/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=6`
       }
     } else {
-      console.log(`/pages/index/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=${this.state.siteId}`)
+      console.log(`/pages/mall/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=thridproduct&infoId=${this.state.productId}&environmental=t&siteId=6`)
       return {
         title: this.state.shareTitle,
-        path: `/pages/index/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=product&infoId=${this.state.productId}&environmental=t&siteId=${this.state.siteId}`,
+        path: `/pages/mall/index?shareId=${this.state.shareId}&custId=${this.state.custId}&page=product&infoId=${this.state.productId}&environmental=t&siteId=6`,
         imageUrl: onShareImg
       }
     }

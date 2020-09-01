@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View,Button,Text,Image } from "@tarojs/components";
-import Taro from '@tarojs/taro'
+import Taro,{request,getStorageSync} from '@tarojs/taro'
 import "./index.scss";
 import API from '@/api'
 import firstStep from '@/static/img/zowoyoo/first-step.png'
@@ -38,31 +38,31 @@ export default class Customer extends Component {
       } else if (options.linkType === '3') {
         this.state.text = `领取赚钱秘籍，学习大佬销售业绩倍增营销术`
       }
-      API.Zowoyoo.savaLink({
-        content: this.state.text,
-        minappOpenid: getApp().globalstate.openId,
-        url: this.state.link
-      }).then(res=>{
-        console.log(res)
-      })
-      // Taro.request({
-      //   url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
-      //   method: 'POST',
-      //   data: {
-      //     content: this.state.text,
-      //     minappOpenid: getApp().globalstate.openId,
-      //     url: this.state.link
-      //   },
-      //   header: {
-      //     'X-Authorization': `Bearer ${token}`
-      //   },
-      //   success: res => {
-      //     console.log(res)
-      //   },
-      //   fail: err => {
-      //     console.log(err)
-      //   }
+      // API.Zowoyoo.savaLink({
+      //   content: this.state.text,
+      //   minappOpenid: getApp().globalstate.openId,
+      //   url: this.state.link
+      // }).then(res=>{
+      //   console.log(res)
       // })
+      Taro.request({
+        url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
+        method: 'POST',
+        data: {
+          content: this.state.text,
+          minappOpenid: Taro.getStorageSync('token'),
+          url: this.state.link
+        },
+        header: {
+          'X-Authorization': `Bearer ${token}`
+        },
+        success: res => {
+          console.log(res)
+        },
+        fail: err => {
+          console.log(err)
+        }
+      })
       
     }
   }
