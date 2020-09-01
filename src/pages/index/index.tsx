@@ -409,7 +409,13 @@ class Index extends Component {
     .then(res => {
       let list = res.data && res.data.results || []
       // let recList = this.state.recommendList.concat(res.data && res.data.results)
-      let recList = [...this.state.recommendList, ...list]
+      let recList: any[] = []
+      if (this.state.startIndex > 1) {
+        recList = [...this.state.recommendList, ...list]
+      } else {
+        recList = [...list]
+      }
+
       if (this.state.tabIndex !== index) {
         recList = []
       }
@@ -467,7 +473,7 @@ class Index extends Component {
       tabIndex: index,
       themeId: index === 1 ? '101098' : '',
       excludeThemeId: index === 2 ? '101098' : '',
-      recommendList: [],
+      // recommendList: [],
       startIndex: 1
     })
     this.getListData(index)
