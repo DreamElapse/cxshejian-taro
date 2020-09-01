@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { WebView } from '@tarojs/components'
 
 import './index.scss'
-
 type PageStateProps = {
 
 }
@@ -28,15 +27,23 @@ interface User {
 
 }))
 class User extends Component {
+  state = {
+    webviewUrl: 'http://testm.lvyoupdd.com/user?siteId=6'
+  }
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () { 
+    this.setState({
+      webviewUrl: 'http://testm.lvyoupdd.com/user?siteId=6'
+    })
+    console.log(this.state.webviewUrl,'================')
+  }
 
   componentDidHide () { }
 
   render () {
     return (
-      <WebView src='http://testm.lvyoupdd.com/user?siteId=6' />
+      <WebView src={this.state.webviewUrl} />
     )
   }
 }

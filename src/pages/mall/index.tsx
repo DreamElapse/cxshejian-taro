@@ -37,7 +37,13 @@ class Mall extends Component {
     webviewParam: {}
   }
 
-  componentDidShow () { }
+  componentDidShow () {
+    console.log(Taro.getStorageSync('infoId'))
+    const localInfoId = Taro.getStorageSync('infoId')
+    if(localInfoId) {
+      console.log(localInfoId)
+    }
+   }
 
   UNSAFE_componentWillUnmount () { }
 
@@ -90,6 +96,7 @@ class Mall extends Component {
   }
   onLoad (query) {
     console.log(query, '------------------load')
+
     const Timestamp = new Date().getTime()
     if (query && query.scene) {
       // 扫描商品详情二维码进入的情况或者扫码直播间海报
