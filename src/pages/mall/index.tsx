@@ -29,13 +29,13 @@ interface Mall {
 }))
 class Mall extends Component {
   state = {
-    webViewUrl: 'http://192.168.19.159/home?siteId=6'
+    webViewUrl: 'http://testm.lvyoupdd.com:8083/home?siteId=6'
   }
   componentWillUnmount () { }
 
   componentDidShow () { 
     this.setState({
-      webViewUrl: `http://192.168.19.159/home?siteId=6`
+      webViewUrl: `http://testm.lvyoupdd.com:8083/home?siteId=6`
     })
   }
 
