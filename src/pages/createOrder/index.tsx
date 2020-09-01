@@ -84,9 +84,11 @@ class CreateOrder extends Component {
          carriage = CARRIAGE_1_16;
        }
      }
+     let mobile = Taro.getStorageSync('phone') || ''
 
      this.setState({
        seat: [carriage, ROW, SEAT],
+       mobile
        // cartGoods: Taro.getStorageSync('goods')
        // selectedSeat: `${carriage[0]} - ${ROW[0]} - ${SEAT[0]}`
      });
@@ -174,7 +176,7 @@ class CreateOrder extends Component {
                     <View className='goods-msg'>
                       <View className='name'>{goods.productName}</View>
                       <View className='price-container'>
-                        <Text className='price'>¥{goods.price}/份</Text>
+                        <Text className='price'>¥{(goods.price/100).toFixed(2)}/份</Text>
                         <Text className='num'>x{goods.number}</Text>
                       </View>
                     </View>
@@ -416,11 +418,11 @@ class CreateOrder extends Component {
   dateHandle(time, type) {
     switch(+type) {
       case 1: // YYYY-MM-DD
-        return `${time.slice(0, 4)}-${time.slice(4, 6)}-${time.slice(6, 8)}`
+        return time.split(' ')[0]
       case 2: // hh:mm
-        return `${time.slice(8, 10)}:${time.slice(10, 12)}`
+        return dayjs(time).format('HH:mm')
       case 3: // MM月DD日
-        return `${time.slice(4, 6)}月${time.slice(6, 8)}日`
+        return dayjs(time).format('MM月DD日')
     }
   }
 
@@ -488,11 +490,11 @@ class CreateOrder extends Component {
     const data = {
       carriage: carriage.substr(0, carriage.length - 1),
       deliverStartTime: mealsData.split('-')[0].replace(' ', ''),
-      deliverEndTime: mealsData.split('-')[1],
+      deliverEndTime: mealsData.split('-')[1].replace(' ', ''),
       downStationName: userStationInfo.endStation.stationName,
       downStationId: userStationInfo.endStation.stationId,
       // downTrainTime: dayjs(userStationInfo.endStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
-      downTrainTime: this.timeHandle(userStationInfo.endStation.arrivalTime),
+      downTrainTime: userStationInfo.endStation.arrivalTime,
       endStationId: ticketList[ticketList.length-1].statinId,
       memo: this.state.memo,
       mobile: this.state.mobile,
@@ -506,12 +508,12 @@ class CreateOrder extends Component {
       train: trainInfo.train,
       // trainStartTime: dayjs(ticketList[0].leaveTime).format('YYYY-MM-DD hh:mm:ss'),
       // trainEndTime: dayjs(ticketList[1].arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
-      trainStartTime: this.timeHandle(ticketList[0].leaveTime),
-      trainEndTime: this.timeHandle(ticketList[1].arrivalTime),
+      trainStartTime: ticketList[0].leaveTime,
+      trainEndTime: ticketList[1].arrivalTime,
       upStationId: userStationInfo.startStation.stationId,
       upStationName: userStationInfo.startStation.stationName,
       // upTrainTime: dayjs(userStationInfo.startStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
-      upTrainTime: this.timeHandle(userStationInfo.startStation.arrivalTime),
+      upTrainTime: userStationInfo.startStation.arrivalTime,
       userId: ''
     }
     API.Order.createOrder(data)

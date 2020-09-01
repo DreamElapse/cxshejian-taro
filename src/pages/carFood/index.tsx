@@ -274,8 +274,8 @@ class CarFood extends Component {
       return +item.number > 0
     })
     this.props.setTotalPrice(this.totalMoney())
-    this.props.addGoods(this.state.cartGoods)
-    Taro.setStorageSync('goods', this.state.cartGoods)
+    this.props.addGoods(cartGoods)
+    // Taro.setStorageSync('goods', this.state.cartGoods)
     let startStation = this.props.userStationInfo.startStation
     if(!startStation) {
       let train = this.props.trainInfo.train

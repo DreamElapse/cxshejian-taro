@@ -5,21 +5,21 @@ import './keyboard.scss'
 // import { get as getGlobalData } from '../../service/config'
 
 class Keyboard extends Component {
- 
+
     constructor(args){
       super(args)
     }
 
     //按键
     tabkey = (e) => {
-       
+
         e &&  e.stopPropagation()
         let tex = e.currentTarget.dataset.tab;
         let myEventDetail = {
           val: tex
         } // detail对象，提供给事件监听函数
         //this.$scope.triggerEvent('myevent', myEventDetail) //myevent自定义名称事件，父组件中使用
-         this.props.onGetCode(myEventDetail);   
+         this.props.onGetCode(myEventDetail);
       }
 
    stopClick = (e) =>{
@@ -46,7 +46,7 @@ class Keyboard extends Component {
 
     return (
       <View className='keyboard ATkey0' id='ATkey0'>
-         <View className={"m_keyBoard {{dataSet}} ATkey0_1"} style={this.isIpx?"height:460rpx;":""} id='ATkey0_1' onClick={this.stopClick}>
+         <View className={`m_keyBoard ${this.props.dataSet} ATkey0_1`} style={this.isIpx?"height:460rpx;":""} id='ATkey0_1' onClick={this.stopClick}>
             <View className="row">
                <View className="ripple" onClick={this.tabkey} data-tab="C">C</View>
                <View className="ripple" onClick={this.tabkey} data-tab="D">D</View>
@@ -63,7 +63,7 @@ class Keyboard extends Component {
                <View className="ripple" onClick={this.tabkey} data-tab="1">1</View>
                <View className="ripple" onClick={this.tabkey} data-tab="2">2</View>
                <View className="ripple" onClick={this.tabkey} data-tab="3">3</View>
-               <View  className="ripple" onClick={this.tabkey} data-tab="0">0</View>               
+               <View  className="ripple" onClick={this.tabkey} data-tab="0">0</View>
             </View>
             <View className="row rowgray">
                <View  className="ripple" onClick={this.tabkey} data-tab="4">4</View>

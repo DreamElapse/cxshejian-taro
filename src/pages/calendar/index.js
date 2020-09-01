@@ -227,7 +227,7 @@ export default class Calendar extends Component {
         dated.map((item, idx) => {
 
           return <View className={`day ${+item.selected === 1 ? 'bc' : ''} ${+idx === 0 && +index === 0 ? 'todaySty' : ''}`} key={idx} data-index={index} data-indexs={idx} onClick={this.selectday}>
-            <View className={"actname {{item.selected == 1 ? 'bc2' : ''}}"}></View>
+            <View className={`actname ${item.selected == 1 ? 'bc2' : ''}`}></View>
             {(idx == 0 && index==0) && <Text>今天</Text>}
             {!(idx == 0 && index==0) && <Text> {dated[idx].day}</Text>}
           </View>

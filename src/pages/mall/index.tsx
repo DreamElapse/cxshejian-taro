@@ -36,9 +36,10 @@ class Mall extends Component {
     shareParam: {},
     webviewParam: {}
   }
-  componentWillUnmount () { }
 
   componentDidShow () { }
+
+  UNSAFE_componentWillUnmount () { }
 
   componentDidHide () { }
   onShareAppMessage(options) {

@@ -279,10 +279,20 @@ class OrderSelectSite extends Component {
        * 获取车次详情
        */
       getTicket = (dateC) => {
+        if (!this.props.trainInfo.train) {
+          Taro.showToast({
+            title: '无车次信息',
+            icon: 'none',
+            duration: 2000,
+            complete: () => {
+              Taro.navigateBack({delta: 1})
+            }
+          })
+        }
         var that = this
         this.isload_success = false
         // API.StationService.getStationToStationByTrainNo({strokeTime:dateC,trainNo:that.trainNo})
-        API.Order.getStations({train: this.props.trainInfo.train || 'D1112'})
+        API.Order.getStations({train: this.props.trainInfo.train})
           .then(res => {
             // Taro.setStorageSync('dateC', dateC)
             this.props.setTicketList(res.data)

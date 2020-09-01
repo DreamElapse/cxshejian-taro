@@ -222,9 +222,8 @@ export default class City extends Component {
     this.setState({
       toView: 'inToView' + _id,
       bigChar:_id
-    },res=>{
-      let stim = null
-      stim = setTimeout(() => {
+    }, ()=>{
+      setTimeout(() => {
         this.setState({
           bigChar:0,
         })
@@ -383,13 +382,13 @@ export default class City extends Component {
         }
         if(this.type == 'from'){
           data = {
-            station: city,//选择站
+            cityNameS: city,//选择站
             from_station_type: dataset.type,//类型
             // to_station_type: 1
           }
         }else if(this.type == 'to'){
           data = {
-            station: city,//选择站
+            cityNameE: city,//选择站
             // from_station_type: 1,
             to_station_type: dataset.type//类型
           }
@@ -497,10 +496,10 @@ export default class City extends Component {
     const navRights = navRight.map((item, index) => {
       return <View className='letter' key={index} onClick={this.scrollToViewFn} data-id={item}>
                 {
-                  this.bigChar == item &&
-                  <View className="bigChar1">{this.bigChar}</View>
+                  this.state.bigChar == item &&
+                  <View className="bigChar1">{this.state.bigChar}</View>
                 }
-                <View className={this.bigChar==item?'newletter cur':'newletter'}>{item}</View>
+                <View className={this.state.bigChar==item?'newletter cur':'newletter'}>{item}</View>
             </View>
     })
 
@@ -547,7 +546,7 @@ export default class City extends Component {
     })
     return (
       <View className='city'>
-        <ScrollView scrollY scrollIntoView={this.toView}  onScroll={this.onScroll} style={'height:' + sHeight + 'px'}>
+        <ScrollView scrollY scrollIntoView={this.state.toView}  onScroll={this.onScroll} style={'height:' + sHeight + 'px'}>
           <View className="sCs">
             <Image className="sImg" src={this.basScr+'/h5/tarocx9z/czt_v1/stationChange/icon_sous1.png'}></Image>
             <Input id='ATcity1' className="serach" placeholder="中文  /  英文  /  首字母" value={value} onInput={this.change}></Input>

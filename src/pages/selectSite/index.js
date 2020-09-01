@@ -100,7 +100,8 @@ export default class Index extends Component {
       }
 
       componentDidShow () {
-        let data = getCurrentInstance().page.data
+        let page = getCurrentInstance().page
+        let data = page.data
         if (data.dateC) {
           this.setState({
             dateC: data.dateC,
@@ -749,15 +750,15 @@ export default class Index extends Component {
                     <View className='nextDay' onClick={this.nextDate}>后一天</View>
                 </View>
 
-                <View className='m_station_tipView' >
-                    <Text className='tip'>请选择出发站和到达站</Text>
-                    <View className='station_text_view'>
-                      <Text className={is_selected_from ? 'station_text_select' : 'station_text'}>{tip_start}</Text>
-                      <Image className='jiantou' src={this.base_img_url+"icon_jiantou.png"}></Image>
-                      <Text className={is_selected_to ?  'station_text_select' : 'station_text'}>{tip_end}</Text>
-                    </View>
-                    <View className='line'></View>
-              </View>
+                {/*<View className='m_station_tipView' >*/}
+                {/*    <Text className='tip'>请选择出发站和到达站</Text>*/}
+                {/*    <View className='station_text_view'>*/}
+                {/*      <Text className={is_selected_from ? 'station_text_select' : 'station_text'}>{tip_start}</Text>*/}
+                {/*      <Image className='jiantou' src={this.base_img_url+"icon_jiantou.png"}></Image>*/}
+                {/*      <Text className={is_selected_to ?  'station_text_select' : 'station_text'}>{tip_end}</Text>*/}
+                {/*    </View>*/}
+                {/*    <View className='line'></View>*/}
+                {/*</View>*/}
 
                 <View className={is_show_bottomBtn?'m_station_content':'m_station_content_noBottom'}>
                   <ScrollView  scrollY  scrollIntoView={this.state.toView}  style='width:100%; height:100%;'>

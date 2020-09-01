@@ -134,7 +134,7 @@ export default class LargeScreen extends Component {
       type: 2,
     }
 
-    API.StationService.getScreenListNew(url,params,true)
+    API.StationService.getScreenListNew(url,params,false)
     .then(res => {
       if(res.code!=997 && res.code != '0'){// 997:查询数据中心接口无数据返回
         Taro.showToast({
@@ -204,8 +204,8 @@ export default class LargeScreen extends Component {
 
     API.StationService.getScreenListNew(url,params,true)
     .then(res => {
-      let newList = res.data&&res.data.data&&res.data.data.data || []
-      if(res.data.code!=997&&res.data.code != '0'){//997：查询数据中心接口无数据返回
+      let newList = res.data&&res.data.data || []
+      if(res.code!=997&&res.code != '0'){//997：查询数据中心接口无数据返回
         Taro.showToast({
           title:'搜索失败',
           icon:'none',
@@ -420,7 +420,7 @@ export default class LargeScreen extends Component {
       trainType:that.state.trainType
     }
 
-    API.StationService.getScreenList(params,true)
+    API.StationService.getScreenList(params, false)
     .then(res => {
       if(res.code!=997&&res.code != '0'){//997:查询数据中心接口无数据返回
         Taro.hideLoading()
@@ -669,7 +669,6 @@ export default class LargeScreen extends Component {
     //  }
 
      let jumpUrl = '../selectSite/index?'+queryParams(jump_params)
-     console.log(jumpUrl)
      Taro.navigateTo({
        url: jumpUrl
      })
@@ -688,7 +687,7 @@ export default class LargeScreen extends Component {
             {/* <View className='td w15 hui'>{item.route[0]}</View> */}
             {/* <View className='td w15 hui'>{item.route[1]}</View> */}
             <View className='td w15 hui'>{item.endStation || '--'}</View>
-            <View className='td w15 hui'>{item.normalStartTime || '--'}</View>
+            <View className='td w15 hui'>{item.normalStartDateTime || '--'}</View>
             <View className='td w15 hui'>{item.ticketCheck || '--'}</View>
             {/* {(item.departLateType === 0 || item.departLateType === 1) && <View className='td w22' style='color:#333333'>{item.status}</View>} */}
             {(item.departLateType === 0 || !item.departLateTyp) && <View className='td w22' style='color:#333333'>--</View>}
