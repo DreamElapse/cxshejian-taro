@@ -183,10 +183,6 @@ class Mall extends Component {
       this.state.webviewParam = JSON.parse(JSON.stringify(query))
     }
 
-  onLoad () {
-    // localStorage.setItem('zowoyooToken','2222222222')
-  }
-
     // 上面一直是处理app.globalData.webviewParam的方法
     let currentUrl = ''
 
