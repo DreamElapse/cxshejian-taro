@@ -34,10 +34,17 @@ class Mall extends Component {
   state = {
     webViewUrl: '',
     shareParam: {},
-    webviewParam: {}
+    webviewParam: {},
+    params: 'siteId=6'
   }
 
-  componentDidShow () { }
+  componentDidShow () {
+    let infoId = Taro.getStorageSync('infoId')
+    infoId && this.setState({
+      params: `siteId=6&environmental=t&page=product&infoId${infoId}`
+    })
+    Taro.removeStorageSync('infoId')
+  }
 
   UNSAFE_componentWillUnmount () { }
 
@@ -143,7 +150,7 @@ class Mall extends Component {
         this.state.webviewParam['page'] = `productdynamic/${paramsArr[1]}`
         this.state.webviewParam['siteId'] = paramsArr[4]
       } else if(paramsArr[0] === 'H') {
-       
+
         this.state.webviewParam['environmental'] = paramsArr[paramsArr.length - 2]
         this.state.webviewParam['custId'] = paramsArr[2]
         this.state.webviewParam['shareId'] = paramsArr[3]
@@ -176,9 +183,13 @@ class Mall extends Component {
       this.state.webviewParam = JSON.parse(JSON.stringify(query))
     }
 
+  onLoad () {
+    // localStorage.setItem('zowoyooToken','2222222222')
+  }
+
     // 上面一直是处理app.globalData.webviewParam的方法
     let currentUrl = ''
-    
+
     if (this.state.webviewParam && this.state.webviewParam.infoId) {
       let infoId = this.state.webviewParam.infoId
       let baseUrl = config[this.state.webviewParam.environmental]
@@ -268,6 +279,7 @@ class Mall extends Component {
     console.log(e)
   }
   render () {
+    const { params } = this.state
     return (
       <WebView onMessage="getMessage" src={this.state.webViewUrl} onError="binderror" onLoad="bindload" />
     )

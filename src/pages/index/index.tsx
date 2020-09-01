@@ -435,7 +435,7 @@ class Index extends Component {
     // 跳小程序页面和h5页面
     if (page.url.includes('/tab')) {
       Taro.switchTab({
-        url: page.url.replace('/switch', '')
+        url: page.url.replace('/tab', '')
       })
     } else if (page.url.includes('/pages')) {
       Taro.navigateTo({
