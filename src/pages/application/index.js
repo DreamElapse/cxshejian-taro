@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View,Button,Image } from "@tarojs/components";
-import Taro from '@tarojs/taro'
+import Taro,{ request } from '@tarojs/taro'
+import config from '../../utils/config'
 import "./index.scss";
 import API from '@/api'
 export default class Application extends Component {
@@ -19,31 +20,31 @@ export default class Application extends Component {
         fromPage: options.fromPage
       }, () => {
         const token = options['X-Authorization']
-        API.Zowoyoo.savaLink({
-          content: this.state.text,
-          minappOpenid: getApp().globalData.openId,
-          url: this.state.qrcode
-        }).then(res=>{
-          console.log(res)
-        })
-        // Taro.request({
-        //   url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
-        //   method: 'POST',
-        //   data: {
-        //     content: this.state.text,
-        //     minappOpenid: getApp().globalData.openId,
-        //     url: this.state.qrcode
-        //   },
-        //   header: {
-        //     'X-Authorization': `Bearer ${token}`
-        //   },
-        //   success: res => {
-        //     console.log(res)
-        //   },
-        //   fail: err => {
-        //     console.log(err)
-        //   }
+        // API.Zowoyoo.savaLink({
+        //   content: this.state.text,
+        //   minappOpenid: getApp().globalData.openId,
+        //   url: this.state.qrcode
+        // }).then(res=>{
+        //   console.log(res)
         // })
+        Taro.request({
+          url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
+          method: 'POST',
+          data: {
+            content: this.state.text,
+            minappOpenid: 'wx18f8259aecab011a',
+            url: this.state.qrcode
+          },
+          header: {
+            'X-Authorization': `Bearer ${token}`
+          },
+          success: res => {
+            console.log(res)
+          },
+          fail: err => {
+            console.log(err)
+          }
+        })
       })
     }
 
@@ -52,8 +53,8 @@ export default class Application extends Component {
     if (this.state.fromPage === 'detail') {
       Taro.navigateBack()
     } else {
-      Taro.redirectTo({
-        url: '/pages/index/index?environmental=t&page=account&from=application',
+      Taro.switchTab({
+        url: '/pages/mall/index?environmental=t&page=account&from=application',
       })
     }
   }

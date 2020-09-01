@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { View, Button, Image,Text } from "@tarojs/components";
 import API from '@/api'
-import Taro from '@tarojs/taro'
+import Taro,{request, showToast ,getStorageSync} from '@tarojs/taro'
+import config from '../../utils/config'
 import "./index.scss";
 import winxinpng from '@/static/img/zowoyoo/weixin.png'
 export default class Bindphone extends Component {
@@ -49,8 +50,8 @@ export default class Bindphone extends Component {
             duration: 2000,
             success: res =>{
               setTimeout(()=>{
-                Taro.reLaunch({
-                  url: `/pages/index/index?environmental=t&page=user&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
+                Taro.switchTab({
+                  url: `/pages/user/index?environmental=t&page=user&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
                 })
               },2000)
             }
@@ -61,15 +62,28 @@ export default class Bindphone extends Component {
 
   }
   otherPhone = () => {
-    Taro.navigateTo({
-      url: `/pages/index/index?environmental=t&page=phone&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
+    Taro.switchTab({
+      url: `/pages/user/index?environmental=t&page=phone&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
     })
   }
   decryptPhoneNumber = () => {
     return new Promise((resolve) => {
-      API.Zowoyoo.minappUserPhone({encryptedData:`${encodeURIComponent(this.state.encryptedData)}`,iv:`${encodeURIComponent(this.state.iv)}`,openid:''}).then(res=>{
-        resolve(res)
+      Taro.request({
+        url: `${config.target}/mtourists-core/user/minappUserPhone?encryptedData=${encodeURIComponent(this.state.encryptedData)}&iv=${encodeURIComponent(this.state.iv)}&openid=${Taro.getStorageSync('token')}`,
+        method: 'GET',
+        header: {
+          'X-Authorization': `Bearer ${this.state.zoowoyooToken}`
+        },
+        success: res => {
+          resolve(res)
+        },
+        fail: err => {
+          resolve(err)
+        }
       })
+      // API.Zowoyoo.minappUserPhone({encryptedData:`${encodeURIComponent(this.state.encryptedData)}`,iv:`${encodeURIComponent(this.state.iv)}`,openid:`${Taro.getStorageSync('token')}`}).then(res=>{
+      //   resolve(res)
+      // })
     })
   }
   componentDidMount() {}
