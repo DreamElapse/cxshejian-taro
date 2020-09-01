@@ -46,7 +46,7 @@ class Mall extends Component {
   componentDidHide () { }
 
   onLoad () {
-    localStorage.setItem('zowoyooToken','2222222222')
+    // localStorage.setItem('zowoyooToken','2222222222')
   }
 
   render () {
