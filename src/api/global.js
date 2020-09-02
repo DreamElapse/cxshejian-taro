@@ -28,10 +28,17 @@ export default {
     const url = `/api/miniapp/api/member/changeMemberInfo`
     return request.post({ url, data })
   },
-  getUserInfo(data) {
+  // 更改用户信息
+  setUserInfo(data) {
     const url = `/api/miniapp/api/member/changeMemberInfo`
     return request.get({ url, data })
+  },
+  getUserInfo(data) {
+    const url = `/api/miniapp//api/member/memberInfo`
+    return request.get({ url, data })
   }
+
+
 
 
 }

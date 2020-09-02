@@ -47,6 +47,10 @@ Taro.login({
     API.Global.login({code})
       .then(res => {
         Taro.setStorageSync('token', res.data)
+        API.Global.getUserInfo()
+          .then(info => {
+            info.data.openId && Taro.setStorageSync('openId', info.data.openId)
+          })
       })
   },
   fail: data => {

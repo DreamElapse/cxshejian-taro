@@ -1,9 +1,22 @@
 .index {
   flex-direction: column;
   width: 100%;
-  .scroll-box{
-    height: 300px;
+  .tab-list{
     width: 100%;
-    margin-top: 30px;
   }
+  .tab-item{
+    width: 200px;
+    height: 60px;
+    line-height: 60px;
+    color: #FFF;
+    background: #1ba4eb;
+    font-size: 28px;
+    text-align: center;
+    &.active{
+      background: #00cc64;
+      color: #fa6003;
+    }
+  }
+
+
 }
