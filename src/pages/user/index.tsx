@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { WebView } from '@tarojs/components'
+import { WebView, View } from '@tarojs/components'
 
 import './index.scss'
 type PageStateProps = {
@@ -28,17 +28,23 @@ interface User {
 }))
 class User extends Component {
   state = {
-    webviewUrl: 'http://192.168.19.159/user?siteId=6'
+    webviewUrl: 'https://testm.lvyoupdd.com/user?siteId=6'
   }
   componentWillUnmount () { }
 
-  componentDidShow () { 
+  componentDidShow () {
+    let time = new Date().getTime()
     this.setState({
-      webviewUrl: 'http://192.168.19.159/user?siteId=6'
+      webviewUrl: `https://testm.lvyoupdd.com/user?time=${time}siteId=6`
     })
   }
 
-  componentDidHide () { }
+  componentDidHide () {
+    console.log(789)
+    this.setState({
+      webviewUrl: ''
+    })
+  }
 
   render () {
     return (
