@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { WebView } from '@tarojs/components'
 import config from '../../utils/config'
 import util from '../../utils/zowoyooutil'
-import Taro,{ request , showToast, getStorageSync, getCurrentInstance } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import pages from '../../utils/pages'
 import './index.scss'
 
@@ -35,56 +35,10 @@ class Mall extends Component {
     webViewUrl: '',
     shareParam: {},
     webviewParam: {},
-    params: 'siteId=6'
-  }
-  onShareAppMessage(options) {
-    if (options.webViewUrl.indexOf('product') > -1 || options.webViewUrl.indexOf('activity') > -1 || options.webViewUrl.indexOf('dynamic') > -1) {
-      let currentPath = `/pages/mall/index?${this.state.shareParam.link}`
-      if (!/\.(jpg|jpeg|png|JPG|PNG)$/.test(this.state.shareParam.imgSrc)) {
-        return {
-          title: this.state.shareParam.title,
-          path: currentPath,
-        }
-      } else {
-        return {
-          title: this.state.shareParam.title,
-          path: currentPath,
-          imageUrl: this.state.shareParam.imgSrc
-        }
-      }
-    } else if (options.webViewUrl.indexOf('share') > -1 || options.webViewUrl.indexOf('invite') > -1) {
-      console.log(this.state.shareParam)
-      let sharePath = `/pages/mall/index?${this.state.shareParam.link}`
-      if (this.state.shareParam.imgSrc && /\.(jpg|jpeg|png|JPG|PNG)$/.test(this.state.shareParam.imgSrc)) {
-        return {
-          title: this.state.shareParam.title,
-          path: sharePath,
-          imageUrl: this.state.shareParam.imgSrc
-        }
-      }
-      return {
-        title: this.state.shareParam.title,
-        path: sharePath,
-        // imageUrl: '../images/share.jpg'
-      }
-    } else {
-      if (this.state.shareParam && this.state.shareParam.link) {
-        return {
-          title: '用畅行舌尖，发现好价玩赚生活',
-          path: `/pages/mall/index?${this.state.shareParam.link}`,
-          // imageUrl: '../images/share.jpg'
-        }
-      } else {
-        return {
-          title: '用畅行舌尖，发现好价玩赚生活',
-          path: `/pages/mall/index`,
-          // imageUrl: '../images/share.jpg'
-        }
-      }
-    }
+    params: 'siteId=6',
+    isHome: true
   }
   componentDidShow () {
-
     let infoId = Taro.getStorageSync('infoId')
     let orderId = Taro.getStorageSync('orderId')
     let paystatus = Taro.getStorageSync('paystatus')
@@ -118,7 +72,11 @@ class Mall extends Component {
     Taro.removeStorageSync('orderId')
     Taro.removeStorageSync('paystatus')
   }
-
+  UNSAFE_componentWillMount () { 
+    Taro.showShareMenu({
+      withShareTicket: true
+    })
+  }
   UNSAFE_componentWillUnmount () { }
 
   componentDidHide () { 
@@ -127,7 +85,8 @@ class Mall extends Component {
     })
   }
   onLoad (query) {
-    const Timestamp = new Date().getTime()
+    setTimeout(()=>{
+      const Timestamp = new Date().getTime()
     if (query && query.scene) {
       // 扫描商品详情二维码进入的情况或者扫码直播间海报
       const scene = decodeURIComponent(query.scene)
@@ -143,32 +102,6 @@ class Mall extends Component {
         const roomId = paramsArr[1]
         // const customParams = `${paramsArr[2]}/${paramsArr[3]}A${siteId}`
         // 在这里进行埋点
-        Taro.request({
-          url: `${config.target}/mtourists-api/pddapi/user/userActionLog`,
-          method: 'POST',
-          data: {
-            actionLinkId: roomId,
-            shareId: paramsArr[3],
-            orderCustId: paramsArr[2],
-            actionCode: 'visit_zbj',
-            actionType: 1,
-            actionRemark: '扫描海报或分享链接进入直播间',
-            actionName: '进入直播间事件'
-          },
-          header: {
-            'X-Authorization': 'Bearer null'
-          },
-          success: res => {
-            if (res.data && res.data.state === 1) {
-              const logres = res.data.data
-              this.globalData.openId = logres.openid
-              this.globalData.unionid = logres.unionid
-            }
-          },
-          fail: err => {
-            console.log(err)
-          }
-        })
         // 埋点结束
         // Taro.redirectTo({
         //   url: `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${roomId}&custom_params=${encodeURIComponent(customParams)}`
@@ -222,6 +155,7 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}/${infoId}?v=${Timestamp}&siteId=6&${urlParams}`
+      this.state.isHome = false
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -233,6 +167,7 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}/${activityId}?v=${Timestamp}&siteId=6&${urlParams}`
+      this.state.isHome = false
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -243,6 +178,7 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
+      this.state.isHome = false
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -253,6 +189,7 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
+      this.state.isHome = false
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -262,6 +199,7 @@ class Mall extends Component {
     else if (this.state.webviewParam && this.state.webviewParam.page === 'index') {
       const webviewlink = config[config.environmental]
       let urlParams = util.formatParam(this.state.webviewParam)
+      this.state.isHome = false
       this.setState({
         webViewUrl: `${webviewlink}home?v=${Timestamp}&${urlParams}`
       })
@@ -271,6 +209,7 @@ class Mall extends Component {
       let urlParams = util.formatParam(this.state.webviewParam)
       let routePage = this.state.webviewParam.page
       let currentUrl = `${baseUrl}${routePage}?v=${Timestamp}&siteId=6&${urlParams}`
+      this.state.isHome = false
       this.setState({
         webViewUrl: currentUrl
       }, () => {
@@ -282,15 +221,14 @@ class Mall extends Component {
       console.log(webviewlink)
       let urlParams = util.formatParam(this.state.webviewParam)
       console.log(Timestamp)
+      this.state.isHome = false
       this.setState({
         webViewUrl: `${webviewlink}home?v=${Timestamp}&siteId=6&${urlParams}`
       })
     }
-    setTimeout(()=>{
-      console.log(this.state.webViewUrl,'----------------------')
-    })
+    },200)
   }
-  getMessage= (e)=> {
+  onMessage= (e)=> {
     if (e.detail.data) {
       this.state.shareParam = e.detail.data[e.detail.data.length - 1]
     }
@@ -301,10 +239,55 @@ class Mall extends Component {
   binderror(e) {
     console.log(e)
   }
+  onShareAppMessage(options) {
+    if (options.webViewUrl.indexOf('product') > -1 || options.webViewUrl.indexOf('activity') > -1 || options.webViewUrl.indexOf('dynamic') > -1) {
+      let currentPath = `/pages/mall/index?${this.state.shareParam.link}`
+      if (!/\.(jpg|jpeg|png|JPG|PNG)$/.test(this.state.shareParam.imgSrc)) {
+        return {
+          title: this.state.shareParam.title,
+          path: currentPath,
+        }
+      } else {
+        return {
+          title: this.state.shareParam.title,
+          path: currentPath,
+          imageUrl: this.state.shareParam.imgSrc
+        }
+      }
+    } else if (options.webViewUrl.indexOf('share') > -1 || options.webViewUrl.indexOf('invite') > -1) {
+      console.log(this.state.shareParam)
+      let sharePath = `/pages/mall/index?${this.state.shareParam.link}`
+      if (this.state.shareParam.imgSrc && /\.(jpg|jpeg|png|JPG|PNG)$/.test(this.state.shareParam.imgSrc)) {
+        return {
+          title: this.state.shareParam.title,
+          path: sharePath,
+          imageUrl: this.state.shareParam.imgSrc
+        }
+      }
+      return {
+        title: this.state.shareParam.title,
+        path: sharePath,
+        // imageUrl: '../images/share.jpg'
+      }
+    } else {
+      if (this.state.shareParam && this.state.shareParam.link) {
+        return {
+          title: '用畅行舌尖，发现好价玩赚生活',
+          path: `/pages/mall/index?${this.state.shareParam.link}`,
+          // imageUrl: '../images/share.jpg'
+        }
+      } else {
+        return {
+          title: '用畅行舌尖，发现好价玩赚生活',
+          path: `/pages/mall/index`,
+          // imageUrl: '../images/share.jpg'
+        }
+      }
+    }
+  }
   render () {
-    const { params } = this.state
     return (
-      <WebView onMessage="getMessage" src={this.state.webViewUrl} onError="binderror" onLoad="bindload" />
+      <WebView onMessage={this.onMessage} src={this.state.webViewUrl} onError={this.binderror} onLoad={this.bindload} />
     )
   }
 }
