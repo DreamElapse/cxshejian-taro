@@ -37,19 +37,49 @@ class Mall extends Component {
     webviewParam: {},
     params: 'siteId=6'
   }
-
   componentDidShow () {
 
     let infoId = Taro.getStorageSync('infoId')
-    infoId && this.setState({
-      params: `siteId=6&environmental=t&page=product&infoId${infoId}`
-    })
+    let orderId = Taro.getStorageSync('orderId')
+    let paystatus = Taro.getStorageSync('paystatus')
+    const Timestamp = new Date().getTime()
+    const webviewlink = config[config.environmental]
+    if(infoId) {
+      this.setState({
+        params: `siteId=6&environmental=t&page=product&infoId${infoId}`
+      },()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
+        })
+      })
+    } else if(orderId) {
+      if(paystatus) {
+        this.setState({
+          webViewUrl: `${webviewlink}paystatus?siteId=6&time=${Timestamp}&orderId=${orderId}&payfrom=pay`
+        })
+      }else {
+        this.setState({
+          webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
+        })
+      }
+    }
+     else {
+      this.setState({
+        webViewUrl: `${webviewlink}home?siteId=6&time=${Timestamp}`
+      })
+    }
     Taro.removeStorageSync('infoId')
+    Taro.removeStorageSync('orderId')
+    Taro.removeStorageSync('paystatus')
   }
 
   UNSAFE_componentWillUnmount () { }
 
-  componentDidHide () { }
+  componentDidHide () { 
+    this.setState({
+      webViewUrl: ''
+    })
+  }
   onShareAppMessage(options) {
     if (options.webViewUrl.indexOf('product') > -1 || options.webViewUrl.indexOf('activity') > -1 || options.webViewUrl.indexOf('dynamic') > -1) {
       let currentPath = `/pages/mall/index?${this.state.shareParam.link}`
@@ -97,8 +127,6 @@ class Mall extends Component {
     }
   }
   onLoad (query) {
-    console.log(query, '------------------load')
-
     const Timestamp = new Date().getTime()
     if (query && query.scene) {
       // 扫描商品详情二维码进入的情况或者扫码直播间海报

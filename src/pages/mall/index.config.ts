@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: '商城'
+  navigationBarTitleText: '12306.舌尖上的旅途'
 }
