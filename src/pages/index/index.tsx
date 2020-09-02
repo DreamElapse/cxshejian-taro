@@ -103,6 +103,9 @@ class Index extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    // Taro.showShareMenu({
+    //   withShareTicket: true
+    // })
   }
 
   componentWillUnmount () { }
@@ -122,6 +125,11 @@ class Index extends Component {
   }
 
   componentDidHide () { }
+
+  // onShareAppMessage(options) {
+  //   console.log(options, 11)
+  // }
+
 
   onReachBottom() {
     if (this.state.noMoreData) return
