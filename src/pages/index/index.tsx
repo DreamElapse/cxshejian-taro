@@ -189,7 +189,7 @@ class Index extends Component {
             <Image src={mfsc} className='taste-img' mode="aspectFill" />
           </Navigator>
 
-          <Navigator className='open-card' url="/pages/adPage/index?url=https://sj-pre.yishizongheng.com/activate-card">
+          <Navigator className='open-card' url="/pages/adPage/index?url=https://cxsj-active-pre.eluchangxing.com/activate-card">
             <Text className='text'>建行信用卡开卡送现金</Text>
             <Image src={jhkk} className='card-img' mode="aspectFill" />
           </Navigator>
