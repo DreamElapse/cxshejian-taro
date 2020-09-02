@@ -99,6 +99,7 @@ export default class Index extends Component {
 
       }
 
+
       componentDidShow () {
         let page = getCurrentInstance().page
         let data = page.data
