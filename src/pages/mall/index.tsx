@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { WebView } from '@tarojs/components'
 import config from '../../utils/config'
 import util from '../../utils/zowoyooutil'
-import Taro,{ request , showToast ,getStorageSync } from '@tarojs/taro'
+import Taro,{ request , showToast, getStorageSync, getCurrentInstance } from '@tarojs/taro'
 import pages from '../../utils/pages'
 import './index.scss'
 
@@ -39,6 +39,7 @@ class Mall extends Component {
   }
 
   componentDidShow () {
+
     let infoId = Taro.getStorageSync('infoId')
     infoId && this.setState({
       params: `siteId=6&environmental=t&page=product&infoId${infoId}`
