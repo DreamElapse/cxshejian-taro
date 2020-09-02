@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem, Block, Navigator } from '@tarojs/components'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { setTrainInfo, setTotalPrice, addGoods } from '@/store/actions'
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import API from '@/api'
 import './index.scss'
 
@@ -13,7 +13,9 @@ import icon_cccx from '@/static/img/index/icon_cccx.png'
 import icon_czdp from '@/static/img/index/icon_czdp.png'
 import jhkk from '@/static/img/index/jhkk.png'
 import mfsc from '@/static/img/index/mfsc.png'
-import scroll from '@/static/img/index/scroll.png'
+// import scroll from '@/static/img/index/scroll.png'
+
+
 
 type PageStateProps = {
   date: string,
@@ -102,11 +104,13 @@ class Index extends Component {
     week: ['周日','周一','周二','周三','周四','周五','周六']
   }
 
-  UNSAFE_componentWillMount() {
+  onLoad() {
     // Taro.showShareMenu({
     //   withShareTicket: true
     // })
   }
+
+  UNSAFE_componentWillMount() {}
 
   componentWillUnmount () { }
 

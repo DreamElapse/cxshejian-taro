@@ -2,12 +2,14 @@ import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 
 import configStore from './store'
-
+// import '@/utils/tdweapp.js'
 import './app.scss'
 
 const store = configStore()
 
 class App extends Component {
+
+  componentDidMount () {}
 
   onLaunch() {
     // Taro.getUpdateManager().onCheckForUpdate(res => {
@@ -39,8 +41,6 @@ class App extends Component {
     //   }
     // });
   }
-
-  componentDidMount () {}
 
   componentDidShow () {}
 
