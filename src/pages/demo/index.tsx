@@ -1,26 +1,27 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Swiper, SwiperItem } from '@tarojs/components'
+import { View, ScrollView, WebView } from '@tarojs/components'
 
-import { add, minus, asyncAdd } from '../../store/actions'
+// import { add, minus, asyncAdd } from '../../store/actions'
 
 import './index.scss'
 
 type PageStateProps = {
-  counter: {
-    num: number
-  }
+
 }
 
 type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
+
 }
 
 type PageOwnProps = {}
 
-type PageState = {}
+type PageState = {
+  activeIndex: number,
+  tabList: Array<string>,
+  scrollNow: string,
+  url: string
+}
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
@@ -29,43 +30,48 @@ interface Demo {
 }
 
 @connect(({ counter }) => ({
-  counter
-}), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
+  ...counter
+}), () => ({
+
 }))
 class Demo extends Component {
+  state: PageState = {
+    activeIndex: 0,
+    tabList: ['a', 'b', 'c', 'd', 'e'],
+    scrollNow: 'a',
+    url: 'www.baidu.com'
+  }
+
   UNSAFE_componentWillReceiveProps (nextProps) {
     console.log(this.props, nextProps)
   }
 
   componentWillUnmount () { }
 
-  componentDidShow () { }
+  componentDidShow () {
+    this.setState({
+      url: 'www.baidu.com?21312'
+    })
+  }
 
   componentDidHide () { }
 
   render () {
+    const { tabList, activeIndex, scrollNow, url } = this.state
     return (
       <View className='demo'>
-        <Swiper
-          className='scroll-box'
-          vertical={false}
-        >
-          <SwiperItem>
-            1
-          </SwiperItem>
-          <SwiperItem>
-            2
-          </SwiperItem>
-        </Swiper>
+        <WebView src={url}></WebView>
+        <ScrollView className='scroll-view' scrollX scrollIntoView={scrollNow} scrollWithAnimation>
+          <View className="tab-list">
+            {
+              tabList.map((item, index) => {
+                return <View className={`tab-item ${activeIndex === index && 'active'}`} key={'item'+index}>{item}</View>
+              })
+            }
+
+          </View>
+        </ScrollView>
+
       </View>
     )
   }
