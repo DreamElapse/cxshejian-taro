@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View } from "@tarojs/components";
-import Taro, { getCurrentPages,showToast,getStorageSync,requestPayment,request } from '@tarojs/taro'
+import Taro, { getCurrentPages,showToast,getStorageSync,setStorageSync,requestPayment,request } from '@tarojs/taro'
 import "./index.scss";
 import API from '@/api'
 import config from '../../utils/config'
@@ -30,14 +30,15 @@ export default class Payment extends Component {
             icon: 'none',
             duration: 2000
           })
-          let webviewUrl = config[config.environmental]
-          var pages = getCurrentPages();
-          console.log(pages)
-          var currPage = pages[pages.length - 1];
-          var prevPage = pages[pages.length - 2];
-          prevPage.setState({
-            webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
-          })
+          // let webviewUrl = config[config.environmental]
+          // var pages = getCurrentPages();
+          // var currPage = pages[pages.length - 1];
+          // var prevPage = pages[pages.length - 2];
+          // prevPage.setState({
+          //   webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
+          // })
+          Taro.setStorageSync('orderId',options.oderId)
+          Taro.setStorageSync('paystatus',false)
           Taro.navigateBack()
         }
       },
@@ -47,14 +48,16 @@ export default class Payment extends Component {
           icon: 'none',
           duration: 2000
         })
-        let webviewUrl = config[config.environmental]
-        var pages = getCurrentPages();
-        var currPage = pages[pages.length - 1];
-        var prevPage = pages[pages.length - 2];
-        prevPage.setState({
-          webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
-        })
-        // Taro.navigateBack()
+        // let webviewUrl = config[config.environmental]
+        // var pages = getCurrentPages();
+        // var currPage = pages[pages.length - 1];
+        // var prevPage = pages[pages.length - 2];
+        // prevPage.setState({
+        //   webViewUrl: `${webviewUrl}orderallpay/${options.oderId}?isgo=pay`,
+        // })
+        Taro.setStorageSync('orderId',options.oderId)
+        Taro.setStorageSync('paystatus',false)
+        Taro.navigateBack()
       }
     })
     //页面加载调取微信支付（原则上应该对options的携带的参数进行校验）
@@ -75,19 +78,21 @@ export default class Payment extends Component {
       //小程序微信支付成功的回调通知
       'success': function(res) {
         //定义小程序页面集合
-        var pages = getCurrentPages();
+        // var pages = getCurrentPages();
         //当前页面 (wxpay page)
-        var currPage = pages[pages.length - 1];
+        // var currPage = pages[pages.length - 1];
         //上一个页面 （index page）
-        var prevPage = pages[pages.length - 2];
+        // var prevPage = pages[pages.length - 2];
         //通过page.setState方法使index的webview 重新加载url  有点类似于后台刷新页面
         //此处有点类似小程序通过加载URL的方式回调通知后端 该订单支付成功。后端逻辑不做赘述。
-        let webviewUrl = config[config.environmental]
-        prevPage.setState({
-          webViewUrl: `${webviewUrl}paystatus?orderId=${orderId}&payfrom=pay`,
-        })
+        // let webviewUrl = config[config.environmental]
+        // prevPage.setState({
+        //   webViewUrl: `${webviewUrl}paystatus?orderId=${orderId}&payfrom=pay`,
+        // })
         //小程序主动返回到上一个页面。即从wxpay page到index page。此时index page的webview已经重新加载了url 了
         //微信小程序的page 也有栈的概念navigateBack 相当于页面出栈的操作
+        Taro.setStorageSync('orderId',options.oderId)
+        Taro.setStorageSync('paystatus',true)
         Taro.navigateBack();
       },
       //小程序支付失败的回调通知
@@ -104,10 +109,11 @@ export default class Payment extends Component {
         var currPage = pages[pages.length - 1];
         var prevPage = pages[pages.length - 2];
         console.log("准备修改数据")
-        prevPage.setState({
-          webViewUrl: `${webviewUrl}orderallpay/${orderId}?isgo=pay`,
-        })
-        console.log("准备结束页面")
+        // prevPage.setState({
+        //   webViewUrl: `${webviewUrl}orderallpay/${orderId}?isgo=pay`,
+        // })
+        Taro.setStorageSync('orderId',options.oderId)
+        Taro.setStorageSync('paystatus',false)
         Taro.navigateBack()
         // this.payFail()
       }

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { View,Button,Image } from "@tarojs/components";
-import Taro,{ request } from '@tarojs/taro'
+import Taro,{ request,getStorageSync } from '@tarojs/taro'
 import config from '../../utils/config'
 import "./index.scss";
 import API from '@/api'
+import postInfo from '@/static/img/zowoyoo/postinfo.jpg'
 export default class Application extends Component {
   state = {
     qrcode: 'http://qnimg.zowoyoo.com/img/null/1581318658992.png',
@@ -27,16 +28,18 @@ export default class Application extends Component {
         // }).then(res=>{
         //   console.log(res)
         // })
+        let openId = Taro.getStorageSync('openId')
         Taro.request({
           url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
           method: 'POST',
           data: {
             content: this.state.text,
-            minappOpenid: 'wx18f8259aecab011a',
+            minappOpenid: openId,
             url: this.state.qrcode
           },
           header: {
-            'X-Authorization': `Bearer ${token}`
+            'X-Authorization': `Bearer ${token}`,
+            siteId: 6
           },
           success: res => {
             console.log(res)
@@ -116,7 +119,7 @@ export default class Application extends Component {
             open-type="contact"
             onContact="handleContact"
             show-message-card="true"
-            send-message-img="../Images/postinfo.jpg"
+            send-message-img={postInfo}
             send-message-path="/pages/index/index"
             send-message-title="客服信息"
           >

@@ -50,7 +50,7 @@ export default class Customer extends Component {
         method: 'POST',
         data: {
           content: this.state.text,
-          minappOpenid: Taro.getStorageSync('token'),
+          minappOpenid: Taro.getStorageSync('openId'),
           url: this.state.link
         },
         header: {
