@@ -39,8 +39,8 @@ interface Index {
 const BUTTON_LIST = [
   {
     img: icon_xsqg,
-    name: '限时抢购',
-    url: ''
+    name: '爆品抢购',
+    url: '/info/pages/mall/index'
   },
   {
     img: icon_thsc,
@@ -439,7 +439,13 @@ class Index extends Component {
   // 跳转页面
   toPage = (page) => {
     // 跳小程序页面和h5页面
-    if (page.url.includes('/tab')) {
+    if (page.url.includes('/info')) {
+      let infoId = '28011235'
+      Taro.setStorageSync('infoId', infoId)
+      Taro.switchTab({
+        url: page.url.replace('/info', '')
+      })
+    } else if (page.url.includes('/tab')) {
       Taro.switchTab({
         url: page.url.replace('/tab', '')
       })

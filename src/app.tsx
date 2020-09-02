@@ -9,6 +9,7 @@ const store = configStore()
 
 class App extends Component {
 
+  onLaunch() { }
 
   componentDidMount () {}
 
