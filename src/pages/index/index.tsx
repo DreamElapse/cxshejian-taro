@@ -88,7 +88,7 @@ class Index extends Component {
     // isSetting: false, // 用户设置
     lat: '',
     lon: '',
-    startIndex: 1,
+    startIndex: 0,
     tabIndex: 1,
     themeId: '101098',
     excludeThemeId: '',
@@ -126,7 +126,7 @@ class Index extends Component {
   onReachBottom() {
     if (this.state.noMoreData) return
     this.setState({
-      startIndex: this.state.startIndex + 1
+      startIndex: this.state.startIndex + 5
     })
     this.getListData(this.state.tabIndex)
   }
@@ -474,7 +474,7 @@ class Index extends Component {
       themeId: index === 1 ? '101098' : '',
       excludeThemeId: index === 2 ? '101098' : '',
       // recommendList: [],
-      startIndex: 1
+      startIndex: 0
     })
     this.getListData(index)
   }
