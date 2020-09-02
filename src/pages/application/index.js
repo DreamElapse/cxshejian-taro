@@ -120,7 +120,7 @@ export default class Application extends Component {
             onContact="handleContact"
             show-message-card="true"
             send-message-img={postInfo}
-            send-message-path="/pages/index/index"
+            send-message-path="/pages/mall/index"
             send-message-title="客服信息"
           >
             <View>发送二维码</View>
