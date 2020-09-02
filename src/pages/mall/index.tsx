@@ -37,49 +37,6 @@ class Mall extends Component {
     webviewParam: {},
     params: 'siteId=6'
   }
-  componentDidShow () {
-
-    let infoId = Taro.getStorageSync('infoId')
-    let orderId = Taro.getStorageSync('orderId')
-    let paystatus = Taro.getStorageSync('paystatus')
-    const Timestamp = new Date().getTime()
-    const webviewlink = config[config.environmental]
-    if(infoId) {
-      this.setState({
-        params: `siteId=6&environmental=t&page=product&infoId${infoId}`
-      },()=>{
-        this.setState({
-          webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
-        })
-      })
-    } else if(orderId) {
-      if(paystatus) {
-        this.setState({
-          webViewUrl: `${webviewlink}paystatus?siteId=6&time=${Timestamp}&orderId=${orderId}&payfrom=pay`
-        })
-      }else {
-        this.setState({
-          webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
-        })
-      }
-    }
-     else {
-      this.setState({
-        webViewUrl: `${webviewlink}home?siteId=6&time=${Timestamp}`
-      })
-    }
-    Taro.removeStorageSync('infoId')
-    Taro.removeStorageSync('orderId')
-    Taro.removeStorageSync('paystatus')
-  }
-
-  UNSAFE_componentWillUnmount () { }
-
-  componentDidHide () { 
-    this.setState({
-      webViewUrl: ''
-    })
-  }
   onShareAppMessage(options) {
     if (options.webViewUrl.indexOf('product') > -1 || options.webViewUrl.indexOf('activity') > -1 || options.webViewUrl.indexOf('dynamic') > -1) {
       let currentPath = `/pages/mall/index?${this.state.shareParam.link}`
@@ -125,6 +82,49 @@ class Mall extends Component {
         }
       }
     }
+  }
+  componentDidShow () {
+
+    let infoId = Taro.getStorageSync('infoId')
+    let orderId = Taro.getStorageSync('orderId')
+    let paystatus = Taro.getStorageSync('paystatus')
+    const Timestamp = new Date().getTime()
+    const webviewlink = config[config.environmental]
+    if(infoId) {
+      this.setState({
+        params: `siteId=6&environmental=t&page=product&infoId${infoId}`
+      },()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
+        })
+      })
+    } else if(orderId) {
+      if(paystatus) {
+        this.setState({
+          webViewUrl: `${webviewlink}paystatus?siteId=6&time=${Timestamp}&orderId=${orderId}&payfrom=pay`
+        })
+      }else {
+        this.setState({
+          webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
+        })
+      }
+    }
+     else {
+      this.setState({
+        webViewUrl: `${webviewlink}home?siteId=6&time=${Timestamp}`
+      })
+    }
+    Taro.removeStorageSync('infoId')
+    Taro.removeStorageSync('orderId')
+    Taro.removeStorageSync('paystatus')
+  }
+
+  UNSAFE_componentWillUnmount () { }
+
+  componentDidHide () { 
+    this.setState({
+      webViewUrl: ''
+    })
   }
   onLoad (query) {
     const Timestamp = new Date().getTime()

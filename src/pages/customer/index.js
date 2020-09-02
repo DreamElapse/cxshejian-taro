@@ -6,6 +6,7 @@ import API from '@/api'
 import firstStep from '@/static/img/zowoyoo/first-step.png'
 import secondStep from '@/static/img/zowoyoo/second-step.png'
 import postInfo from '@/static/img/zowoyoo/postinfo.jpg'
+import config from '../../utils/config'
 
 export default class Customer extends Component {
   state = {
@@ -30,39 +31,35 @@ export default class Customer extends Component {
       this.state.orderId = options.orderid
       this.setState({
         linkType: options.linkType
-      })
-      if (options.linkType === '1') {
-        this.state.text = `您查看的订单编号${options.orderid}的预约网址为`
-      } else if (options.linkType === '2') {
-        this.state.text = `点击以下链接继续浏览详情`
-      } else if (options.linkType === '3') {
-        this.state.text = `领取赚钱秘籍，学习大佬销售业绩倍增营销术`
-      }
-      // API.Zowoyoo.savaLink({
-      //   content: this.state.text,
-      //   minappOpenid: getApp().globalstate.openId,
-      //   url: this.state.link
-      // }).then(res=>{
-      //   console.log(res)
-      // })
-      Taro.request({
-        url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
-        method: 'POST',
-        data: {
-          content: this.state.text,
-          minappOpenid: Taro.getStorageSync('openId'),
-          url: this.state.link
-        },
-        header: {
-          'X-Authorization': `Bearer ${token}`
-        },
-        success: res => {
-          console.log(res)
-        },
-        fail: err => {
-          console.log(err)
+      },()=>{
+        if (options.linkType === '1') {
+          this.state.text = `您查看的订单编号${options.orderid}的预约网址为`
+        } else if (options.linkType === '2') {
+          this.state.text = `点击以下链接继续浏览详情`
+        } else if (options.linkType === '3') {
+          this.state.text = `领取赚钱秘籍，学习大佬销售业绩倍增营销术`
         }
+        Taro.request({
+          url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
+          method: 'POST',
+          data: {
+            content: this.state.text,
+            minappOpenid: Taro.getStorageSync('openId'),
+            url: this.state.link
+          },
+          header: {
+            'X-Authorization': `Bearer ${token}`,
+            siteId: 6
+          },
+          success: res => {
+            console.log(res)
+          },
+          fail: err => {
+            console.log(err)
+          }
+        })
       })
+      
       
     }
   }
