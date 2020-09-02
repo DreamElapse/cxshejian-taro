@@ -6,7 +6,7 @@ import util from '../../utils/zowoyooutil'
 import Taro from '@tarojs/taro'
 import pages from '../../utils/pages'
 import './index.scss'
-
+import shareImg from '@/static/img/zowoyoo/share.jpg'
 type PageStateProps = {
 
 }
@@ -267,20 +267,20 @@ class Mall extends Component {
       return {
         title: this.state.shareParam.title,
         path: sharePath,
-        // imageUrl: '../images/share.jpg'
+        imageUrl: shareImg
       }
     } else {
       if (this.state.shareParam && this.state.shareParam.link) {
         return {
-          title: '用畅行舌尖，发现好价玩赚生活',
+          title: '畅行舌尖，让你享受火车出行新生活',
           path: `/pages/mall/index?${this.state.shareParam.link}`,
-          // imageUrl: '../images/share.jpg'
+          imageUrl: shareImg
         }
       } else {
         return {
-          title: '用畅行舌尖，发现好价玩赚生活',
+          title: '畅行舌尖，让你享受火车出行新生活',
           path: `/pages/mall/index`,
-          // imageUrl: '../images/share.jpg'
+          imageUrl: shareImg
         }
       }
     }
