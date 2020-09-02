@@ -96,7 +96,7 @@ export default class Bindphone extends Component {
   decryptPhoneNumber = () => {
     return new Promise((resolve) => {
       Taro.request({
-        url: `${config.target}/mtourists-core/user/minappUserPhone?encryptedData=${encodeURIComponent(this.state.encryptedData)}&iv=${encodeURIComponent(this.state.iv)}&openid=${Taro.getStorageSync('token')}`,
+        url: `${config.target}/mtourists-core/user/minappUserPhone?encryptedData=${encodeURIComponent(this.state.encryptedData)}&iv=${encodeURIComponent(this.state.iv)}&openid=${Taro.getStorageSync('openId')}`,
         method: 'GET',
         header: {
           'X-Authorization': `Bearer ${this.state.zoowoyooToken}`,

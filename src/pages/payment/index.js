@@ -9,9 +9,10 @@ export default class Payment extends Component {
     const token = options['X-Authorization']
     const interiorAppId = `wx18f8259aecab011a`
     console.log(options,'-----------------+++++++++++++')
-    const orderId = options['orderId']
+    const orderId = options['oderId']
+    console.log(orderId,'===================')
     Taro.request({
-      url: `${config.target}/mtourists-core/order/minapp/AllinPayInfo/${orderId}?appId=${interiorAppId}&openid=${Taro.getStorageSync('token')}`,
+      url: `${config.target}/mtourists-core/order/minapp/AllinPayInfo/${orderId}?appId=${interiorAppId}&openid=${Taro.getStorageSync('openId')}`,
       method: 'POST',
       header: {
         'X-Authorization': `Bearer ${token}`,
@@ -31,6 +32,7 @@ export default class Payment extends Component {
           })
           let webviewUrl = config[config.environmental]
           var pages = getCurrentPages();
+          console.log(pages)
           var currPage = pages[pages.length - 1];
           var prevPage = pages[pages.length - 2];
           prevPage.setState({
