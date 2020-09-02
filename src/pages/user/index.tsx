@@ -28,15 +28,14 @@ interface User {
 }))
 class User extends Component {
   state = {
-    webviewUrl: 'http://testm.lvyoupdd.com/user?siteId=6'
+    webviewUrl: 'http://192.168.19.159/user?siteId=6'
   }
   componentWillUnmount () { }
 
   componentDidShow () { 
     this.setState({
-      webviewUrl: 'http://testm.lvyoupdd.com/user?siteId=6'
+      webviewUrl: 'http://192.168.19.159/user?siteId=6'
     })
-    console.log(this.state.webviewUrl,'================')
   }
 
   componentDidHide () { }

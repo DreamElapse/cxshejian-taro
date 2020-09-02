@@ -4,7 +4,7 @@ module.exports = {
     API_URL: '"https://cxsj-api-pre.yishizongheng.com"',
     API_VEGA_STATION: '"https://www.cx9z.com"',
     API_WEITAIKEJI: '"https://czt.weitaikeji.com"',
-    API_ZIWOYOU: '"http://testm.lvyoupdd.com:8510"'
+    API_ZIWOYOU: '"https://testm.lvyoupdd.com"'
   },
   defineConstants: {
   },

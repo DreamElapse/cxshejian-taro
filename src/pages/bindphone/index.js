@@ -29,6 +29,7 @@ export default class Bindphone extends Component {
     }
   }
   getPhoneNumber = (e) => {
+    console.log('+++++++++++++++++++++++++++++++++++')
     if(e && e.detail && e.detail.errMsg==="getPhoneNumber:ok") {
       this.state.encryptedData = e.detail.encryptedData
       this.state.iv = e.detail.iv
@@ -41,22 +42,48 @@ export default class Bindphone extends Component {
           icon: 'loading',
           mask:true
         })
-        
-        API.Zowoyoo.changeMobile({mobile: this.state.wxPhoneNumber}).then(res=>{
-          Taro.showToast({
-            title: '修改成功',
-            icon: 'success',
-            mask:true,
-            duration: 2000,
-            success: res =>{
-              setTimeout(()=>{
-                Taro.switchTab({
-                  url: `/pages/user/index?environmental=t&page=user&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
-                })
-              },2000)
-            }
-          })
+        Taro.request({
+          url: `${config.target}/mtourists-core/user/mobile?mobile=${this.state.wxPhoneNumber}`,
+          method: 'PUT',
+          header: {
+            'X-Authorization': `Bearer ${this.state.zoowoyooToken}`,
+            siteId: 6
+          },
+          success: res => {
+            Taro.showToast({
+              title: '修改成功',
+              icon: 'success',
+              mask: true,
+              duration: 2000,
+              success: res=>{
+                setTimeout(()=>{
+                  wx.reLaunch({
+                    url: `/pages/mall/index?environmental=t&page=user&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
+                  })
+                },2000)
+              }
+            })
+          },
+          fail: err => {
+            
+          }
         })
+        
+        // API.Zowoyoo.changeMobile({mobile: this.state.wxPhoneNumber}).then(res=>{
+        //   Taro.showToast({
+        //     title: '修改成功',
+        //     icon: 'success',
+        //     mask:true,
+        //     duration: 2000,
+        //     success: res =>{
+        //       setTimeout(()=>{
+        //         Taro.switchTab({
+        //           url: `/pages/user/index?environmental=t&page=user&from=miniapp&valuePhone=${this.state.originalPhoneNumber}&valueName=${this.state.originalName}&valueImg=${this.state.originalImg}`,
+        //         })
+        //       },2000)
+        //     }
+        //   })
+        // })
       }
     })
 
@@ -72,7 +99,8 @@ export default class Bindphone extends Component {
         url: `${config.target}/mtourists-core/user/minappUserPhone?encryptedData=${encodeURIComponent(this.state.encryptedData)}&iv=${encodeURIComponent(this.state.iv)}&openid=${Taro.getStorageSync('token')}`,
         method: 'GET',
         header: {
-          'X-Authorization': `Bearer ${this.state.zoowoyooToken}`
+          'X-Authorization': `Bearer ${this.state.zoowoyooToken}`,
+          siteId: 6
         },
         success: res => {
           resolve(res)
@@ -81,9 +109,6 @@ export default class Bindphone extends Component {
           resolve(err)
         }
       })
-      // API.Zowoyoo.minappUserPhone({encryptedData:`${encodeURIComponent(this.state.encryptedData)}`,iv:`${encodeURIComponent(this.state.iv)}`,openid:`${Taro.getStorageSync('token')}`}).then(res=>{
-      //   resolve(res)
-      // })
     })
   }
   componentDidMount() {}
