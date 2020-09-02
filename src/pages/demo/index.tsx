@@ -39,7 +39,7 @@ class Demo extends Component {
     activeIndex: 0,
     tabList: ['a', 'b', 'c', 'd', 'e'],
     scrollNow: 'a',
-    url: 'www.baidu.com'
+    url: 'https://www.baidu.com'
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -49,9 +49,7 @@ class Demo extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    this.setState({
-      url: 'www.baidu.com?21312'
-    })
+
   }
 
   componentDidHide () { }
@@ -60,8 +58,8 @@ class Demo extends Component {
     const { tabList, activeIndex, scrollNow, url } = this.state
     return (
       <View className='demo'>
-        <WebView src={url}></WebView>
-        <ScrollView className='scroll-view' scrollX scrollIntoView={scrollNow} scrollWithAnimation>
+        {/*<WebView src={url}></WebView>*/}
+        <ScrollView className='tab-box' scrollX scrollIntoView={scrollNow} scrollWithAnimation>
           <View className="tab-list">
             {
               tabList.map((item, index) => {
@@ -70,6 +68,7 @@ class Demo extends Component {
             }
 
           </View>
+
         </ScrollView>
 
       </View>
