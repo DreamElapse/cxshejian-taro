@@ -76,7 +76,7 @@ export default class Payment extends Component {
       'signType': obj.signtype,
       'paySign': obj.paysign,
       //小程序微信支付成功的回调通知
-      'success': function(res) {
+      success: (res)=> {
         //定义小程序页面集合
         // var pages = getCurrentPages();
         //当前页面 (wxpay page)
@@ -91,12 +91,12 @@ export default class Payment extends Component {
         // })
         //小程序主动返回到上一个页面。即从wxpay page到index page。此时index page的webview已经重新加载了url 了
         //微信小程序的page 也有栈的概念navigateBack 相当于页面出栈的操作
-        Taro.setStorageSync('orderId',options.oderId)
+        Taro.setStorageSync('orderId',orderId)
         Taro.setStorageSync('paystatus',true)
-        Taro.navigateBack();
+        Taro.navigateBack()
       },
       //小程序支付失败的回调通知
-      'fail': function(res) {
+      fail: (res)=> {
         Taro.showToast({
           title: '支付失败',
           icon: 'none',
@@ -112,7 +112,7 @@ export default class Payment extends Component {
         // prevPage.setState({
         //   webViewUrl: `${webviewUrl}orderallpay/${orderId}?isgo=pay`,
         // })
-        Taro.setStorageSync('orderId',options.oderId)
+        Taro.setStorageSync('orderId',orderId)
         Taro.setStorageSync('paystatus',false)
         Taro.navigateBack()
         // this.payFail()

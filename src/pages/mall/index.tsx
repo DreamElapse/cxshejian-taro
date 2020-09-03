@@ -42,26 +42,39 @@ class Mall extends Component {
     let infoId = Taro.getStorageSync('infoId')
     let orderId = Taro.getStorageSync('orderId')
     let paystatus = Taro.getStorageSync('paystatus')
+    let account = Taro.getStorageSync('account')
     const Timestamp = new Date().getTime()
     const webviewlink = config[config.environmental]
     if(infoId) {
       this.setState({
         params: `siteId=6&environmental=t&page=product&infoId${infoId}`
       },()=>{
-        this.setState({
-          webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
-        })
+        setTimeout(()=>{
+          this.setState({
+            webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
+          })
+        },400)
       })
     } else if(orderId) {
       if(paystatus) {
-        this.setState({
-          webViewUrl: `${webviewlink}paystatus?siteId=6&time=${Timestamp}&orderId=${orderId}&payfrom=pay`
-        })
+        setTimeout(()=>{
+          this.setState({
+            webViewUrl: `${webviewlink}paystatus?siteId=6&time=${Timestamp}&orderId=${orderId}&payfrom=pay`
+          })
+        },400)
       }else {
-        this.setState({
-          webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
-        })
+        setTimeout(()=>{
+          this.setState({
+            webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
+          })
+        },400)
       }
+    } else if(account) {
+      setTimeout(()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}account?siteId=6&time=${Timestamp}&from=application`
+        })
+      },400)
     }
      else {
       this.setState({
@@ -71,6 +84,7 @@ class Mall extends Component {
     Taro.removeStorageSync('infoId')
     Taro.removeStorageSync('orderId')
     Taro.removeStorageSync('paystatus')
+    Taro.removeStorageSync('account')
   }
   UNSAFE_componentWillMount () { 
     Taro.showShareMenu({

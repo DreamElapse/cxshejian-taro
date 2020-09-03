@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { WebView, View } from '@tarojs/components'
 import config from '../../utils/config'
 import shareImg from '@/static/img/zowoyoo/share.jpg'
+import Taro ,{getStorageSync} from '@tarojs/taro'
 
 import './index.scss'
 type PageStateProps = {
@@ -30,7 +31,7 @@ interface User {
 }))
 class User extends Component {
   state = {
-    webviewUrl: `${[config[config.environmental]]}user?siteId=6`,
+    webviewUrl: '',
     shareParam: {},
     webviewParam: {},
     params: 'siteId=6',
@@ -39,10 +40,19 @@ class User extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    let time = new Date().getTime()
-    this.setState({
-      webviewUrl: `${[config[config.environmental]]}user?time=${time}siteId=6`
-    })
+    let account = Taro.getStorageSync('account')
+    const webviewlink = config[config.environmental]
+    let times = new Date().getTime()
+    if(account) {
+      this.setState({
+        webviewUrl: `${webviewlink}account?time=${times}&siteId=6&from=application`
+      })
+    } else {
+      this.setState({
+        webviewUrl: `${webviewlink}user?time=${times}siteId=6`
+      })
+    }
+    // Taro.removeStorageSync('account')
   }
 
   componentDidHide () {

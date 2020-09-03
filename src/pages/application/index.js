@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { View,Button,Image } from "@tarojs/components";
-import Taro,{ request,getStorageSync } from '@tarojs/taro'
+import Taro,{ request,getStorageSync,setStorageSync } from '@tarojs/taro'
 import config from '../../utils/config'
 import "./index.scss";
 import API from '@/api'
@@ -14,6 +14,9 @@ export default class Application extends Component {
   }
   onLoad (options) {
     console.log(options)
+    if(options.fromPage === 'with') {
+      Taro.setStorageSync('account','application')
+    }
     if (options && options.qrcode && options.wxid) {
       this.setState({
         qrcode: options.qrcode,
@@ -57,7 +60,7 @@ export default class Application extends Component {
       Taro.navigateBack()
     } else {
       Taro.switchTab({
-        url: '/pages/mall/index?environmental=t&page=account&from=application',
+        url: '/pages/mall/index',
       })
     }
   }

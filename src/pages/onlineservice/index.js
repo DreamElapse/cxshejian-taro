@@ -69,7 +69,7 @@ export default class Onlineservice extends Component {
         }
       })
       // API.Zowoyoo.savaLink({
-      //   content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
+      //   content: '想体验更多功能，请长按识别二维码关注“畅行舌尖”公众号',
       //     minappOpenid: getApp().globalData.openId,
       //     url: 'url',
       //     isFollow: 1,
