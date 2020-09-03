@@ -5,8 +5,9 @@ import config from '../../utils/config'
 import util from '../../utils/zowoyooutil'
 import Taro from '@tarojs/taro'
 import pages from '../../utils/pages'
-import './index.scss'
 import shareImg from '@/static/img/zowoyoo/share.jpg'
+import './index.scss'
+
 type PageStateProps = {
 
 }
@@ -46,11 +47,8 @@ class Mall extends Component {
     const webviewlink = config[config.environmental]
     if(infoId) {
       this.setState({
-        params: `siteId=6&environmental=t&page=product&infoId${infoId}`
-      },()=>{
-        this.setState({
-          webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
-        })
+        params: `siteId=6&environmental=t&page=product&infoId${infoId}`,
+        webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
       })
       // 隐藏tabBar
       Taro.hideTabBar()
