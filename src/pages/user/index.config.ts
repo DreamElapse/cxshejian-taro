@@ -1,3 +1,4 @@
 export default {
-  navigationBarTitleText: '用户'
+  navigationBarTitleText: '12306.舌尖上的旅途',
+  enableShareAppMessage: true
 }

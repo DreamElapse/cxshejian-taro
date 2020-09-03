@@ -12,7 +12,7 @@ export default class Onlineservice extends Component {
     titleType: '0', // 0为默认空title ； 1:设置提醒 ；2：团长升级后 ；3：在线客服（未关注）；4: 在线客服（已关注）；5：支付完成
     showAccount: true,
     noAccount:'',
-    siteId: '0',
+    siteId: '6',
     isAttent: false // 是否关注公众号，false没有。true已关注
   }
   onLoad (options) {
@@ -21,7 +21,7 @@ export default class Onlineservice extends Component {
       const token = options['X-Authorization']
       this.setState({
         titleType: options.titleType,
-        siteId: options.siteId
+        siteId: '6'
       })
       // API.Zowoyoo.attentionCode({
       //   sceneId: 334
@@ -46,7 +46,8 @@ export default class Onlineservice extends Component {
         url: `${config.target}/mtourists-api/pddapi/user/attentionCode?sceneId=334`,
         method: 'GET',
         header: {
-          'X-Authorization': `Bearer ${token}`
+          'X-Authorization': `Bearer ${token}`,
+          siteId: 6
         },
         success: res => {
           if (res.data.state === 1) {
@@ -80,14 +81,15 @@ export default class Onlineservice extends Component {
         url: `${config.target}/mtourists-core/wechat/message/outer-link/save`,
         method: 'POST',
         data: {
-          content: '想体验更多功能，请长按识别二维码关注“游好货吃喝玩乐”公众号',
+          content: '想体验更多功能，请长按识别二维码关注“畅行舌尖”公众号',
           minappOpenid: Taro.getStorageSync('token'),
           url: 'url',
           isFollow: 1,
           siteId: 6
         },
         header: {
-          'X-Authorization': `Bearer ${token}`
+          'X-Authorization': `Bearer ${token}`,
+          siteId: 6
         },
         success: res => {
           console.log(res)
@@ -182,7 +184,7 @@ export default class Onlineservice extends Component {
             onContact="handleContact"
             show-message-card="true"
             send-message-img={postInfo}
-            send-message-path="/pages/index/index"
+            send-message-path="/pages/mall/index"
             send-message-title="客服信息"
           >
             <View>确认</View>

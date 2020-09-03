@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { View, Button, Image, Text } from "@tarojs/components";
 import Taro,{showToast} from '@tarojs/taro'
 import "./index.scss";
-
+import copyImg from '@/static/img/zowoyoo/copy.png'
+import shareImg from '@/static/img/zowoyoo/poster-share.png'
+import downInmg from '@/static/img/zowoyoo/poster-download.png'
 export default class Poster extends Component {
   state = {
     showToast: false,
@@ -152,13 +154,13 @@ export default class Poster extends Component {
             </View> */}
           </View>
           <View class="poster-section-content">
-            {/* <Image class="img" mode="widthFix" src="{{posterUrl}}"></Image> */}
+            <Image class="img" mode="widthFix" src={this.state.posterUrl}></Image>
           </View>
           <View class="product-title">
             <Text class="product-title-content">{this.state.contentData}</Text>
             <Text class="product-title-link">{this.state.contentLink}</Text>
             <View class="copy-box" onClick={this.copyContent}>
-              {/* <Image class="copy-btn" src="../Images/copy.png"></Image> */}
+              <Image class="copy-btn" src={copyImg}></Image>
               <Text>复制文案</Text>
             </View>
           </View>
@@ -171,13 +173,13 @@ export default class Poster extends Component {
             </View>
             <View class="bottom-right">
               <Button plain="true" open-type="share">
-                {/* <Image class="share" src="../Images/poster-share.png"></Image> */}
+                <Image class="share" src={shareImg}></Image>
               </Button>
-              {/* <Image
+              <Image
                 class="download"
-                src="../Images/poster-download.png"
+                src={downInmg}
                 onClick={this.downloadPoster}
-              ></Image> */}
+              ></Image>
             </View>
           </View>
         </View>
