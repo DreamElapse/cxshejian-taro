@@ -200,7 +200,7 @@ class Index extends Component {
         </View>
         {/*------免费试吃/开卡------*/}
         <View className='sec-middle'>
-          <Navigator className='foretaste' url="/page/adPage/index?url=">
+          <Navigator className='foretaste' url="/page/adPage/index?url=" onClick={this.showTip}>
             <Text className='text'>车厢食品免费试吃</Text>
             <Image src={mfsc} className='taste-img' mode="aspectFill" />
           </Navigator>
@@ -320,6 +320,13 @@ class Index extends Component {
   // getUserInfo = (res) => {
   //   console.log(res, 123)
   // }
+
+  showTip = () => {
+    Taro.showToast({
+      title: '敬请期待',
+      icon: 'none'
+    })
+  }
 
   // 获取车次信息
   getTrain = () => {

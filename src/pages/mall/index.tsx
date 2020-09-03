@@ -57,7 +57,7 @@ class Mall extends Component {
         },400)
       })
       // 隐藏tabBar
-      Taro.hideTabBar()
+      // Taro.hideTabBar()
     } else if(orderId) {
       if(paystatus) {
         setTimeout(()=>{
