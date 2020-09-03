@@ -1,17 +1,32 @@
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 
-import configStore from './store'
-// import '@/utils/tdweapp.js'
+import configStore from '@/store'
+
 import './app.scss'
 
+// let tdweapp = require('@/utils/tdweapp.js')
+
+
 const store = configStore()
+
+// const TD = require('@/utils/tdweapp.js')
 
 class App extends Component {
 
   componentDidMount () {}
 
   onLaunch() {
+    // TD.launch({
+    //   appkey: '1B4CB238B43B4B5C9648E0F8F380FA8E',
+    //   appName: '畅行舌尖小程序',
+    //   versionName: '1.0.0',
+    //   versionCode: 'versionCode',
+    //   wxAppid: 'wx18f8259aecab011a',
+    //   getLocation: false, // 默认不获取用户位置
+    //   autoOnPullDownRefresh: false, // 默认不统计下拉刷新数据
+    //   autoOnReachBottom: false // 默认不统计页面触底数据
+    // })
     // Taro.getUpdateManager().onCheckForUpdate(res => {
     //   if (res.hasUpdate) {
     //     //新版本下载完成

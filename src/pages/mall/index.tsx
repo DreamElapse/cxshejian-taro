@@ -44,6 +44,7 @@ class Mall extends Component {
     infoId && this.setState({
       params: `siteId=6&environmental=t&page=product&infoId${infoId}`
     })
+    Taro.hideTabBar()
     Taro.removeStorageSync('infoId')
   }
 
