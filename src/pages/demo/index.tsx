@@ -60,14 +60,12 @@ class Demo extends Component {
       <View className='demo'>
         {/*<WebView src={url}></WebView>*/}
         <ScrollView className='tab-box' scrollX scrollIntoView={scrollNow} scrollWithAnimation>
-          <View className="tab-list">
-            {
-              tabList.map((item, index) => {
-                return <View className={`tab-item ${activeIndex === index && 'active'}`} key={'item'+index}>{item}</View>
-              })
-            }
+          {
+            tabList.map((item, index) => {
+              return <View className={`tab-item ${activeIndex === index && 'active'}`} key={'item'+index}>{item}</View>
+            })
+          }
 
-          </View>
 
         </ScrollView>
 
