@@ -17,6 +17,7 @@ import mfsc from '@/static/img/index/mfsc.png'
 
 
 
+
 type PageStateProps = {
   date: string,
   trainInfo: any,
@@ -96,7 +97,7 @@ class Index extends Component {
     excludeThemeId: '',
     isGetLocation: false,
     hasDistance: true,
-    hideModal: true,
+    hideModal: false,
     topAd: [],
     middleAd: [],
     noMoreData: false,
@@ -105,6 +106,7 @@ class Index extends Component {
   }
 
   onLoad() {
+    // app.tdweapp.td_app_sdk.event()
     // Taro.showShareMenu({
     //   withShareTicket: true
     // })
@@ -115,6 +117,8 @@ class Index extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
+    // console.log(TD, 111)
+    // TD.Page.load(true)
     // 扶手码code
     let router: any = getCurrentInstance().router
     let code = router.params.code || 9999
