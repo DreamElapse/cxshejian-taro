@@ -5,8 +5,9 @@ import config from '../../utils/config'
 import util from '../../utils/zowoyooutil'
 import Taro from '@tarojs/taro'
 import pages from '../../utils/pages'
-import './index.scss'
 import shareImg from '@/static/img/zowoyoo/share.jpg'
+import './index.scss'
+
 type PageStateProps = {
 
 }
@@ -55,6 +56,8 @@ class Mall extends Component {
           })
         },400)
       })
+      // 隐藏tabBar
+      // Taro.hideTabBar()
     } else if(orderId) {
       if(paystatus) {
         setTimeout(()=>{
@@ -86,14 +89,14 @@ class Mall extends Component {
     Taro.removeStorageSync('paystatus')
     Taro.removeStorageSync('account')
   }
-  UNSAFE_componentWillMount () { 
+  UNSAFE_componentWillMount () {
     Taro.showShareMenu({
       withShareTicket: true
     })
   }
   UNSAFE_componentWillUnmount () { }
 
-  componentDidHide () { 
+  componentDidHide () {
     this.setState({
       webViewUrl: ''
     })

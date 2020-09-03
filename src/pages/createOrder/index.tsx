@@ -493,7 +493,6 @@ class CreateOrder extends Component {
       deliverEndTime: mealsData.split('-')[1].replace(' ', ''),
       downStationName: userStationInfo.endStation.stationName,
       downStationId: userStationInfo.endStation.stationId,
-      // downTrainTime: dayjs(userStationInfo.endStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
       downTrainTime: userStationInfo.endStation.arrivalTime,
       endStationId: ticketList[ticketList.length-1].statinId,
       memo: this.state.memo,
@@ -506,13 +505,11 @@ class CreateOrder extends Component {
       startStationName: ticketList[0].statinName,
       totalAmount: this.props.totalPrice * 100,
       train: trainInfo.train,
-      // trainStartTime: dayjs(ticketList[0].leaveTime).format('YYYY-MM-DD hh:mm:ss'),
-      // trainEndTime: dayjs(ticketList[1].arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
+      teamCode: trainInfo.teamCode,
       trainStartTime: ticketList[0].leaveTime,
       trainEndTime: ticketList[1].arrivalTime,
       upStationId: userStationInfo.startStation.stationId,
       upStationName: userStationInfo.startStation.stationName,
-      // upTrainTime: dayjs(userStationInfo.startStation.arrivalTime).format('YYYY-MM-DD hh:mm:ss'),
       upTrainTime: userStationInfo.startStation.arrivalTime,
       userId: ''
     }
