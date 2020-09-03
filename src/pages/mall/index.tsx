@@ -48,8 +48,6 @@ class Mall extends Component {
     const webviewlink = config[config.environmental]
     if(infoId) {
       this.setState({
-        params: `siteId=6&environmental=t&page=product&infoId${infoId}`,
-        webViewUrl: `${webviewlink}product/${infoId}?siteId=6&time=${Timestamp}`
         params: `siteId=6&environmental=t&page=product&infoId${infoId}`
       },()=>{
         setTimeout(()=>{
