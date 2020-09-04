@@ -37,7 +37,7 @@ interface Demo {
 class Demo extends Component {
   state: PageState = {
     activeIndex: 0,
-    tabList: ['a', 'b', 'c', 'd', 'e'],
+    tabList: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
     scrollNow: 'a',
     url: 'https://www.baidu.com'
   }
@@ -59,20 +59,26 @@ class Demo extends Component {
     return (
       <View className='demo'>
         {/*<WebView src={url}></WebView>*/}
-        <ScrollView className='tab-box' scrollX scrollIntoView={scrollNow} scrollWithAnimation>
-          <View className="tab-list">
-            {
-              tabList.map((item, index) => {
-                return <View className={`tab-item ${activeIndex === index && 'active'}`} key={'item'+index}>{item}</View>
-              })
-            }
+        <ScrollView className='tab-box' scrollX scrollIntoView={'item'+activeIndex} scrollWithAnimation>
+          {
+            tabList.map((item, index) => {
+              return <View className={`tab-item ${activeIndex === index && 'active'}`} key={'item'+index} id={'item'+index} onClick={() => {this.changeTab(index)}}>{item}</View>
+            })
+          }
 
-          </View>
 
         </ScrollView>
 
       </View>
     )
+  }
+
+  changeTab(index) {
+    let select = Taro.createSelectorQuery()
+    // let tabItem =
+    this.setState({
+      activeIndex: index
+    })
   }
 }
 

@@ -121,7 +121,7 @@ class Index extends Component {
     // TD.Page.load(true)
     // 扶手码code
     let router: any = getCurrentInstance().router
-    let code = router.params.code || 9999
+    let code = router.params.code
     code && this.setState({code}, () => {
       this.getTrain()
     })

@@ -1,23 +1,26 @@
-.index {
+.demo {
   flex-direction: column;
   width: 100%;
   .tab-box{
-    width: 100%
+    width: 100%;
+    white-space: nowrap;
   }
   .tab-list{
-    width: 100%;
+
   }
   .tab-item{
     width: 200px;
     height: 60px;
     line-height: 60px;
+    display: inline-block;
     color: #FFF;
     background: #1ba4eb;
     font-size: 28px;
     text-align: center;
+    border-right: 2px solid #FFF;
     &.active{
       background: #00cc64;
-      color: #fa6003;
+      color: #fda26a;
     }
   }
 
