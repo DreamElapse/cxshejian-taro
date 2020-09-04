@@ -101,7 +101,7 @@ class User extends Component {
       }else {
         setTimeout(()=>{
           this.setState({
-            webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
+            webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay&siteId=6`
           })
         },400)
       }

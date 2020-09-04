@@ -67,8 +67,9 @@ class Mall extends Component {
         },400)
       }else {
         setTimeout(()=>{
+          console.log(`${webviewlink}orderallpay/${orderId}?isgo=pay&siteId=6`,'---------------------')
           this.setState({
-            webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay`
+            webViewUrl: `${webviewlink}orderallpay/${orderId}?isgo=pay&siteId=6`
           })
         },400)
       }

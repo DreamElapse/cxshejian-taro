@@ -102,20 +102,10 @@ export default class Payment extends Component {
           icon: 'none',
           duration: 2000
         })
-        let webviewUrl = config[config.environmental]
-        console.log("支付失败"),
-          console.log(res)
-        var pages = getCurrentPages();
-        var currPage = pages[pages.length - 1];
-        var prevPage = pages[pages.length - 2];
-        console.log("准备修改数据")
-        // prevPage.setState({
-        //   webViewUrl: `${webviewUrl}orderallpay/${orderId}?isgo=pay`,
-        // })
+
         Taro.setStorageSync('orderId',orderId)
         Taro.setStorageSync('paystatus',false)
         Taro.navigateBack()
-        // this.payFail()
       }
     })
   }
