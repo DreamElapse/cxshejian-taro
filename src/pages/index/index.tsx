@@ -420,6 +420,7 @@ class Index extends Component {
 
   // 请求推荐商品列表
   getListData = (index) => {
+    if (this.state.noMoreData) return
     let loading = this.state.startIndex > 1
     let data = {
       resultNum: 5,
@@ -503,7 +504,8 @@ class Index extends Component {
       themeId: index === 1 ? '101098' : '',
       excludeThemeId: index === 2 ? '101098' : '',
       // recommendList: [],
-      startIndex: 0
+      startIndex: 0,
+      noMoreData: false
     })
     this.getListData(index)
   }
