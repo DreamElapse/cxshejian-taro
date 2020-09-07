@@ -46,7 +46,7 @@ export default {
         selectedIconPath: "./static/img/tabBar/index_active.png"
       },
       {
-        text: "商城",
+        text: "旅游商城",
         pagePath: "pages/mall/index",
         iconPath: "./static/img/tabBar/mall.png",
         selectedIconPath: "./static/img/tabBar/mall_active.png"
