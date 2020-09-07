@@ -110,6 +110,8 @@ class Index extends Component {
     // Taro.showShareMenu({
     //   withShareTicket: true
     // })
+    this.getAdData()
+    // this.state.areaId && this.getListData(this.state.tabIndex)
   }
 
   UNSAFE_componentWillMount() {}
@@ -125,11 +127,7 @@ class Index extends Component {
     code && this.setState({code}, () => {
       this.getTrain()
     })
-
-    this.getAdData()
     !this.state.areaId && this.getLocation()
-    this.state.areaId && this.getListData(this.state.tabIndex)
-
   }
 
   componentDidHide () { }
