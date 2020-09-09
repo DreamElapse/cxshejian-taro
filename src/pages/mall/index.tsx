@@ -44,9 +44,23 @@ class Mall extends Component {
     let orderId = Taro.getStorageSync('orderId')
     let paystatus = Taro.getStorageSync('paystatus')
     let account = Taro.getStorageSync('account')
+    let preference = Taro.getStorageSync('preference')
+    let hotRecommend = Taro.getStorageSync('hotRecommend')
     const Timestamp = new Date().getTime()
     const webviewlink = config[config.environmental]
-    if(infoId) {
+    if (hotRecommend) {
+      setTimeout(()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}classify/0?time=${Timestamp}`
+        })
+      },400)
+    } else if (preference) {
+      setTimeout(()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}classify/101098?time=${Timestamp}`
+        })
+      },400)
+    } else if(infoId) {
       this.setState({
         params: `siteId=6&environmental=t&page=product&infoId${infoId}`
       },()=>{
@@ -79,8 +93,7 @@ class Mall extends Component {
           webViewUrl: `${webviewlink}account?siteId=6&time=${Timestamp}&from=application`
         })
       },400)
-    }
-     else {
+    } else {
       this.setState({
         webViewUrl: `${webviewlink}home?siteId=6&time=${Timestamp}`
       })
@@ -89,6 +102,8 @@ class Mall extends Component {
     Taro.removeStorageSync('orderId')
     Taro.removeStorageSync('paystatus')
     Taro.removeStorageSync('account')
+    Taro.removeStorageSync('preference')
+    Taro.removeStorageSync('hotRecommend')
   }
   UNSAFE_componentWillMount () {
     Taro.showShareMenu({

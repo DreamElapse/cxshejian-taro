@@ -45,7 +45,7 @@ const BUTTON_LIST = [
   {
     img: icon_xsqg,
     name: '必买清单',
-    url: ''
+    url: '/info/pages/mall/index'
   },
   {
     img: icon_thsc,
@@ -462,22 +462,13 @@ class Index extends Component {
   // 跳转页面
   toPage = (page) => {
     // 跳小程序页面和h5页面
-    if (!page.url) {
-      if(+this.state.tabIndex !== 1) {
-        this.changeTab(1)
-      }
-      var query: any = Taro.createSelectorQuery()
-        query.selectViewport().scrollOffset()
-        query.select(".tab-list").boundingClientRect()
-        query.exec(function (res: any): void {
-          // console.log(res, 123)
-          let top: number = res[0].scrollTop + res[1].top - 10
-          Taro.pageScrollTo({
-            scrollTop: top,
-            duration: 200
-          })
-        })
+    if (page.url.includes('/info')) {
+      Taro.setStorageSync('hotRecommend', 1)
+      Taro.switchTab({
+        url: page.url.replace('/info', '')
+      })
     } else if (page.url.includes('/tab')) {
+      Taro.setStorageSync('preference', 1)
       Taro.switchTab({
         url: page.url.replace('/tab', '')
       })
@@ -623,7 +614,7 @@ class Index extends Component {
   // 跳转商城商品详情
   toMall = (item) => {
     let infoId = item.infoId
-    Taro.setStorageSync('infoId', infoId)
+    infoId && Taro.setStorageSync('infoId', infoId)
     Taro.switchTab({
       url: `/pages/mall/index`
     })
