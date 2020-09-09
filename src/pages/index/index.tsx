@@ -11,6 +11,8 @@ import icon_xsqg from '@/static/img/index/icon_xsqg.png'
 import icon_thsc from '@/static/img/index/icon_thsc.png'
 import icon_cccx from '@/static/img/index/icon_cccx.png'
 import icon_czdp from '@/static/img/index/icon_czdp.png'
+import xpfb from '@/static/img/index/xpfb.png'
+import fpzn from '@/static/img/index/fpzn.png'
 import jhkk from '@/static/img/index/jhkk.png'
 import mfsc from '@/static/img/index/mfsc.png'
 // import scroll from '@/static/img/index/scroll.png'
@@ -42,12 +44,12 @@ interface Index {
 const BUTTON_LIST = [
   {
     img: icon_xsqg,
-    name: '爆品抢购',
+    name: '必买清单',
     url: '/info/pages/mall/index'
   },
   {
     img: icon_thsc,
-    name: '特惠商城',
+    name: '最佳推荐',
     url: '/tab/pages/mall/index'
   },
   {
@@ -93,8 +95,8 @@ class Index extends Component {
     lon: '',
     startIndex: 0,
     tabIndex: 1,
-    themeId: '101098',
-    excludeThemeId: '',
+    themeId: '',
+    excludeThemeId: '101098',
     isGetLocation: false,
     hasDistance: true,
     hideModal: false,
@@ -198,16 +200,15 @@ class Index extends Component {
         </View>
         {/*------免费试吃/开卡------*/}
         <View className='sec-middle'>
-          <Navigator className='foretaste' url="/page/adPage/index?url=" onClick={this.showTip}>
-            <Text className='text'>车厢食品免费试吃</Text>
-            <Image src={mfsc} className='taste-img' mode="aspectFill" />
-          </Navigator>
+          <View className='foretaste' onClick={() => {this.toMall({infoId: 28011235})}}>
+            <Text className='text'>今日新品发布</Text>
+            <Image src={xpfb} className='taste-img' mode="aspectFill" />
+          </View>
 
-          <Navigator className='open-card' url="/pages/adPage/index?url=https://cxsj-active-pre.eluchangxing.com/activate-card">
-            <Text className='text'>建行信用卡开卡送现金</Text>
-            <Image src={jhkk} className='card-img' mode="aspectFill" />
-          </Navigator>
-
+          <View className='open-card' hoverClass="" onClick={() => {this.toMall({infoId: 28196375})}}>
+            <Text className='text'>扶贫助农产品</Text>
+            <Image src={fpzn} className='card-img' mode="aspectFill" />
+          </View>
         </View>
 
 
@@ -285,8 +286,8 @@ class Index extends Component {
 
         {/*------tab切换------*/}
         <View className="tab-list">
-          <View className={`tab-item ${+tabIndex === 1 && 'active'}`} onClick={() => this.changeTab(1)} key={1}>特产推荐</View>
-          <View className={`tab-item ${+tabIndex === 2 && 'active'}`} onClick={() => this.changeTab(2)} key={2}>旅游推荐</View>
+          <View className={`tab-item ${+tabIndex === 1 && 'active'}`} onClick={() => this.changeTab(1)} key={1}>旅游推荐</View>
+          <View className={`tab-item ${+tabIndex === 2 && 'active'}`} onClick={() => this.changeTab(2)} key={2}>出行必备</View>
         </View>
 
         <View className='recommend-list'>
@@ -462,12 +463,12 @@ class Index extends Component {
   toPage = (page) => {
     // 跳小程序页面和h5页面
     if (page.url.includes('/info')) {
-      let infoId = '28011235'
-      Taro.setStorageSync('infoId', infoId)
+      Taro.setStorageSync('hotRecommend', 1)
       Taro.switchTab({
         url: page.url.replace('/info', '')
       })
     } else if (page.url.includes('/tab')) {
+      Taro.setStorageSync('preference', 1)
       Taro.switchTab({
         url: page.url.replace('/tab', '')
       })
@@ -499,8 +500,8 @@ class Index extends Component {
   changeTab = (index) => {
     this.setState({
       tabIndex: index,
-      themeId: index === 1 ? '101098' : '',
-      excludeThemeId: index === 2 ? '101098' : '',
+      themeId: index === 2 ? '101098' : '',
+      excludeThemeId: index === 1 ? '101098' : '',
       // recommendList: [],
       startIndex: 0,
       noMoreData: false
@@ -610,10 +611,10 @@ class Index extends Component {
     })
   }
 
-  // 跳转商城提交订单
+  // 跳转商城商品详情
   toMall = (item) => {
     let infoId = item.infoId
-    Taro.setStorageSync('infoId', infoId)
+    infoId && Taro.setStorageSync('infoId', infoId)
     Taro.switchTab({
       url: `/pages/mall/index`
     })

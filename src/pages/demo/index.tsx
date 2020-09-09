@@ -74,7 +74,7 @@ class Demo extends Component {
   }
 
   changeTab(index) {
-    let select = Taro.createSelectorQuery()
+    // let select = Taro.createSelectorQuery()
     // let tabItem =
     this.setState({
       activeIndex: index
