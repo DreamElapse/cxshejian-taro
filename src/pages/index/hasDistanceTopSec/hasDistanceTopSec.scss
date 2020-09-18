@@ -7,10 +7,10 @@
   .fixed-boll{
     position: absolute;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 45%;
     width: 1px;
     height: 1px;
+    z-index: 100;
     .main-boll,.boll-item{
       width: 80px;
       height: 80px;
@@ -47,7 +47,7 @@
       border-radius: 80px;
       position: absolute;
       top: 50%;
-      right: 0;
+      right: 10px;
       transform: translateY(-50%);
       background: rgba(0,0,0,0.4);
       opacity: 0.1;
@@ -213,7 +213,7 @@
 
   /*途经城市*/
   .road-city{
-    margin-top: 30px;
+    margin-top: 70px;
     display: flex;
     align-items: center;
     z-index: 2;
@@ -222,6 +222,10 @@
       font-size: 28px;
       font-weight: bold;
     }
+    .city-scroll-box{
+      flex: 1;
+      overflow: hidden;
+    }
     .city-list{
       display: flex;
       align-items: center;
@@ -229,6 +233,7 @@
       padding: 30px 0;
     }
     .city{
+      flex: 0 0 80px;
       font-size: 20px;
       color: #4bb1fd;
       margin: 0 30px;
@@ -242,6 +247,7 @@
         height: 36px;
         border-radius: 100%;
         background: #27a3ff;
+        position: relative;
       }
       .city-img{
         width: 60px;
@@ -249,6 +255,31 @@
       }
       .city-name{
         margin-top: 8px;
+      }
+      .city-line{
+        position: absolute;
+        right: -57px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+        background: #CCF;
+        &:before,&:after{
+          content: "";
+          width: 12px;
+          height: 12px;
+          border-radius: 100%;
+          position: absolute;
+          left: 26px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: #F0F;
+        }
+        &:before{
+          left: -26px;
+          background: #00cc64;
+        }
       }
       &.active{
         font-size: 30px;
@@ -262,23 +293,25 @@
       }
     }
     .begin-city{
-      flex: 0 0 100px;
-      &:before{
+      flex: 0 0 80px;
+      margin-right: 0;
+      .city-icon:before{
         content: "始发";
         font-size: 20px;
         position: absolute;
-        top: -20px;
+        top: -34px;
         left: 50%;
         transform: translateX(-50%);
       }
     }
     .end-city{
-      flex: 0 0 100px;
-      &:before{
+      flex: 0 0 80px;
+      margin-left: 0;
+      .city-icon:before{
         content: "终点";
         font-size: 20px;
         position: absolute;
-        top: -20px;
+        top: -34px;
         left: 50%;
         transform: translateX(-50%);
       }

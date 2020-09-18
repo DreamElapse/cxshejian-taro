@@ -157,51 +157,55 @@ class HasDistanceTopSec extends Component {
             </View>
             <Text className='bottom-space'></Text>
           </View>
-        </View>
 
-        {/*------途径城市-------*/}
-        {cityList.length > 0 && <View className='road-city'>
-          {/*<View className='name'>途经城市好物推荐</View>*/}
-          <View className="city begin-city">
-            <View className="city-icon"></View>
-            <Text className="city-name">{cityList[0].name}</Text>
-          </View>
-          <Text className="city begin-city"></Text>
-          <View className='city-list'>
+          {/*------途径城市-------*/}
+          {cityList.length > 0 && <View className='road-city'>
+            {/*<View className='name'>途经城市好物推荐</View>*/}
+            <View className="city begin-city">
+              <View className="city-icon"></View>
+              <Text className="city-name">{cityList[0].name}</Text>
+            </View>
+            <View className="city-scroll-box">
+              <View className='city-list'>
+                {
+                  cityList.map((item, index) => {
+                    return (
+                      <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
+                        <View className="city-icon">
+                          {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFill"></Image>}
+                          <View className="city-line"></View>
+                        </View>
+                        <Text className="city-name">{item.name}</Text>
+
+                      </View>
+                    )
+                  })
+                }
+              </View>
+            </View>
+
+            <View className="city end-city">
+              <View className="city-icon"></View>
+              <Text className="city-name">{cityList[cityList.length-1].name}</Text>
+            </View>
+          </View>}
+
+          <View className="white-bg"></View>
+
+          {/*------当前城市有推荐商品-----*/}
+          {hasRecommend && <View className="city-recommend">
             {
-              cityList.map((item, index) => {
+              defualtRecommend.map((item, index) => {
                 return (
-                  <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
-                    <View className="city-icon">
-                      {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFill"></Image>}
-                    </View>
-                    <Text className="city-name">{item.name}</Text>
+                  <View className="recommend-item" key={'reco'+index}>
+                    <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
+                    <Text className="recommend-text">{item.name}</Text>
                   </View>
                 )
               })
             }
-          </View>
-          <View className="city end-city">
-            <View className="city-icon"></View>
-            <Text className="city-name">{cityList[cityList.length-1].name}</Text>
-          </View>
-        </View>}
-
-        <View className="white-bg"></View>
-
-        {/*------当前城市有推荐商品-----*/}
-        {hasRecommend && <View className="city-recommend">
-          {
-            defualtRecommend.map((item, index) => {
-              return (
-                <View className="recommend-item" key={'reco'+index}>
-                  <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
-                  <Text className="recommend-text">{item.name}</Text>
-                </View>
-              )
-            })
-          }
-        </View>}
+          </View>}
+        </View>
 
       </View>
     )

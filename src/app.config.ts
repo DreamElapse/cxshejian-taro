@@ -46,6 +46,12 @@ export default {
         selectedIconPath: "./static/img/tabBar/index_active.png"
       },
       {
+        text: "行程",
+        pagePath: "pages/add/index",
+        iconPath: "./static/img/tabBar/distance.png",
+        selectedIconPath: "./static/img/tabBar/distance_active.png"
+      },
+      {
         text: "旅游商城",
         pagePath: "pages/mall/index",
         iconPath: "./static/img/tabBar/mall.png",
