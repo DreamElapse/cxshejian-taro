@@ -103,7 +103,7 @@
 
   }
   .city-recommend{
-    margin-top: -20px;
+    margin-top: -25px;
   }
 
 
@@ -225,12 +225,14 @@
     .city-scroll-box{
       flex: 1;
       overflow: hidden;
+      overflow-X: auto;
     }
     .city-list{
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 30px 0;
+      padding: 30px 0 30px 30px;
+      transition: all 0.2s;
     }
     .city{
       flex: 0 0 80px;
@@ -255,8 +257,11 @@
       }
       .city-name{
         margin-top: 8px;
+        &.transparent{
+          color: #FFF;
+        }
       }
-      .city-line{
+      .city-line-left,.city-line-right{
         position: absolute;
         right: -57px;
         top: 50%;
@@ -264,7 +269,7 @@
         width: 12px;
         height: 12px;
         border-radius: 100%;
-        background: #CCF;
+        background: #caecff;
         &:before,&:after{
           content: "";
           width: 12px;
@@ -274,41 +279,53 @@
           left: 26px;
           top: 50%;
           transform: translateY(-50%);
-          background: #F0F;
+          background: #caecff;
         }
         &:before{
           left: -26px;
-          background: #00cc64;
+          background: #caecff;
         }
+      }
+      .city-line-left{
+        right: auto;
+        left: -57px;
       }
       &.active{
         font-size: 30px;
+        padding-top: 21px;
         .city-icon{
           width: 60px;
           height: 60px;
+          background: transparent;
+        }
+        .background{
+          background: #27a3ff;
         }
         .city-name{
           margin-top: 14px;
         }
       }
+
     }
     .begin-city{
-      flex: 0 0 80px;
+      flex: 0 0 70px;
       margin-right: 0;
       .city-icon:before{
         content: "始发";
         font-size: 20px;
         position: absolute;
+        width: 70px;
         top: -34px;
         left: 50%;
         transform: translateX(-50%);
       }
     }
     .end-city{
-      flex: 0 0 80px;
+      flex: 0 0 70px;
       margin-left: 0;
       .city-icon:before{
         content: "终点";
+        width: 70px;
         font-size: 20px;
         position: absolute;
         top: -34px;
@@ -323,7 +340,7 @@
     border-radius: 100%;
     background: #FFF;
     margin: 0 auto;
-    margin-top: -150px;
+    margin-top: -200px;
     z-index: 1;
     position: relative;
   }

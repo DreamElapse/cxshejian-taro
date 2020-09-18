@@ -42,11 +42,11 @@ class Demo extends Component {
     url: 'https://www.baidu.com'
   }
 
-  UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
+
+  UNSAFE_componentWillMount() {
+
   }
 
-  componentWillUnmount () { }
 
   componentDidShow () {
 

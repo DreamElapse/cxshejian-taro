@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 // import Taro from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import dayjs from 'dayjs'
 import './hasDistanceTopSec.scss'
@@ -64,11 +65,13 @@ const defualtRecommend = [
 
 const cityList = [
   {name: '上海', img: shanghai},
+  {name: '上海', img: shanghai},
   {name: '南京', img: ''},
   {name: '武汉', img: wuhan},
   {name: '长沙', img: changsha},
   {name: '韶关', img: ''},
   {name: '深圳', img: shenzhen},
+  {name: '广州', img: guangzhou},
   {name: '广州', img: guangzhou}
 ]
 
@@ -83,7 +86,8 @@ class HasDistanceTopSec extends Component {
     showBoll: false,
     week: ['周日','周一','周二','周三','周四','周五','周六'],
     hasRecommend: true,
-    cityIndex: 0
+    cityIndex: 3,
+    areaId: 1
   }
 
   onLoad() {
@@ -166,16 +170,17 @@ class HasDistanceTopSec extends Component {
               <Text className="city-name">{cityList[0].name}</Text>
             </View>
             <View className="city-scroll-box">
-              <View className='city-list'>
+              <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}>
                 {
                   cityList.map((item, index) => {
                     return (
                       <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
-                        <View className="city-icon">
-                          {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFill"></Image>}
-                          <View className="city-line"></View>
+                        <View className={`city-icon ${!item.img && index === cityIndex && 'background'}`}>
+                          {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
+                          {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFit"></Image>}
+                          {index !== cityIndex - 1 && <View className="city-line-right"></View>}
                         </View>
-                        <Text className="city-name">{item.name}</Text>
+                        <Text className={`city-name ${(index === 0 || index === cityList.length - 1) && 'transparent'}`}>{item.name}</Text>
 
                       </View>
                     )
@@ -197,7 +202,7 @@ class HasDistanceTopSec extends Component {
             {
               defualtRecommend.map((item, index) => {
                 return (
-                  <View className="recommend-item" key={'reco'+index}>
+                  <View className="recommend-item" key={'reco'+index} onClick={() => {this.clickRecommend(index)}}>
                     <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
                     <Text className="recommend-text">{item.name}</Text>
                   </View>
@@ -227,14 +232,23 @@ class HasDistanceTopSec extends Component {
 
   // 选择城市
   selectCity(city, index) {
+    if (index === 0 || index === cityList.length - 1) return
     this.setState({
       // positionCity: city.cityName,
-      // areaId: city.zwyCityId,
+      areaId: city.zwyCityId,
       cityIndex: index
     }, () => {
       // this.getListData(this.state.tabIndex)
-      this.props.setTab(123)
+      // this.props.setTab(123)
     })
+  }
+
+  clickRecommend = (index) => {
+    if (index === 0) {
+      Taro.navigateTo({
+        url: `/pages/rankList/index?areaId=${this.state.areaId}`
+      })
+    }
   }
 
 }
