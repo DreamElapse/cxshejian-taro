@@ -4,7 +4,6 @@ import { View, Text, ScrollView, Block, Image } from '@tarojs/components'
 import dayjs from 'dayjs'
 // import {get as getGlobalData } from '../../../../service/config'
 import {get_crossDatas, check_isCrossDay, addTrip_sourcefrom_enum, isNotEmptyObj, isEmptyObj, queryParams, get_stationSelect_status, select_station_status, get_date_crossDay} from '@/utils/common'
-// import TrainUtil from '../../../../service/apiCommon'
 import './index.scss'
 let today_date = dayjs().format('YYYY-MM-DD')
 // import CustomButton from '../../../../components/customButton/customButton'
@@ -38,7 +37,7 @@ export default class Index extends Component {
 
     this.base_img_url = "https://www.cx9z.com/h5/tarocx9z/czt_v1/chooseStation/" //图片地址
 
-    this.sourcefrom = addTrip_sourcefrom_enum.momentSearch_trainSearch //来源
+    this.sourcefrom = addTrip_sourcefrom_enum.addTrain_trainSearch //来源
     this.trainNo = ''//车次号
     this.from_station = '',//页面传递过来的出发站 武汉
     this.to_station = '',//页面传递过来的到达站   北京
@@ -59,7 +58,7 @@ export default class Index extends Component {
         let params = getCurrentInstance().router.params
         if(params){
           if(params.sourcefrom){
-            this.sourcefrom = params.sourcefrom
+            this.sourcefrom = '4'
           }
           if(params.trainNo){
             this.trainNo = params.trainNo
@@ -333,48 +332,73 @@ export default class Index extends Component {
       /**
        * 处理完，跨天后，-> 立即判断是否结束与绑定(api)
        */
-      handle_check_tripisEndorBinded = () => {
+      handle_check_tripisEndorBinded(){
         let that = this
+    
         var {dateC, selectStations} = that.state
         that.hide_crossDayModal()
-
         // 获取两个车次数据
         let crossData = get_crossDatas(dateC, selectStations)
-
+        
         let trainNo = crossData.nowTrainNo // that.trainNo
-        let startTime = this.is_from_currentDate ? crossData.from.startTime : crossData.to.startTime
-        let endTime = this.is_from_currentDate ? crossData.from.endTime : crossData.to.endTime
+        let startTime = this.is_from_currentDate ? crossData.from.depDate+' '+crossData.from.depTime : crossData.to.depDate+' '+crossData.to.depTime
+        let endTime = this.is_from_currentDate ? crossData.from.arrDate+' '+crossData.from.arrTime : crossData.to.arrDate+' '+crossData.to.arrTime
         let from_name = crossData.from.from_name
         let to_name = crossData.from.to_name
         let sourcefrom = this.sourcefrom
-        let depDate = this.is_from_currentDate ? crossData.from.depDate : crossData.to.depDate
+        
+       //绑定行程
+       let params ={
+        train: trainNo,
+        upStationName: from_name,
+        upTrainTime: startTime,
+        downStationName: to_name,
+        downTrainTime: endTime,
+      }
 
-        //车次号，选择日期，到达站名字 到达站到达时间 （yyyy-MM-dd HH:mm）
-        let arrTime_ = dayjs(endTime).format('YYYY-MM-DD HH:mm')//到达站到达时间
+      API.StationService.addSchedule(params,true)
+        .then(res => {
 
-        that.setState({
-          bottom_btn_enable: true,
+          if(+res.code === 1){
+            that.setState({
+              bottom_btn_enable: true,
+            })
+            Taro.showToast({
+              title: '车次绑定成功',
+              icon: 'none',
+              duration:1000,
+            })
+            Taro.switchTab({
+              url: '/pages/trainState/index'
+            })
+          }else{
+            Taro.showToast({
+              title: res.message,
+              icon: 'none',
+              duration:1000,
+            })
+          }
         })
+        .catch(res => {
 
-        Taro.removeStorageSync('search_monent_stationList')
-        Taro.hideLoading()
-
-        let jump_params = {
-          'sourcefrom': that.sourcefrom,
-          'trainNo':trainNo,
-          'dateC':depDate,
-          'from_station':from_name,
-          'to_station':to_name,
-          'check_status':'1' // 1: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail
-        }
-
-        let jumpUrl = '../lateQueryResults/index?'+queryParams(jump_params)
-
-          Taro.navigateTo({
-            url: jumpUrl
+          that.setState({
+            bottom_btn_enable: true,
           })
-
-
+          Taro.hideLoading()
+          if(isEmptyObj(res.message)){
+            Taro.showToast({
+              title:'添加行程失败',
+              icon:'none',
+              duration:1500
+            })
+          }else{
+            Taro.showToast({
+              title: res.message,
+              icon: 'none',
+              duration:1000,
+            })
+          }
+        })
       }
 
       /**
@@ -389,7 +413,7 @@ export default class Index extends Component {
        * 选择车次 完成 后的处理： 跨天 、 是否结束与绑定判断
        */
       toHandle_selectStationsComplete = () => {
-
+       
         var that = this
         //  时刻查询下 车次查询 、添加行程下 车次查询  、 车站大屏
         // 非 （时刻查询下 站站查询 或  添加行程下 站站查询, 扫描车次） ，都要进行跨天判断
@@ -403,7 +427,7 @@ export default class Index extends Component {
           }
         }
          // -> 立即判断是否结束与绑定(api)
-        //  that.handle_check_tripisEndorBinded()
+         that.handle_check_tripisEndorBinded()
       }
 
        /**
@@ -427,6 +451,7 @@ export default class Index extends Component {
           // Taro.showToast({
           //   title: '添加行程'
           // })
+          
           if(this.check_selectStationComplete()){
             this.toHandle_selectStationsComplete()
           }else{
@@ -684,7 +709,7 @@ export default class Index extends Component {
                           <View className={cicle_class}></View>
                       </View>
                     </View>
-                    {is_enable && <View className={'box '+box_class}>
+                    {is_enable && <View className={'box '+box_class} onClick={this.onClick_chooseStation.bind(this, item)}>
                       {is_selected && <View style='display:flex;justify-content:center;align-items:center;'>
                         <Image style='width:17px; height:17px; margin-right:8px;' src={this.base_img_url+"icon_zuobiao.png"}></Image>
                         <Text>{station_text}</Text>
@@ -751,15 +776,15 @@ export default class Index extends Component {
                     <View className='nextDay' onClick={this.nextDate}>后一天</View>
                 </View>
 
-                {/*<View className='m_station_tipView' >*/}
-                {/*    <Text className='tip'>请选择出发站和到达站</Text>*/}
-                {/*    <View className='station_text_view'>*/}
-                {/*      <Text className={is_selected_from ? 'station_text_select' : 'station_text'}>{tip_start}</Text>*/}
-                {/*      <Image className='jiantou' src={this.base_img_url+"icon_jiantou.png"}></Image>*/}
-                {/*      <Text className={is_selected_to ?  'station_text_select' : 'station_text'}>{tip_end}</Text>*/}
-                {/*    </View>*/}
-                {/*    <View className='line'></View>*/}
-                {/*</View>*/}
+                <View className='m_station_tipView' >
+                   <Text className='tip'>请选择出发站和到达站</Text>
+                   <View className='station_text_view'>
+                     <Text className={is_selected_from ? 'station_text_select' : 'station_text'}>{tip_start}</Text>
+                     <Image className='jiantou' src={this.base_img_url+"icon_jiantou.png"}></Image>
+                     <Text className={is_selected_to ?  'station_text_select' : 'station_text'}>{tip_end}</Text>
+                   </View>
+                   <View className='line'></View>
+                </View>
 
                 <View className={is_show_bottomBtn?'m_station_content':'m_station_content_noBottom'}>
                   <ScrollView  scrollY  scrollIntoView={this.state.toView}  style='width:100%; height:100%;'>
@@ -769,15 +794,20 @@ export default class Index extends Component {
                   </ScrollView>
                 </View>
 
-                {/* {is_show_bottomBtn && <View className='m_bottom'>
+                {is_show_bottomBtn && <View className='m_bottom'>
                    <View className='tipWrap'>
-                    <Image className='tipImg' src={getGlobalData('domain_h5')+"/h5/tarocx9z/czt_v1/searchResult/icon_tishi.png"}></Image>
+                    <Image className='tipImg' src={"https://imgczt.weitaikeji.com/h5/taroVega/czt_v1/searchResult/icon_tishi.png"}></Image>
                     <Text className='tipText'>添加行程，列车动态实时提醒</Text>
                    </View>
                    <View className='confirmAdd'>
+                   {is_bottomBtn_enable &&        
+                     <View className='add' onClick={this.onClick_add}>
+                          <Text className='add'>确定添加</Text>
+                     </View>
+                     }
                      {!is_bottomBtn_enable && <View className='add add_diable'>确定添加</View>}
                      </View>
-                </View>} */}
+                </View>}
 
                 {is_show_crossDay_modal && <View className="cross_modal">
                   <View className="bottom">

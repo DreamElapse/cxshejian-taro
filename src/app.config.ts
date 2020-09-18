@@ -2,6 +2,7 @@ export default {
   pages: [
       'pages/index/index',
       'pages/add/index',
+      'pages/trainState/index',
       'pages/adPage/index',
       'pages/calendar/index',
       'pages/carFood/index',
@@ -44,6 +45,12 @@ export default {
         pagePath: "pages/index/index",
         iconPath: "./static/img/tabBar/index.png",
         selectedIconPath: "./static/img/tabBar/index_active.png"
+      },
+      {
+        text: "行程",
+        pagePath: "pages/trainState/index",
+        iconPath: "./static/img/tabBar/xingc.png",
+        selectedIconPath: "./static/img/tabBar/xingc_active.png"
       },
       {
         text: "旅游商城",
