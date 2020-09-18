@@ -128,7 +128,7 @@ class Index extends Component {
     let code = router.params.code
     Taro.showModal({
       title: 'code',
-      content: code
+      content: code + ''
     })
     code && this.setState({code}, () => {
       this.getTrain()
@@ -338,6 +338,10 @@ class Index extends Component {
         res.data && this.props.setTrainInfo(res.data)
         this.setState({
           hasDistance: !!res.data
+        })
+        Taro.showModal({
+          title: 'hasDistance',
+          content: '' + this.state.hasDistance
         })
         // res.data && this.getCityList(res.data.train)
         res.data && this.getCarFood(res.data)
