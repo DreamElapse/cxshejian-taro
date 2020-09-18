@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem, Block, Navigator } from '@tarojs/components'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { setTrainInfo, setTotalPrice, addGoods } from '@/store/actions'
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import API from '@/api'
 import './index.scss'
 
@@ -98,7 +98,7 @@ class Index extends Component {
     themeId: '',
     excludeThemeId: '101098',
     isGetLocation: false,
-    hasDistance: true,
+    hasDistance: false,
     hideModal: false,
     topAd: [],
     middleAd: [],
@@ -126,6 +126,10 @@ class Index extends Component {
     // 扶手码code
     let router: any = getCurrentInstance().router
     let code = router.params.code
+    Taro.showModal({
+      title: 'code',
+      content: code
+    })
     code && this.setState({code}, () => {
       this.getTrain()
     })
@@ -153,33 +157,33 @@ class Index extends Component {
     return (
       <View className='home-page'>
         <View className='top-sec'>
-          {/*{*/}
-          {/*  hasDistance && <View className='ticket'>*/}
-          {/*    <View className='top-msg'>*/}
-          {/*      <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>*/}
-          {/*      /!*<Text className='tip-text'>到达口:C1</Text>*!/*/}
-          {/*    </View>*/}
-          {/*    <View className='bottom-msg'>*/}
-          {/*      <View className='left-msg'>*/}
-          {/*        <Text className='name'>{trainInfo.startStation}</Text>*/}
-          {/*        <Text className='time'>{trainInfo.startTime}</Text>*/}
-          {/*      </View>*/}
-          {/*      <View className='center-msg'>*/}
-          {/*        <Text className='train'>{trainInfo.train}</Text>*/}
-          {/*        <Text className='icon'></Text>*/}
-          {/*        <Text className='long-time'>{trainInfo.duration}</Text>*/}
-          {/*      </View>*/}
-          {/*      <View className='right-msg'>*/}
-          {/*        <Text className='name'>{trainInfo.endStation}</Text>*/}
-          {/*        <Text className='time'>{trainInfo.endTime}</Text>*/}
-          {/*      </View>*/}
-
-          {/*    </View>*/}
-          {/*    <Text className='bottom-space'></Text>*/}
-          {/*  </View>*/}
-          {/*}*/}
           {
-            hasDistance && topAd.map((item, index) => {
+            hasDistance && <View className='ticket'>
+              <View className='top-msg'>
+                <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>
+                {/*<Text className='tip-text'>到达口:C1</Text>*/}
+              </View>
+              <View className='bottom-msg'>
+                <View className='left-msg'>
+                  <Text className='name'>{trainInfo.startStation}</Text>
+                  <Text className='time'>{trainInfo.startTime}</Text>
+                </View>
+                <View className='center-msg'>
+                  <Text className='train'>{trainInfo.train}</Text>
+                  <Text className='icon'></Text>
+                  <Text className='long-time'>{trainInfo.duration}</Text>
+                </View>
+                <View className='right-msg'>
+                  <Text className='name'>{trainInfo.endStation}</Text>
+                  <Text className='time'>{trainInfo.endTime}</Text>
+                </View>
+
+              </View>
+              <Text className='bottom-space'></Text>
+            </View>
+          }
+          {
+            hasDistance || topAd.map((item, index) => {
               return <Image src={item.imageUrl} mode="aspectFill" className='topImg' key={'img'+index} onClick={() => {this.toAdPage(item)}}></Image>
             })
           }
@@ -332,9 +336,9 @@ class Index extends Component {
     API.Home.getTrain({qrcode: this.state.code})
       .then(res => {
         res.data && this.props.setTrainInfo(res.data)
-        // this.setState({
-        //   hasDistance: !!res.data
-        // })
+        this.setState({
+          hasDistance: !!res.data
+        })
         // res.data && this.getCityList(res.data.train)
         res.data && this.getCarFood(res.data)
       })
