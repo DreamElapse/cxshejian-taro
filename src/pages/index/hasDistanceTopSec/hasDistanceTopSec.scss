@@ -1,0 +1,297 @@
+.top-sec-content{
+  color: #333;
+  .top-content{
+    position: relative;
+    overflow: hidden;
+  }
+  .fixed-boll{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 1px;
+    .main-boll,.boll-item{
+      width: 80px;
+      height: 80px;
+      border-radius: 80px;
+      background: rgba(200,200,200,0.5);
+      font-size: 24px;
+      color: #FFF;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+      line-height: 80px;
+      transition: all 0.1s;
+    }
+    .main-boll{
+      right: 10px;
+      z-index: 1;
+      text-align: center;
+      line-height: 80px;
+      color: #FFF;
+      &.active{
+        background: rgba(255,255,255,0.5)
+      }
+    }
+    .boll-item{
+      opacity: 0;
+      transition: all 0.2s;
+    }
+    .boll-menu-bg{
+      overflow: hidden;
+      width: 80px;
+      height: 80px;
+      border-radius: 80px;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      opacity: 0.1;
+      transition: all 0.1s;
+      &.active{
+        width: 400px;
+        height: 420px;
+        border-radius: 100%;
+        opacity: 1;
+        top: 50%;
+        right: -120px;
+      }
+    }
+    .boll-img{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .boll-text{
+      font-size: 20px;
+      color: #FFF;
+      position: absolute;
+      bottom: -50px;
+      left: 50%;
+      width: 100px;
+      transform: translateX(-50%);
+    }
+
+    .boll-item{
+      &.active{
+        opacity: 1;
+      }
+      &.boll-item1.active{
+        top: -130px;
+        right: 50px;
+      }
+      &.boll-item2.active{
+        top: -65px;
+        right: 140px;
+      }
+      &.boll-item3.active{
+        top: 65px;
+        right: 140px;
+      }
+      &.boll-item4.active{
+        top: 130px;
+        right: 50px;
+      }
+    }
+
+  }
+  .city-recommend{
+    margin-top: -20px;
+  }
+
+
+  /*车票信息*/
+  .ticket{
+    padding-top: 28px;
+    margin: 0 20px;
+    background: #e4f2ff;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    .top-msg,.bottom-msg,.foot-msg{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+    .bottom-msg{
+      padding: 40px 50px;
+    }
+    .date{
+      font-size: 30px;
+      font-weight: bold;
+    }
+    .customer-name{
+      font-size: 26px;
+    }
+    .tip-text{
+      border-radius: 40px;
+      width: 160px;
+      height: 40px;
+      text-align: center;
+      color: #FFF;
+      font-size: 24px;
+      line-height: 40px;
+      background: #1eb0ff;
+      position: relative;
+      &:after{
+        content: "";
+        width: 20px;
+        height: 20px;
+        background: #1eb0ff;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
+    .name{
+      display: block;
+      margin-bottom: 18px;
+      font-size: 42px;
+      text-align: center;
+    }
+    .time{
+      font-size: 30px;
+    }
+    .center-msg{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    .train{
+      font-size: 32px;
+    }
+    .icon{
+      height: 4px;
+      background: #95abb9;
+      width: 234px;
+      position: relative;
+      margin: 15px 0;
+      &:before{
+        content: "";
+        height: 4px;
+        width: 40px;
+        background: #95abb9;
+        position: absolute;
+        right: 0;
+        bottom: 11px;
+        transform: rotate(30deg)
+      }
+    }
+    .long-time{
+      font-size: 24px;
+      color: #666;
+    }
+    .foot-msg{
+      margin-top: 28px;
+      .small-text{
+        display: block;
+        margin-bottom: 18px;
+        font-size: 24px;
+        color: #666;
+      }
+      .big-text{
+        font-size: 28px;
+      }
+    }
+
+    .bottom-space{
+      height: 32px;
+      width: 100%;
+      margin-top: 20px;
+      display: block;
+      background: #caecff;
+    }
+  }
+
+  /*途经城市*/
+  .road-city{
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+    .name{
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .city-list{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 0;
+    }
+    .city{
+      font-size: 20px;
+      color: #4bb1fd;
+      margin: 0 30px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      .city-icon{
+        width: 36px;
+        height: 36px;
+        border-radius: 100%;
+        background: #27a3ff;
+      }
+      .city-img{
+        width: 60px;
+        height: 60px;
+      }
+      .city-name{
+        margin-top: 8px;
+      }
+      &.active{
+        font-size: 30px;
+        .city-icon{
+          width: 60px;
+          height: 60px;
+        }
+        .city-name{
+          margin-top: 14px;
+        }
+      }
+    }
+    .begin-city{
+      flex: 0 0 100px;
+      &:before{
+        content: "始发";
+        font-size: 20px;
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+    .end-city{
+      flex: 0 0 100px;
+      &:before{
+        content: "终点";
+        font-size: 20px;
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+  .white-bg{
+    width: 250px;
+    height: 200px;
+    border-radius: 100%;
+    background: #FFF;
+    margin: 0 auto;
+    margin-top: -150px;
+    z-index: 1;
+    position: relative;
+  }
+}

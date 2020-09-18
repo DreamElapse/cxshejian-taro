@@ -7,18 +7,15 @@ import { setTrainInfo, setTotalPrice, addGoods } from '@/store/actions'
 import API from '@/api'
 import './index.scss'
 
-import icon_xsqg from '@/static/img/index/icon_xsqg.png'
-import icon_thsc from '@/static/img/index/icon_thsc.png'
-import icon_cccx from '@/static/img/index/icon_cccx.png'
-import icon_czdp from '@/static/img/index/icon_czdp.png'
-import xpfb from '@/static/img/index/xpfb.png'
-import fpzn from '@/static/img/index/fpzn.png'
-import jhkk from '@/static/img/index/jhkk.png'
-import mfsc from '@/static/img/index/mfsc.png'
+
+import topBg from '@/static/img/index/pic_beijing.png'
+import default1 from '@/static/img/index/default-1.png'
+import default2 from '@/static/img/index/default-2.png'
+import default3 from '@/static/img/index/default-3.png'
 // import scroll from '@/static/img/index/scroll.png'
 
-
-
+import NoDistanceTopSec from './NoDistanceTopSec/NoDistanceTopSec'
+import HasDistanceTopSec from './HasDistanceTopSec/HasDistanceTopSec'
 
 type PageStateProps = {
   date: string,
@@ -41,28 +38,13 @@ interface Index {
   props: IProps;
 }
 
-const BUTTON_LIST = [
-  {
-    img: icon_xsqg,
-    name: '必买清单',
-    url: '/info/pages/mall/index'
-  },
-  {
-    img: icon_thsc,
-    name: '最佳推荐',
-    url: '/tab/pages/mall/index'
-  },
-  {
-    img: icon_cccx,
-    name: '时刻查询',
-    url: '/pages/add/index'
-  },
-  {
-    img: icon_czdp,
-    name: '车站大屏',
-    url: '/pages/switchStation/index'
-  }
+const defualtRecommend = [
+  {img: default1, url: '', name: '广州必玩景点榜'},
+  {img: default2, url: '', name: '广州美食必吃榜'},
+  {img: default3, url: '', name: '广州热门必逛榜'}
 ]
+
+const tabList = ['旅游爆款', '高铁优选', '当地美食', '亲子热门']
 
 @connect(({ counter }) => ({
   ...counter
@@ -83,7 +65,6 @@ const BUTTON_LIST = [
 class Index extends Component {
 
   state = {
-    buttonList: BUTTON_LIST,
     goodsList: [],
     cityList: [],
     cityIndex: 0,
@@ -100,11 +81,11 @@ class Index extends Component {
     isGetLocation: false,
     hasDistance: true,
     hideModal: false,
-    topAd: [],
+    topAd: [1],
     middleAd: [],
     noMoreData: false,
     code: '',
-    week: ['周日','周一','周二','周三','周四','周五','周六']
+    noRecommend: true
   }
 
   onLoad() {
@@ -112,7 +93,7 @@ class Index extends Component {
     // Taro.showShareMenu({
     //   withShareTicket: true
     // })
-    this.getAdData()
+    // this.getAdData()
     // this.state.areaId && this.getListData(this.state.tabIndex)
   }
 
@@ -134,11 +115,6 @@ class Index extends Component {
 
   componentDidHide () { }
 
-  // onShareAppMessage(options) {
-  //   console.log(options, 11)
-  // }
-
-
   onReachBottom() {
     if (this.state.noMoreData) return
     this.setState({
@@ -148,177 +124,153 @@ class Index extends Component {
   }
 
   render () {
-    const { cityList, cityIndex, hideModal, buttonList, positionCity, lat, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, week } = this.state
+    const { cityList, cityIndex, hideModal, positionCity, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, noRecommend } = this.state
     const { trainInfo } = this.props
     return (
       <View className='home-page'>
-        <View className='top-sec'>
-          {/*{*/}
-          {/*  hasDistance && <View className='ticket'>*/}
-          {/*    <View className='top-msg'>*/}
-          {/*      <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>*/}
-          {/*      /!*<Text className='tip-text'>到达口:C1</Text>*!/*/}
-          {/*    </View>*/}
-          {/*    <View className='bottom-msg'>*/}
-          {/*      <View className='left-msg'>*/}
-          {/*        <Text className='name'>{trainInfo.startStation}</Text>*/}
-          {/*        <Text className='time'>{trainInfo.startTime}</Text>*/}
-          {/*      </View>*/}
-          {/*      <View className='center-msg'>*/}
-          {/*        <Text className='train'>{trainInfo.train}</Text>*/}
-          {/*        <Text className='icon'></Text>*/}
-          {/*        <Text className='long-time'>{trainInfo.duration}</Text>*/}
-          {/*      </View>*/}
-          {/*      <View className='right-msg'>*/}
-          {/*        <Text className='name'>{trainInfo.endStation}</Text>*/}
-          {/*        <Text className='time'>{trainInfo.endTime}</Text>*/}
-          {/*      </View>*/}
-
-          {/*    </View>*/}
-          {/*    <Text className='bottom-space'></Text>*/}
-          {/*  </View>*/}
-          {/*}*/}
-          {
-            hasDistance && topAd.map((item, index) => {
-              return <Image src={item.imageUrl} mode="aspectFill" className='topImg' key={'img'+index} onClick={() => {this.toAdPage(item)}}></Image>
-            })
-          }
-        </View>
-
-        {/*------按钮------*/}
-        <View className='inter-list'>
-          {
-            buttonList.map((item, i) => {
-              return (
-                <View className='inter-item' key={'icon'+i} onClick={() => {this.toPage(item)}}>
-                  <Image src={item.img} className='icon' mode="aspectFill"></Image>
-                  <Text className='name'>{item.name}</Text>
-                </View>
-              )
-            })
-          }
-        </View>
-        {/*------免费试吃/开卡------*/}
-        <View className='sec-middle'>
-          <View className='foretaste' onClick={() => {this.toMall({infoId: 28011235})}}>
-            <Text className='text'>今日新品发布</Text>
-            <Image src={xpfb} className='taste-img' mode="aspectFill" />
-          </View>
-
-          <View className='open-card' hoverClass="" onClick={() => {this.toMall({infoId: 28196375})}}>
-            <Text className='text'>扶贫助农产品</Text>
-            <Image src={fpzn} className='card-img' mode="aspectFill" />
-          </View>
-        </View>
-
-
-        {/*------轮播------*/}
+        {/*<Image src={topBg} className="top-bg"></Image>*/}
         <Swiper
-          className='scroll-box'
+          className='top-scroll-box'
           vertical={false}
         >
           {
-            middleAd.map((item, index) => {
+            topAd.map((item, index) => {
               return (
                 <SwiperItem key={'scr'+index}>
-                  <Image src={item.imageUrl} className='scroll-img' mode="aspectFill" onClick={() => {this.toAdPage(item)}}></Image>
+                  <Image src={topBg} className='scroll-img' mode="aspectFill" onClick={() => {this.toAdPage(item)}}></Image>
                 </SwiperItem>
               )
             })
           }
         </Swiper>
 
-        {/*------乘务美食------*/}
-        {hideModal && <View className='crew-food'>
-          {goodsList.length > 0 && <View className='title'>
-            <Text className='name'>{trainInfo.train}乘务员美食推荐</Text>
-            <View className='icon' onClick={this.toCarFood}>更多</View>
-          </View>}
-          <View className='goods-box'>
+        <View className="page-content">
+          {/*----顶部部分-----*/}
+          <View className="top-sec">
+            {hasDistance || <NoDistanceTopSec positionCity={positionCity} setPosition={this.setLocationCity}></NoDistanceTopSec>}
+            {hasDistance && <HasDistanceTopSec setTab={this.setTab}></HasDistanceTopSec>}
+          </View>
+
+          {/*------当前城市无推荐商品-----*/}
+          {noRecommend && <View className="city-recommend">
             {
-              goodsList.map((item, index) => {
+              defualtRecommend.map((item, index) => {
                 return (
-                  <View className='goods-item' key={'goo'+index} onClick={this.toCarFood}>
-                    <Image src={item.thumbImg} className='goods-img' mode="aspectFill"></Image>
-                    <Text className='goods-title'>{item.productName}</Text>
-                    <View className='goods-msg'>
-                      <Text className='price'>¥{(item.price/100).toFixed(2)}</Text>
-                      {/*<Text className='pre-price'>¥{item.prePrice}</Text>*/}
-                      <Text className='buy-btn'>立即抢购</Text>
-                    </View>
+                  <View className="recommend-item" key={'reco'+index}>
+                    <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
+                    <Text className="recommend-text">{item.name}</Text>
                   </View>
                 )
               })
             }
-          </View>
-        </View>}
+          </View>}
 
-        {/*------途径城市-------*/}
-        {/*{hasDistance && <View className='road-city'>*/}
-        {/*  <View className='name'>途经城市好物推荐</View>*/}
-        {/*  <View className='city-list'>*/}
-        {/*    {*/}
-        {/*      cityList.map((item, index) => {*/}
-        {/*        return <Text className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>{item.cityName}</Text>*/}
-        {/*      })*/}
-        {/*    }*/}
-        {/*  </View>*/}
-        {/*</View>}*/}
-        {/*<Swiper>*/}
+          {/*------免费试吃/开卡------*/}
+          {/*<View className='sec-middle'>
+            <View className='foretaste' onClick={() => {this.toMall({infoId: 28011235})}}>
+              <Text className='text'>今日新品发布</Text>
+              <Image src={xpfb} className='taste-img' mode="aspectFill" />
+            </View>
 
-        {/*  {*/}
-        {/*    cityList.map((item, index) => {*/}
-        {/*      return (*/}
-        {/*        <Block key={'swiper'+index}>*/}
-        {/*          <SwiperItem >*/}
-        {/*            <Text className={`city ${index === 1 && 'active'}`}>{item}</Text>*/}
-        {/*          </SwiperItem>*/}
-        {/*        </Block>*/}
-        {/*      )*/}
-        {/*    })*/}
-        {/*  }*/}
-        {/*</Swiper>*/}
-        {/*------定位------*/}
-        <View className='fixed-position'>
-          <Text>{positionCity ? '当前定位 ' + positionCity : '定位服务已关闭，打开定位'}</Text>
-          {!lat && <Button openType="openSetting" className="setting">去设置</Button>}
-        </View>
+            <View className='open-card' hoverClass="" onClick={() => {this.toMall({infoId: 28196375})}}>
+              <Text className='text'>扶贫助农产品</Text>
+              <Image src={fpzn} className='card-img' mode="aspectFill" />
+            </View>
+          </View>*/}
 
-        {/*------tab切换------*/}
-        <View className="tab-list">
-          <View className={`tab-item ${+tabIndex === 1 && 'active'}`} onClick={() => this.changeTab(1)} key={1}>旅游推荐</View>
-          <View className={`tab-item ${+tabIndex === 2 && 'active'}`} onClick={() => this.changeTab(2)} key={2}>出行必备</View>
-        </View>
 
-        <View className='recommend-list'>
-          {
-            recommendList.map((item, index) => {
-              return (
-                <View className='recommend-item' key={'re'+index} onClick={() => {this.toMall(item)}}>
-                  <Image src={item.signImg} className='recommend-img' mode="aspectFill"></Image>
-                  <Text className='recommend-title'>{item.infoTitle}</Text>
-                  <View className='recommend-msg'>
-                    <Text className='city'>{item.city}</Text>
-                    <View className='right-msg'>
-                      <Text className='unit'>¥</Text>
-                      <Text className='price'>{item.salePrice}</Text>
-                      <Text className='unit'>起</Text>
-                      <Text className='buy-btn'>立即抢购</Text>
+          {/*------轮播------*/}
+          {/*<Swiper
+            className='scroll-box'
+            vertical={false}
+          >
+            {
+              middleAd.map((item, index) => {
+                return (
+                  <SwiperItem key={'scr'+index}>
+                    <Image src={item.imageUrl} className='scroll-img' mode="aspectFill" onClick={() => {this.toAdPage(item)}}></Image>
+                  </SwiperItem>
+                )
+              })
+            }
+          </Swiper>*/}
+
+          {/*------乘务美食------*/}
+          {hideModal && <View className='crew-food'>
+            {goodsList.length > 0 && <View className='title'>
+              <Text className='name'>{trainInfo.train}乘务员美食推荐</Text>
+              <View className='icon' onClick={this.toCarFood}>更多</View>
+            </View>}
+            <View className='goods-box'>
+              {
+                goodsList.map((item, index) => {
+                  return (
+                    <View className='goods-item' key={'goo'+index} onClick={this.toCarFood}>
+                      <Image src={item.thumbImg} className='goods-img' mode="aspectFill"></Image>
+                      <Text className='goods-title'>{item.productName}</Text>
+                      <View className='goods-msg'>
+                        <Text className='price'>¥{(item.price/100).toFixed(2)}</Text>
+                        {/*<Text className='pre-price'>¥{item.prePrice}</Text>*/}
+                        <Text className='buy-btn'>立即抢购</Text>
+                      </View>
                     </View>
-                  </View>
-                </View>
-              )
-            })
-          }
+                  )
+                })
+              }
+            </View>
+          </View>}
+
+          {/*------途径城市-------*/}
+          {/*{hasDistance && <View className='road-city'>*/}
+          {/*  <View className='name'>途经城市好物推荐</View>*/}
+          {/*  <View className='city-list'>*/}
+          {/*    {*/}
+          {/*      cityList.map((item, index) => {*/}
+          {/*        return <Text className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>{item.cityName}</Text>*/}
+          {/*      })*/}
+          {/*    }*/}
+          {/*  </View>*/}
+          {/*</View>}*/}
+
+          {/*------城市好物推荐------*/}
+          <View className="good-recommend">
+            <Text className="recommend-title">城市好物推荐</Text>
+
+            {/*------tab切换------*/}
+            <View className="tab-list">
+              {
+                tabList.map((item, index) => {
+                  return <View className={`tab-item ${+tabIndex === index+1 && 'active'}`} onClick={() => this.changeTab(index+1)} key={'tab'+index}>{item}</View>
+                })
+              }
+            </View>
+
+            <View className='recommend-list'>
+              {
+                recommendList.map((item, index) => {
+                  return (
+                    <View className='recommend-item' key={'re'+index} onClick={() => {this.toMall(item)}}>
+                      <Image src={item.signImg} className='recommend-img' mode="aspectFill"></Image>
+                      <Text className='recommend-title'>{item.infoTitle}</Text>
+                      <View className='recommend-msg'>
+                        <Text className='city'>{item.city}</Text>
+                        <View className='right-msg'>
+                          <Text className='unit'>¥</Text>
+                          <Text className='price'>{item.salePrice}</Text>
+                          <Text className='unit'>起</Text>
+                          <Text className='buy-btn'>立即抢购</Text>
+                        </View>
+                      </View>
+                    </View>
+                  )
+                })
+              }
+            </View>
+          </View>
         </View>
-        {/*<Button openType='getUserInfo' onGetUserInfo={this.getUserInfo}>用户信息</Button>*/}
       </View>
     )
   }
-
-  // getUserInfo = (res) => {
-  //   console.log(res, 123)
-  // }
 
   showTip = () => {
     Taro.showToast({
@@ -338,6 +290,10 @@ class Index extends Component {
         // res.data && this.getCityList(res.data.train)
         res.data && this.getCarFood(res.data)
       })
+  }
+
+  setTab = (num) => {
+    console.log(num)
   }
 
   // 获取位置信息
@@ -400,6 +356,14 @@ class Index extends Component {
     })
   }
 
+  setLocationCity = (areaId) => {
+    this.setState({
+      areaId
+    }, () => {
+      this.getListData(this.state.tabIndex)
+    })
+  }
+
   // 获取当前城市的城市ID
   getLocationCity = () => {
     let data = {
@@ -457,43 +421,6 @@ class Index extends Component {
         url: `/pages/adPage/index?url=${ad.toUrl}`
       })
     }
-  }
-
-  // 跳转页面
-  toPage = (page) => {
-    // 跳小程序页面和h5页面
-    if (page.url.includes('/info')) {
-      Taro.setStorageSync('hotRecommend', 1)
-      Taro.switchTab({
-        url: page.url.replace('/info', '')
-      })
-    } else if (page.url.includes('/tab')) {
-      Taro.setStorageSync('preference', 1)
-      Taro.switchTab({
-        url: page.url.replace('/tab', '')
-      })
-    } else if (page.url.includes('/pages')) {
-      Taro.navigateTo({
-        url: page.url
-      })
-    } else if (page.url) {
-      Taro.navigateTo({
-        url: `/pages/adPage/index?url=${page.url}`
-      })
-    }
-    // else {
-    //   var query: any = Taro.createSelectorQuery()
-    //   query.selectViewport().scrollOffset()
-    //   query.select(".tab-list").boundingClientRect()
-    //   query.exec(function (res: any): void {
-    //     // console.log(res, 123)
-    //     var miss: number = res[0].scrollTop + res[1].top - 10
-    //     Taro.pageScrollTo({
-    //       scrollTop: miss,
-    //       duration: 200
-    //     });
-    //   });
-    // }
   }
 
   // 切换商品推荐列表
