@@ -18,6 +18,8 @@ import default3 from '@/static/img/index/default-3.png'
 
 type PageStateProps = {
   positionCity: string,
+  areaId: any,
+  middleAd: any,
   setLocationCity: any
 }
 type PageDispatchProps = {
@@ -51,12 +53,12 @@ const BUTTON_LIST = [
   {
     img: lxsc,
     name: '旅行商城',
-    url: ''
+    url: '/tab/pages/mall/index'
   },
   {
     img: jrsx,
     name: '今日上新',
-    url: ''
+    url: '/mall/pages/mall/index'
   }
 ]
 
@@ -75,14 +77,16 @@ const defualtRecommend = [
 class NoDistanceTopSec extends Component {
   state = {
     buttonList: BUTTON_LIST,
-    hasRecommend: true
+    hasRecommend: false
   }
 
   onLoad() {
 
   }
 
-  UNSAFE_componentWillMount() {}
+  UNSAFE_componentWillMount() {
+    console.log(this.props.middleAd, 456)
+  }
 
   componentWillUnmount () { }
 
@@ -90,11 +94,11 @@ class NoDistanceTopSec extends Component {
 
   render() {
     const { buttonList, hasRecommend } = this.state
-    const { positionCity }  = this.props
+    const { positionCity, middleAd }  = this.props
     // const { } = this.props
 
     return (
-      <View className="top-sec-content">
+      <View className="no-distance">
         <Text className="title">Hi，尊敬的会员</Text>
         <View className="distance-tip" onClick={this.toAddDistance}>
           <Image src={addIcon} className="add-icon" mode="aspectFill"></Image>
@@ -117,20 +121,20 @@ class NoDistanceTopSec extends Component {
         </View>
 
         {/*------定位------*/}
-        <View className={`fixed-position ${positionCity && 'active'} ${hasRecommend && 'has-recommend'}`}>
+        <View className={`fixed-position ${positionCity && 'active'} ${middleAd.length > 0 && 'has-recommend'}`}>
           <Text>{positionCity ? '当前定位: ' + positionCity : '当前未获取定位权限，请在'}</Text>
           {!!positionCity || <Button openType="openSetting" className="setting">设置</Button>}
           {!!positionCity || <Text>中打开</Text>}
         </View>
 
         {/*------当前城市有推荐商品-----*/}
-        {hasRecommend && <View className="city-recommend">
+        {middleAd.length > 0 && <View className="city-recommend">
           {
-            defualtRecommend.map((item, index) => {
+            middleAd.map((item, index) => {
               return (
-                <View className="recommend-item" key={'reco'+index}>
-                  <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
-                  <Text className="recommend-text">{item.name}</Text>
+                <View className="recommend-item" key={'reco'+index} onClick={() => {this.clickRecommend(item, index)}}>
+                  <Image src={item.imageUrl} className="recommend-img" mode="aspectFill" key={'img'+index}></Image>
+                  <Text className="recommend-text">{item.imageDesc}</Text>
                 </View>
               )
             })
@@ -152,12 +156,13 @@ class NoDistanceTopSec extends Component {
   // 跳转页面
   toPage = (page) => {
     // 跳小程序页面和h5页面
-    if (page.url.includes('/info')) {
-      Taro.setStorageSync('hotRecommend', 1)
-      Taro.switchTab({
-        url: page.url.replace('/info', '')
-      })
-    } else if (page.url.includes('/tab')) {
+    // if (page.url.includes('/info')) {
+    //   Taro.setStorageSync('hotRecommend', 1)
+    //   Taro.switchTab({
+    //     url: page.url.replace('/info', '')
+    //   })
+    // }
+    if (page.url.includes('/tab')) {
       Taro.setStorageSync('preference', 1)
       Taro.switchTab({
         url: page.url.replace('/tab', '')
@@ -166,18 +171,31 @@ class NoDistanceTopSec extends Component {
       Taro.navigateTo({
         url: page.url
       })
-    } else if (page.url) {
+    } else if (page.url.includes('/mall')) {
+      Taro.setStorageSync('today', 1)
       Taro.navigateTo({
-        url: `/pages/adPage/index?url=${page.url}`
+        url: page.url.replace('/mall', '')
       })
     }
+    // else if (page.url) {
+    //   Taro.navigateTo({
+    //     url: `/pages/adPage/index?url=${page.url}`
+    //   })
+    // }
   }
 
-  // 广告页跳转
-  toAdPage = (ad) => {
-    ad && Taro.navigateTo({
-      url: `/pages/adPage/index?url=${ad}`
-    })
+  clickRecommend = (item, index) => {
+    if (index === 0) {
+      let city = this.props.positionCity
+      if (+item.type === 1) {
+        city = '广州'
+      }
+      Taro.navigateTo({
+        url: `${item.toUrl}&city=${city}`
+      })
+    } else {
+      console.log(item)
+    }
   }
 }
 

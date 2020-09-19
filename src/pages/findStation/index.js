@@ -21,12 +21,13 @@ export default class FindStation extends Component {
   constructor(){//bind
     super(...arguments)
     this.state = {
+        sruedata: {},//绑定传参
         list: [],
         where: '',
         num: '',
         date: '',
         shareData: '',
-        type:'time',//类型，time跳转查询结果页 bind为直接添加绑定车次跳转列车详情
+        type:'bind',//类型，time跳转查询结果页 bind为直接添加绑定车次跳转列车详情
         topdate:'',
         dateC: '',
         timeCC: '',
@@ -37,25 +38,25 @@ export default class FindStation extends Component {
         rail:false, //选择高铁动车
         choseindex:-1,
         srueadd:false,//确认添加按钮(是否能添加)
-        sruedata:{}, //绑定传参
         noPageText:'',
         thisPage:true,
         status:0,//是否停运
     }
-    this.sourcefrom = ''
+    this.sourcefrom = '4'
     this.from_station = ''
     this.to_station = ''
     this.from_station_type = '1'
     this.to_station_type = '1'
-    this.basScr = 'https://www.cx9z.com'
+    this.basScr = 'https://imgczt.weitaikeji.com'
     this.registerType = ''
   }
 
   UNSAFE_componentWillMount () {
     let params = getCurrentInstance().router.params
+    
     if(params){
       if(params.sourcefrom){
-        this.sourcefrom = decodeURI(params.sourcefrom)
+        this.sourcefrom = 4
       }
       if(params.from_station){
         this.from_station = decodeURI(params.from_station)
@@ -73,13 +74,13 @@ export default class FindStation extends Component {
         this.to_station_type = decodeURI(params.to_station_type)
       }
 
-      if(params.type){
-        this.setState({
-          type:params.type
-          //type:'bind'
-        })
-      }
-
+      // if(params.type){
+      //   this.setState({
+      //     type:params.type
+      //     //type:'bind'
+      //   })
+      // }
+    
       if (params.registerType){
         this.registerType = decodeURI(params.registerType)
       }
@@ -159,15 +160,15 @@ export default class FindStation extends Component {
     .then(res => {
       if(+res.code === 0){
         if (res.data) {
-          let list = (res.data.onlineTrains).concat(res.data.timeoutTrain)
-          for(var i=0;i<list.length;i++){
-            if (list[i].interval && parseInt(list[i].interval)>0){
-              list[i].interval = that.timeStamp(list[i].interval)
-            }
-          }
+          // let list = (res.data.onlineTrains).concat(res.data.timeoutTrain)
+          // for(var i=0;i<list.length;i++){
+          //   if (list[i].interval && parseInt(list[i].interval)>0){
+          //     list[i].interval = that.timeStamp(list[i].interval)
+          //   }
+          // }
           that.setState({
-            list: list,
-            num: list.length
+            list: res.data,
+            num: res.data.length
           },function(){
 
           })
@@ -238,64 +239,89 @@ export default class FindStation extends Component {
       }
     })
   }
+  
+  sureAdd = () =>{ //绑定
+    let scheduleItem = this.state.sruedata;
+    
+    //绑定行程
+    let params ={
+      train: scheduleItem.trainNo,
+      upStationName: scheduleItem.startStation,
+      upTrainTime: scheduleItem.startTime,
+      downStationName: scheduleItem.endStation,
+      downTrainTime: scheduleItem.endTime,
+    }
+
+    API.StationService.addSchedule(params,true)
+      .then(res => {
+        if(+res.code === 1){
+          Taro.showToast({
+            title: '车次绑定成功',
+            icon: 'none',
+            duration:1000,
+          })
+          Taro.switchTab({
+            url: '/pages/trainState/index'
+          })
+        }else{
+          Taro.showToast({
+            title: res.message,
+            icon: 'none',
+            duration:1000,
+          })
+        }
+      })
+      .catch(res => {
+
+        that.setState({
+          bottom_btn_enable: true,
+        })
+        Taro.hideLoading()
+        if(isEmptyObj(res.message)){
+          Taro.showToast({
+            title:'添加行程失败',
+            icon:'none',
+            duration:1500
+          })
+        }else{
+          Taro.showToast({
+            title: res.message,
+            icon: 'none',
+            duration:1000,
+          })
+        }
+      })
+  }
 
   tobindready = (e) => {
 
-    var that = this
-    //时刻查询下站站查询
-    let dataset = e.currentTarget.dataset
-    let valid = dataset.valid
-    let trainNo = dataset.num
-    let dateC = this.state.dateC
-    let from_name = dataset.s
-    let to_name = dataset.e
-    let depDate = dataset.depDate
-    let trainstatus = dataset.trainstatus  //是否已停运
-    this.setState({
-      choseindex:e.currentTarget.dataset.index,
-      srueadd:true,
-      sruedata:{
-        endStation: e.currentTarget.dataset.e,
-        endTime: e.currentTarget.dataset.edate + ':00',
-        startStation: e.currentTarget.dataset.s,
-        startTime: e.currentTarget.dataset.sdate + ':00',
-        trainNo: e.currentTarget.dataset.num,
-        scheduleType:1,
-        type: 'cx9z_wx_miniapp',
-      },
-      status: e.currentTarget.dataset.status
+      this.state.sruedata['endStation'] = e.currentTarget.dataset.e,
+      this.state.sruedata['endTime'] = e.currentTarget.dataset.edate,
+      this.state.sruedata['startStation'] = e.currentTarget.dataset.s,
+      this.state.sruedata['startTime'] = e.currentTarget.dataset.sdate,
+      this.state.sruedata['trainNo'] = e.currentTarget.dataset.num
+    
+      this.setState({
+        choseindex:e.currentTarget.dataset.index,
+        srueadd:true
     })
-    if(this.sourcefrom == addTrip_sourcefrom_enum.momentSearch_stationSearch){
-       //1、TODO：先进行行程，是否结束与绑定判断
-      // 2、 未结束与绑定 -> 跳转车次结果页，其他:toast提示
-
-      let jump_params = {
-        'sourcefrom': that.sourcefrom,
-        'trainNo':trainNo,
-        'dateC':dateC,
-        'from_station':from_name,
-        'to_station':to_name,
-        'check_status':'1' //  0 可绑定 2已经绑定 3已结束 2/3: 结束或已绑定 (跳转到车次结果页 -> 不显示立即添加按钮)     0：未结束或未绑定(跳转到车次结果页 ->显示立即添加按钮) ， -1: fail
-      }
-      let jumpUrl = '../lateQueryResults/index?'+queryParams(jump_params)
-      Taro.navigateTo({
-        url: jumpUrl
-      })
-    }
+      
   }
 
+  
+
   render () {
-    let {list, timeCC, weekDay, choseindex,noPageText,thisPage, num,type,where,dateC}=this.state;
+    let {list, timeCC, weekDay, choseindex,noPageText,thisPage, num,type,where,dateC,rail}=this.state;
     let top_time = timeCC +' '+weekDay
 
     const lists = list.map((item, index)=>{
       //跨天天数计算
       let daysNum = get_date_crossDay(item.dptDate, item.arrDate)
       let daysNumTip = daysNum > 0 ? "+"+daysNum+"天" : ''
-      return <View id={'ATfind5_' + index} key={index} className={classNames('trip-list', choseindex == index ? 'bodershow' : '')} data-status={item.trainStatus} data-valid={item.valid} data-index={index} data-to-arrtime={item.arrDate+" "+item.arrTime} data-depDate={item.dptDate} data-sdate={item.dptDate+" "+item.dptTime} data-edate={item.arrDate+" "+item.arrTime} data-s={item.dptStationName} data-e={item.arrStationName} data-num={item.trainNo}>
+      return <View id={'ATfind5_' + index} key={index} className={classNames('trip-list', choseindex == index ? 'bodershow' : '')} data-status={item.trainStatus} data-valid={item.valid} data-index={index} data-to-arrtime={item.arrDate+" "+item.arrTime} data-depDate={item.dptDate} data-sdate={item.dptDate+" "+item.dptTime} data-edate={item.arrDate+" "+item.arrTime} data-s={item.dptStationName} data-e={item.arrStationName} data-num={item.trainNo} onClick={this.tobindready}>
         {
           choseindex==index &&
-          <Image className="bingstaTion" src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_yixuan2.png'}></Image>
+          <Image className="bingstaTion" src={this.basScr+'/h5/taroVega/czt_v1/chooseStation/icon_yixuan2.png'}></Image>
         }
         <View className="trip-content">
           <View className="t-t">
@@ -308,7 +334,7 @@ export default class FindStation extends Component {
             </View>
             <View className="con">
               <View className={classNames("after", item.valid == 0 || item.trainStatus == 1?'traveColr':'')}>{item.interval}</View>
-              <Image src={this.basScr+'/h5/tarocx9z/czt_v1/business/The_arrow.png'} class="ani"></Image>
+              <Image src={this.basScr+'/h5/taroVega/czt_v1/business/The_arrow.png'} class="ani"></Image>
               <View className={classNames("afterstype", item.valid == 0 || item.trainStatus == 1?'traveColr':'')}>{item.trainType || ''}</View>
             </View>
             <View className="right">
@@ -331,7 +357,11 @@ export default class FindStation extends Component {
           <View className="tripdate">
               <View id='ATfind1' className="calendar" onClick={this.toCalendar}>
                 <Text>{top_time}</Text>
-                {/*<Image src={this.basScr+'/h5/tarocx9z/czt_v1/chooseStation/icon_date.png'}></Image>*/}
+                <Image src={this.basScr+'/h5/taroVega/czt_v1/chooseStation/icon_date.png'}></Image>
+              </View>
+              <View id='ATfind2' className="choserail" onClick={this.choserail}>
+                <Image src={rail==false?this.basScr+'/h5/taroVega/czt_v1/chooseStation/icon_weixuan.png':this.basScr+'/h5/taroVega/czt_v1/chooseStation/icon_gouxuan.png'}></Image>
+                <Text>高铁动车</Text>
               </View>
           </View>
           <View id='ATfind3' className="topTitle">
@@ -349,6 +379,16 @@ export default class FindStation extends Component {
         <View className="bottomtext">
           <Text>— 我也是有底线的 —</Text>
         </View>
+        }
+        {
+          type =="bind" &&
+          <View className="sureadd">
+            {
+              choseindex!=-1
+              ?<View id='ATfind6' className="btnadd truechose" onClick={this.sureAdd}>确认添加</View>
+              :<View id='ATfind7' className="btnadd falsechose">确认添加</View>
+            }
+          </View>
         }
         </View>}
 

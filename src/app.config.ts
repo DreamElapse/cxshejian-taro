@@ -26,6 +26,7 @@ export default {
       'pages/selectSite/index',
       'pages/stationLargeScreen/index',
       'pages/switchStation/index',
+      'pages/trainState/index',
       'pages/user/index'
   ],
   window: {
@@ -48,7 +49,7 @@ export default {
       },
       {
         text: "行程",
-        pagePath: "pages/add/index",
+        pagePath: "pages/trainState/index",
         iconPath: "./static/img/tabBar/distance.png",
         selectedIconPath: "./static/img/tabBar/distance_active.png"
       },

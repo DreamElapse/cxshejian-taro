@@ -28,10 +28,10 @@ import xiamen from '@/static/img/cityIcon/xiamen.png'
 import xian from '@/static/img/cityIcon/xian.png'
 import zhengzhou from '@/static/img/cityIcon/zhengzhou.png'
 
-
-
 type PageStateProps = {
-  trainInfo: any
+  trainInfo: any,
+  positionCity: string,
+  middleAd: Array<any>
 }
 type PageDispatchProps = {
   setTab: (any) => any
@@ -51,10 +51,26 @@ interface HasDistanceTopSec {
 }
 
 const fixedButton = [
-  {img: czdpIcon, name: '车站大屏', url: ''},
-  {img: skcxIcon, name: '时刻查询', url: ''},
-  {img: lxscIcon, name: '旅行商城', url: ''},
-  {img: jrsxIcon, name: '今日上新', url: ''}
+  {
+    img: czdpIcon,
+    name: '车站大屏',
+    url: '/pages/switchStation/index'
+  },
+  {
+    img: skcxIcon,
+    name: '时刻查询',
+    url: '/pages/add/index'
+  },
+  {
+    img: lxscIcon,
+    name: '旅行商城',
+    url: '/tab/pages/mall/index'
+  },
+  {
+    img: jrsxIcon,
+    name: '今日上新',
+    url: '/mall/pages/mall/index'
+  }
 ]
 
 const defualtRecommend = [
@@ -85,7 +101,7 @@ class HasDistanceTopSec extends Component {
   state = {
     showBoll: false,
     week: ['周日','周一','周二','周三','周四','周五','周六'],
-    hasRecommend: true,
+    hasRecommend: false,
     cityIndex: 3,
     areaId: 1
   }
@@ -106,10 +122,9 @@ class HasDistanceTopSec extends Component {
 
   render() {
     const { showBoll, week, hasRecommend, cityIndex } = this.state
-    const { trainInfo } = this.props
-
+    const { trainInfo, middleAd } = this.props
     return (
-      <View className="top-sec-content">
+      <View className="has-distance">
         <View className="top-content">
           {/*-----悬浮按钮-------*/}
           <View className="fixed-boll">
@@ -119,7 +134,7 @@ class HasDistanceTopSec extends Component {
             {
               fixedButton.map((item, index) => {
                 return (
-                  <View className={`boll-item boll-item${index+1} ${showBoll ? 'active' : ''}`} key={'boll'+index}>
+                  <View className={`boll-item boll-item${index+1} ${showBoll ? 'active' : ''}`} key={'boll'+index} onClick={() => {this.toPage(item)}}>
                     <Image src={item.img} className="boll-img" mode="aspectFill"></Image>
                     <Text className="boll-text">{item.name}</Text>
                   </View>
@@ -131,8 +146,8 @@ class HasDistanceTopSec extends Component {
           <View className='ticket'>
             <View className='top-msg'>
               <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>
-              <Text className="customer-name">小小</Text>
-              {/*<Text className='tip-text'>到达口:C1</Text>*/}
+              {/* <Text className="customer-name">小小</Text> */}
+              {/* <Text className='tip-text'>到达口:C1</Text> */}
             </View>
             <View className='bottom-msg'>
               <View className='left-msg'>
@@ -149,22 +164,23 @@ class HasDistanceTopSec extends Component {
                 <Text className='time'>{trainInfo.endTime}</Text>
               </View>
             </View>
-            <View className="foot-msg">
+            {trainInfo.seat && <View className="foot-msg">
               <View className="foot-left">
                 <Text className='small-text'>席别</Text>
-                <Text className='big-text'>二等座</Text>
+                <Text className='big-text'>{trainInfo.seat}</Text>
               </View>
               <View className="foot-right">
                 <Text className='small-text'>座位号</Text>
-                <Text className='big-text'>12车2C</Text>
+                <Text className='big-text'>{trainInfo.seat}</Text>
               </View>
-            </View>
+            </View>}
             <Text className='bottom-space'></Text>
           </View>
 
           {/*------途径城市-------*/}
           {cityList.length > 0 && <View className='road-city'>
             {/*<View className='name'>途经城市好物推荐</View>*/}
+          <Text className='city-context'>{cityList[cityIndex].cityContext ? cityList[cityIndex].cityContext : '当前'}</Text>
             <View className="city begin-city">
               <View className="city-icon"></View>
               <Text className="city-name">{cityList[0].name}</Text>
@@ -177,6 +193,7 @@ class HasDistanceTopSec extends Component {
                       <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
                         <View className={`city-icon ${!item.img && index === cityIndex && 'background'}`}>
                           {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
+                          {item.info && index !== cityIndex &&  <Text className="train-info">{item.info}</Text>}
                           {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFit"></Image>}
                           {index !== cityIndex - 1 && <View className="city-line-right"></View>}
                         </View>
@@ -198,13 +215,13 @@ class HasDistanceTopSec extends Component {
           <View className="white-bg"></View>
 
           {/*------当前城市有推荐商品-----*/}
-          {hasRecommend && <View className="city-recommend">
+          {middleAd.length > 0 && <View className="city-recommend">
             {
-              defualtRecommend.map((item, index) => {
+              middleAd.map((item, index) => {
                 return (
-                  <View className="recommend-item" key={'reco'+index} onClick={() => {this.clickRecommend(index)}}>
-                    <Image src={item.img} className="recommend-img" mode="aspectFill" onClick={() => {this.toAdPage(item.url)}} key={'img'+index}></Image>
-                    <Text className="recommend-text">{item.name}</Text>
+                  <View className="recommend-item" key={'reco'+index} onClick={() => {this.clickRecommend(item, index)}}>
+                    <Image src={item.imageUrl} className="recommend-img" mode="aspectFill"></Image>
+                    <Text className="recommend-text">{item.imageDesc}</Text>
                   </View>
                 )
               })
@@ -221,6 +238,37 @@ class HasDistanceTopSec extends Component {
     this.setState({
       showBoll: !this.state.showBoll
     })
+  }
+
+  // 跳转页面
+  toPage = (page) => {
+    // 跳小程序页面和h5页面
+    // if (page.url.includes('/info')) {
+    //   Taro.setStorageSync('hotRecommend', 1)
+    //   Taro.switchTab({
+    //     url: page.url.replace('/info', '')
+    //   })
+    // }
+    if (page.url.includes('/tab')) {
+      Taro.setStorageSync('preference', 1)
+      Taro.switchTab({
+        url: page.url.replace('/tab', '')
+      })
+    } else if (page.url.includes('/pages')) {
+      Taro.navigateTo({
+        url: page.url
+      })
+    } else if (page.url.includes('/mall')) {
+      Taro.setStorageSync('today', 1)
+      Taro.navigateTo({
+        url: page.url.replace('/mall', '')
+      })
+    }
+    // else if (page.url) {
+    //   Taro.navigateTo({
+    //     url: `/pages/adPage/index?url=${page.url}`
+    //   })
+    // }
   }
 
   // 广告页跳转
@@ -243,11 +291,17 @@ class HasDistanceTopSec extends Component {
     })
   }
 
-  clickRecommend = (index) => {
+  clickRecommend = (item, index) => {
     if (index === 0) {
+      let city = this.props.positionCity
+      if (+item.type === 1) {
+        city = '广州'
+      }
       Taro.navigateTo({
-        url: `/pages/rankList/index?areaId=${this.state.areaId}`
+        url: `${item.toUrl}&city=${city}`
       })
+    } else {
+      console.log(item)
     }
   }
 

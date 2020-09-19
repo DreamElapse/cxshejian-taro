@@ -32,7 +32,18 @@ export default {
   getTrain(data) {
     const url = `/api/miniapp/api/train/getByQrcode`
     return request.get({ url, data, toast: false })
+  },
+  // 获取用户已绑定行程信息
+  getDistance(data) {
+    const url = `/api/miniapp/api/schedule/nearest`
+    return request.get({ url, data})
+  },
+  // 城市景点榜单
+  getRankList(data) {
+    const url = `/api/miniapp/api/placard/info`
+    return request.get({ url, data })
   }
+
 
 
 

@@ -1,4 +1,4 @@
-.top-sec-content{
+.has-distance{
   color: #333;
   .top-content{
     position: relative;
@@ -218,6 +218,16 @@
     align-items: center;
     z-index: 2;
     position: relative;
+    .city-context{
+      font-size: 28px;
+      color: #27a3ff;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      text-align: center;
+    }
     .name{
       font-size: 28px;
       font-weight: bold;
@@ -250,6 +260,10 @@
         border-radius: 100%;
         background: #27a3ff;
         position: relative;
+        font-size: 16px;
+        color: #FFF;
+        text-align: center;
+        line-height: 36px;
       }
       .city-img{
         width: 60px;
