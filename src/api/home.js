@@ -42,6 +42,11 @@ export default {
   getRankList(data) {
     const url = `/api/miniapp/api/placard/info`
     return request.get({ url, data })
+  },
+  // 查询列成途径城市
+  getTrainCityList(data) {
+    const url = `/api/miniapp/api/train/listStrok`
+    return request.get({ url, data })
   }
 
 

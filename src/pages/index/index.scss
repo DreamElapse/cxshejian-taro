@@ -15,7 +15,10 @@
   }
   .page-content{
     padding: 0 20px;
-    margin-top: -80px;
+    margin-top: 150px;
+    &.page-content-top{
+      margin-top: -80px;
+    }
   }
   .top-sec{
     background: #FFF;

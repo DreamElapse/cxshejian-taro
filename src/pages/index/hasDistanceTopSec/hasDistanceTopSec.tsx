@@ -4,6 +4,7 @@ import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import dayjs from 'dayjs'
+import API from '@/api'
 import './hasDistanceTopSec.scss'
 
 import zyIcon from '@/static/img/index/icon_zy.png'
@@ -12,9 +13,9 @@ import czdpIcon from '@/static/img/index/icon_czdp.png'
 import skcxIcon from '@/static/img/index/icon_skcx.png'
 import lxscIcon from '@/static/img/index/icon_lxsc.png'
 import jrsxIcon from '@/static/img/index/icon_jrsx.png'
-import default1 from '@/static/img/index/default-1.png'
-import default2 from '@/static/img/index/default-2.png'
-import default3 from '@/static/img/index/default-3.png'
+// import default1 from '@/static/img/index/default-1.png'
+// import default2 from '@/static/img/index/default-2.png'
+// import default3 from '@/static/img/index/default-3.png'
 import beijing from '@/static/img/cityIcon/beijing.png'
 import changsha from '@/static/img/cityIcon/changsha.png'
 import guangzhou from '@/static/img/cityIcon/guangzhou.png'
@@ -34,7 +35,8 @@ type PageStateProps = {
   middleAd: Array<any>
 }
 type PageDispatchProps = {
-  setTab: (any) => any
+  setTab: (any) => any,
+  onRef: (any) => void
 }
 
 type PageOwnProps = {
@@ -54,12 +56,12 @@ const fixedButton = [
   {
     img: czdpIcon,
     name: '车站大屏',
-    url: '/pages/switchStation/index'
+    url: '/page/pages/switchStation/index'
   },
   {
     img: skcxIcon,
     name: '时刻查询',
-    url: '/pages/add/index'
+    url: '/page/pages/add/index'
   },
   {
     img: lxscIcon,
@@ -73,22 +75,37 @@ const fixedButton = [
   }
 ]
 
-const defualtRecommend = [
-  {img: default1, url: '', name: '广州必玩景点榜'},
-  {img: default2, url: '', name: '广州美食必吃榜'},
-  {img: default3, url: '', name: '广州热门必逛榜'}
-]
+// const defualtRecommend = [
+//   {img: default1, url: '', name: '广州必玩景点榜'},
+//   {img: default2, url: '', name: '广州美食必吃榜'},
+//   {img: default3, url: '', name: '广州热门必逛榜'}
+// ]
 
-const cityList = [
-  {name: '上海', img: shanghai},
-  {name: '上海', img: shanghai},
-  {name: '南京', img: ''},
-  {name: '武汉', img: wuhan},
-  {name: '长沙', img: changsha},
-  {name: '韶关', img: ''},
-  {name: '深圳', img: shenzhen},
-  {name: '广州', img: guangzhou},
-  {name: '广州', img: guangzhou}
+// const cityList = [
+//   {name: '上海', img: shanghai},
+//   {name: '上海', img: shanghai},
+//   {name: '南京', img: ''},
+//   {name: '武汉', img: wuhan},
+//   {name: '长沙', img: changsha},
+//   {name: '韶关', img: ''},
+//   {name: '深圳', img: shenzhen},
+//   {name: '广州', img: guangzhou},
+//   {name: '广州', img: guangzhou}
+// ]
+
+const cityIcon = [
+  { city: '北京市', icon: beijing },
+  { city: '长沙市', icon: changsha },
+  { city: '广州市', icon: guangzhou },
+  { city: '贵阳市', icon: guiyang },
+  { city: '杭州市', icon: hangzhou },
+  { city: '昆明市', icon: kunming },
+  { city: '上海市', icon: shanghai },
+  { city: '深圳市', icon: shenzhen },
+  { city: '武汉市', icon: wuhan },
+  { city: '厦门市', icon: xiamen },
+  { city: '西安市', icon: xian },
+  { city: '郑州市', icon: zhengzhou }
 ]
 
 @connect(({counter}) => ({
@@ -101,16 +118,14 @@ class HasDistanceTopSec extends Component {
   state = {
     showBoll: false,
     week: ['周日','周一','周二','周三','周四','周五','周六'],
-    hasRecommend: false,
-    cityIndex: 3,
-    areaId: 1
+    cityIndex: 0,
+    areaId: 1,
+    cityList: []
   }
 
-  onLoad() {
-
+  UNSAFE_componentWillMount() {
+    this.props.onRef(this)
   }
-
-  UNSAFE_componentWillMount() {}
 
   componentWillUnmount () { }
 
@@ -121,7 +136,7 @@ class HasDistanceTopSec extends Component {
   componentDidHide () { }
 
   render() {
-    const { showBoll, week, hasRecommend, cityIndex } = this.state
+    const { showBoll, week, cityIndex, cityList } = this.state
     const { trainInfo, middleAd } = this.props
     return (
       <View className="has-distance">
@@ -180,7 +195,7 @@ class HasDistanceTopSec extends Component {
           {/*------途径城市-------*/}
           {cityList.length > 0 && <View className='road-city'>
             {/*<View className='name'>途经城市好物推荐</View>*/}
-          <Text className='city-context'>{cityList[cityIndex].cityContext ? cityList[cityIndex].cityContext : '当前'}</Text>
+          <Text className='city-context'>{cityList[cityIndex].strokDesc}</Text>
             <View className="city begin-city">
               <View className="city-icon"></View>
               <Text className="city-name">{cityList[0].name}</Text>
@@ -193,8 +208,8 @@ class HasDistanceTopSec extends Component {
                       <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
                         <View className={`city-icon ${!item.img && index === cityIndex && 'background'}`}>
                           {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
-                          {item.info && index !== cityIndex &&  <Text className="train-info">{item.info}</Text>}
-                          {index === cityIndex && item.img && <Image src={item.img} className="city-img" mode="aspectFit"></Image>}
+                          {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
+                          {index === cityIndex && item.img && <Image src={item.cityName} className="city-img" mode="aspectFit"></Image>}
                           {index !== cityIndex - 1 && <View className="city-line-right"></View>}
                         </View>
                         <Text className={`city-name ${(index === 0 || index === cityList.length - 1) && 'transparent'}`}>{item.name}</Text>
@@ -254,13 +269,13 @@ class HasDistanceTopSec extends Component {
       Taro.switchTab({
         url: page.url.replace('/tab', '')
       })
-    } else if (page.url.includes('/pages')) {
+    } else if (page.url.includes('/page/pages')) {
       Taro.navigateTo({
-        url: page.url
+        url: page.url.replace('/page', '')
       })
-    } else if (page.url.includes('/mall')) {
+    } else if (page.url.includes('/mall/pages')) {
       Taro.setStorageSync('today', 1)
-      Taro.navigateTo({
+      Taro.switchTab({
         url: page.url.replace('/mall', '')
       })
     }
@@ -303,6 +318,23 @@ class HasDistanceTopSec extends Component {
     } else {
       console.log(item)
     }
+  }
+
+  // 获取行程途径城市
+  getTrainCityList = () => {
+    let trainInfo = this.props.trainInfo
+    let data = {
+      scheduleId: trainInfo.distanceId || '',
+      // train: trainInfo.train,
+      train: 'G1315',
+      trainDate: dayjs().format('YYYY-MM-DD')
+    }
+    API.Home.getTrainCityList(data)
+      .then(res => {
+        this.setState({
+          cityList: res.data
+        })
+      })
   }
 
 }

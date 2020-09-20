@@ -12,9 +12,9 @@ import czdp from '@/static/img/index/icon_czdp-2.png'
 import skcx from '@/static/img/index/icon_skcx-2.png'
 import lxsc from '@/static/img/index/icon_lxsc-2.png'
 import jrsx from '@/static/img/index/icon_jrsx-2.png'
-import default1 from '@/static/img/index/default-1.png'
-import default2 from '@/static/img/index/default-2.png'
-import default3 from '@/static/img/index/default-3.png'
+// import default1 from '@/static/img/index/default-1.png'
+// import default2 from '@/static/img/index/default-2.png'
+// import default3 from '@/static/img/index/default-3.png'
 
 type PageStateProps = {
   positionCity: string,
@@ -43,12 +43,12 @@ const BUTTON_LIST = [
   {
     img: czdp,
     name: '车站大屏',
-    url: '/pages/switchStation/index'
+    url: '/page/pages/switchStation/index'
   },
   {
     img: skcx,
     name: '时刻查询',
-    url: '/pages/add/index'
+    url: '/page/pages/add/index'
   },
   {
     img: lxsc,
@@ -62,11 +62,11 @@ const BUTTON_LIST = [
   }
 ]
 
-const defualtRecommend = [
-  {img: default1, url: '', name: '广州必玩景点榜'},
-  {img: default2, url: '', name: '广州美食必吃榜'},
-  {img: default3, url: '', name: '广州热门必逛榜'}
-]
+// const defualtRecommend = [
+//   {img: default1, url: '', name: '广州必玩景点榜'},
+//   {img: default2, url: '', name: '广州美食必吃榜'},
+//   {img: default3, url: '', name: '广州热门必逛榜'}
+// ]
 
 @connect(({counter}) => ({
   ...counter
@@ -85,7 +85,7 @@ class NoDistanceTopSec extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    console.log(this.props.middleAd, 456)
+    
   }
 
   componentWillUnmount () { }
@@ -167,13 +167,13 @@ class NoDistanceTopSec extends Component {
       Taro.switchTab({
         url: page.url.replace('/tab', '')
       })
-    } else if (page.url.includes('/pages')) {
+    } else if (page.url.includes('/page/pages')) {
       Taro.navigateTo({
-        url: page.url
+        url: page.url.replace('/page', '')
       })
-    } else if (page.url.includes('/mall')) {
+    } else if (page.url.includes('/mall/pages')) {
       Taro.setStorageSync('today', 1)
-      Taro.navigateTo({
+      Taro.switchTab({
         url: page.url.replace('/mall', '')
       })
     }

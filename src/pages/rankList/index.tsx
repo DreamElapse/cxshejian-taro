@@ -7,7 +7,7 @@ import API from '@/api'
 
 import './index.scss'
 
-import noodle from '@/static/img/goodsList/noodle.jpg'
+// import noodle from '@/static/img/goodsList/noodle.jpg'
 import dingwei from '@/static/img/goodsList/dingwei.png'
 import biaoqian from '@/static/img/goodsList/biaoqian.png'
 
@@ -23,22 +23,22 @@ type IProps = PageStateProps & PageDispatchProps & PageOwnProps
 
 interface RankList { props: IProps; }
 
-const defaultRankList: Array<any> = [
-  {
-    img: noodle,
-    title: '点都德',
-    city: '广州',
-    tag: ['#十分nice', '#环境优美', '#资深吃货必备'],
-    detail: '金沙红米肠外皮脆酥'
-  },
-  {
-    img: noodle,
-    title: '点都德',
-    city: '广州',
-    tag: ['#十分nice', '#环境优美', '#资深吃货必备'],
-    detail: '金沙红米肠外皮脆酥'
-  }
-]
+// const defaultRankList: Array<any> = [
+//   {
+//     img: noodle,
+//     title: '点都德',
+//     city: '广州',
+//     tag: ['#十分nice', '#环境优美', '#资深吃货必备'],
+//     detail: '金沙红米肠外皮脆酥'
+//   },
+//   {
+//     img: noodle,
+//     title: '点都德',
+//     city: '广州',
+//     tag: ['#十分nice', '#环境优美', '#资深吃货必备'],
+//     detail: '金沙红米肠外皮脆酥'
+//   }
+// ]
 
 @connect(({ counter }) => ({
   ...counter

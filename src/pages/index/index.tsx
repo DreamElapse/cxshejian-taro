@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { View, Image, Button, Text, Swiper, SwiperItem, Block, Navigator } from '@tarojs/components'
 import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { setTrainInfo, setTotalPrice, addGoods } from '@/store/actions'
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import API from '@/api'
 import './index.scss'
 
@@ -66,8 +66,6 @@ class Index extends Component {
 
   state = {
     goodsList: [],
-    cityList: [],
-    cityIndex: 0,
     recommendList: [],
     positionCity: '', // 用户定位
     areaId: '',
@@ -81,16 +79,15 @@ class Index extends Component {
     isGetLocation: false,
     hasDistance: false,
     hideModal: false,
-    topAd: [1],
+    topAd: [],
     middleAd: [],
     noMoreData: false,
     code: '',
-    noRecommend: true,
-    defaultRecommend: []
+    defaultRecommend: [] // 默认推荐
   }
 
   onLoad() {
-    this.getAdData()
+    
   }
 
   UNSAFE_componentWillMount() {}
@@ -98,16 +95,14 @@ class Index extends Component {
   componentWillUnmount () { }
 
   componentDidShow () {
-    // console.log(TD, 111)
-    // TD.Page.load(true)
+    this.getDistance() // 获取行程
     // 扶手码code
     let router: any = getCurrentInstance().router
     let code = router.params.code
-    code && this.setState({code}, () => {
-      this.getDistance()
-      // this.getTrain()
-    })
+    code && this.setState({code})
     !this.state.areaId && this.getLocation()
+    this.getListData(this.state.tabIndex)
+    // this.getTrainCityList()
   }
 
   componentDidHide () { }
@@ -121,12 +116,12 @@ class Index extends Component {
   }
 
   render () {
-    const { cityList, cityIndex, hideModal, positionCity, areaId, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, defaultRecommend, noRecommend } = this.state
+    const { hideModal, positionCity, areaId, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, defaultRecommend } = this.state
     const { trainInfo } = this.props
     return (
       <View className='home-page'>
         {/*<Image src={topBg} className="top-bg"></Image>*/}
-        <Swiper
+        {areaId && <Swiper
           className='top-scroll-box'
           vertical={false}
         >
@@ -139,13 +134,25 @@ class Index extends Component {
               )
             })
           }
-        </Swiper>
+        </Swiper>}
 
-        <View className="page-content">
+        <View className={`page-content ${areaId && 'page-content-top'}`}>
           {/*----顶部部分-----*/}
           <View className="top-sec">
-            {hasDistance || <NoDistanceTopSec positionCity={positionCity} areaId={areaId} middleAd={middleAd} setPosition={this.setLocationCity}></NoDistanceTopSec>}
-            {hasDistance && <HasDistanceTopSec setTab={this.setTab} positionCity={positionCity} middleAd={middleAd}></HasDistanceTopSec>}
+            {hasDistance || 
+            <NoDistanceTopSec 
+              positionCity={positionCity} 
+              areaId={areaId} 
+              middleAd={middleAd}
+              setPosition={this.setLocationCity}
+            ></NoDistanceTopSec>}
+            {hasDistance && 
+            <HasDistanceTopSec 
+              setTab={this.setTab} 
+              positionCity={positionCity} 
+              middleAd={middleAd} 
+              onRef={ref => {this.$child = ref}}
+            ></HasDistanceTopSec>}
           </View>
 
           {/*------当前城市无推荐商品-----*/}
@@ -284,18 +291,23 @@ class Index extends Component {
           let obj = {
             date: tranData.date,
             train: tranData.train,
-            startStation: tranData.startStationName,
-            startTime: tranData.trainStartTime.split(' ')[1],
+            startStation: tranData.upStationName,
+            startTime: tranData.upTrainTime.split(' ')[1],
+            // startTime: tranData.trainStartTime,
             duration: tranData.lengthTime,
-            endStation: tranData.endStationName,
-            endTime: tranData.trainEndTime.split(' ')[1]
+            endStation: tranData.downStationName,
+            endTime: tranData.downTrainTime.split(' ')[1],
+            // endTime: tranData.trainEndTime,
+            distanceId: tranData.id
           }
           this.props.setTrainInfo(obj)
           this.setState({
             hasDistance: !!res.data
           })
+          // this.getTrainCityList()
+          this.$child.getTrainCityList()
         } else {
-          this.getTrain()
+          this.state.code && this.getTrain()
         }
       })
   }
@@ -304,14 +316,18 @@ class Index extends Component {
   getTrain = () => {
     API.Home.getTrain({qrcode: this.state.code})
       .then(res => {
-        res.data && this.props.setTrainInfo(res.data)
         this.setState({
           hasDistance: !!res.data
         })
-        // res.data && this.getCityList(res.data.train)
-        res.data && this.getCarFood(res.data)
+        if (res.data) {
+          this.props.setTrainInfo(res.data)
+          this.$child.getTrainCityList()
+          // this.getCarFood(res.data)
+          // this.getTrainCityList()
+        }
       })
   }
+
 
   setTab = (num) => {
     console.log(num)
@@ -366,6 +382,9 @@ class Index extends Component {
 
               // 通过坐标值获取城市
             },
+            fail: () => {
+
+            },
             complete() {
               _this.setState({
                 isGetLocation: false
@@ -396,9 +415,10 @@ class Index extends Component {
         this.setState({
           positionCity: res.data.areaName,
           areaId: res.data.areaId + ''
+        }, () => {
+          this.getAdData()
+          this.getListData(this.state.tabIndex)
         })
-        this.getListData(this.state.tabIndex)
-        // this.getCityList(this.props.trainInfo.train)
       })
   }
 
@@ -463,12 +483,11 @@ class Index extends Component {
   changeTab = (index) => {
     let theme = ['',  '101098', '101032', '100110'] // 2 || 3 || 4
     let themeId = theme[index-1]
-    let excludeThemeId
+    let excludeThemeId = index === 1 ? '101098' : index === 4 ? '100110' : ''  // 1 || 4
     this.setState({
       tabIndex: index,
       themeId,
-      excludeThemeId: index === 1 ? '101098' : index === 4 ? '100110' : '', // 1 || 4
-      // recommendList: [],
+      excludeThemeId,
       startIndex: 0,
       noMoreData: false
     })
@@ -476,27 +495,26 @@ class Index extends Component {
   }
 
   // 城市列表
-  getCityList = (train) => {
-    API.Home.getCityList({train})
-      .then(res => {
-        let id = this.state.areaId
-        let index: number = res.data.findIndex(item => {
-          return item.zwyCityId === id
-        })
-        index > -1 && this.setState({
-          positionCity: res.data[index].cityName,
-          cityList: res.data,
-          cityIndex: index
-        })
-      })
-  }
+  // getCityList = (train) => {
+  //   API.Home.getCityList({train})
+  //     .then(res => {
+  //       let id = this.state.areaId
+  //       let index: number = res.data.findIndex(item => {
+  //         return item.zwyCityId === id
+  //       })
+  //       index > -1 && this.setState({
+  //         positionCity: res.data[index].cityName,
+  //         cityList: res.data,
+  //         cityIndex: index
+  //       })
+  //     })
+  // }
 
   // 选择城市
   selectCity(city, index) {
     this.setState({
       positionCity: city.cityName,
       areaId: city.zwyCityId,
-      cityIndex: index
     }, () => {
       this.getListData(this.state.tabIndex)
     })

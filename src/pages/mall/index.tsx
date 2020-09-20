@@ -52,7 +52,7 @@ class Mall extends Component {
     if (today) {
       setTimeout(()=>{
         this.setState({
-          webViewUrl: `${webviewlink}classify/today?to=today&time=${Timestamp}`
+          webViewUrl: `${webviewlink}today?to=today&time=${Timestamp}`
         })
       },400)
     }  else if (hotRecommend) {
