@@ -407,38 +407,38 @@ onPullDownRefresh(){
                     <Image   className='dimg' src={'https://imgczt.weitaikeji.com/h5/taroVega/czt_v2/schedule/detele.png'} ></Image>
               </View>  */}
               <View class='trainNo'>
-              <View class='leftBox'>
-                {itemData.scheduleType == 12 && <View className='type'>接</View>}
-                {itemData.scheduleType == 13 && <View className='type'>送</View>}             
-                
-                {
-                  item=='current' ? 
-                  <Text className='tr'>{itemData.fullRemainTime}</Text>
-                  :
-                  <Text className={item=='overLess' ? 'or':'tr'}>{itemData.lengthTime}</Text>
-                }
-                
-              </View>
-              <View className='rightBox1'>
-                {
-                  item == 'afterTomorrow' || item == 'longer' ?
-                  <View class='todays'>{itemData.startLessTime}</View>
-                  :null
-                }
-                {
-                   item == 'tomorrow' || item=='today' ?
-                   <View class={['todays'+' '+(itemData.flag && itemData.lateState.indexOf('晚点') != -1?'bitlate':'')+' '+(itemData.flag && itemData.lateState.indexOf('正点') != -1?'bitearlier':'')+' '+(itemData.flag && itemData.lateState.indexOf('早点') != -1 ?'Punctuality':'')]}>{itemData.flag ?(itemData.lateState == '--' ? ''+(itemData.startLessTime == '后出发' ? '1分钟后出发' : itemData.startLessTime) : itemData.lateState) : (itemData.startLessTime == '后出发' ? '1分钟后出发' : itemData.startLessTime)}</View>
-                   :null
-                }
-                {
-                  // item == 'current' &&
-                  // <View class={["today"+' '+(itemData.lateState.indexOf('晚点') != -1 ?'bitlate':'')+' '+(itemData.lateState.indexOf('正点') != -1 ?'bitearlier':'')+' '+(itemData.lateState.indexOf('早点') != -1 ?'Punctuality':'')]}>{itemData.lateState == '--' ? '' : itemData.lateState+'·'}下一站{itemData.nextStation}</View>                 
-                }
-                 {
-                  item == 'overLess' &&
-                  <View class='todays oldtaodst'>已结束</View>
-                }
-              </View>
+                <View class='leftBox'>
+                  {itemData.scheduleType == 12 && <View className='type'>接</View>}
+                  {itemData.scheduleType == 13 && <View className='type'>送</View>}             
+                  
+                  {
+                    item=='current' ? 
+                    <Text className='tr'>{itemData.fullRemainTime}</Text>
+                    :
+                    <Text className={item=='overLess' ? 'or':'tr'}>{itemData.lengthTime}</Text>
+                  }
+                  
+                </View>
+                <View className='rightBox1'>
+                  {
+                    item == 'afterTomorrow' || item == 'longer' ?
+                    <View class='todays'>{itemData.startLessTime}</View>
+                    :null
+                  }
+                  {
+                    item == 'tomorrow' || item=='today' ?
+                    <View class={['todays'+' '+(itemData.flag && itemData.lateState.indexOf('晚点') != -1?'bitlate':'')+' '+(itemData.flag && itemData.lateState.indexOf('正点') != -1?'bitearlier':'')+' '+(itemData.flag && itemData.lateState.indexOf('早点') != -1 ?'Punctuality':'')]}>{itemData.flag ?(itemData.lateState == '--' ? ''+(itemData.startLessTime == '后出发' ? '1分钟后出发' : itemData.startLessTime) : itemData.lateState) : (itemData.startLessTime == '后出发' ? '1分钟后出发' : itemData.startLessTime)}</View>
+                    :null
+                  }
+                  {
+                    // item == 'current' &&
+                    // <View class={["today"+' '+(itemData.lateState.indexOf('晚点') != -1 ?'bitlate':'')+' '+(itemData.lateState.indexOf('正点') != -1 ?'bitearlier':'')+' '+(itemData.lateState.indexOf('早点') != -1 ?'Punctuality':'')]}>{itemData.lateState == '--' ? '' : itemData.lateState+'·'}下一站{itemData.nextStation}</View>                 
+                  }
+                  {
+                    item == 'overLess' &&
+                    <View class='todays oldtaodst'>已结束</View>
+                  }
+                </View>
 
             </View>
             <View class='stationContent'>
@@ -459,6 +459,7 @@ onPullDownRefresh(){
             {/* <View className='deteleAll' id='detele' onClick={() => {this.deleteSchedule(itemData.id)}} data-scheduleid={itemData.id} data-train={ itemData.train} data-dept={itemData.upStationName} data-date={itemData.deleteStartime}> */}
             <View className='deteleAll' onClick={() => {this.deleteSchedule(itemData.id)}}>
                 <Image   className='dimg' src={'https://imgczt.weitaikeji.com/h5/taroVega/czt_v2/schedule/detele.png'} ></Image>
+                <Text className='delete-text'>删除</Text>
             </View>
         </View>
       </View>

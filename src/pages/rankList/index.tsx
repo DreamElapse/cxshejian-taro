@@ -10,6 +10,7 @@ import './index.scss'
 // import noodle from '@/static/img/goodsList/noodle.jpg'
 import dingwei from '@/static/img/goodsList/dingwei.png'
 import biaoqian from '@/static/img/goodsList/biaoqian.png'
+import backIcon from '@/static/img/goodsList/back.png'
 
 type PageStateProps = { }
 
@@ -85,6 +86,7 @@ class RankList extends Component {
     const { rankList, rankData, city } = this.state
     return (
       <View className='rank-list'>
+        <Image src={backIcon} className='back-icon' mode="aspectFill" onClick={this.pageBack}></Image>
         <Image src={rankData.imageUrl} className="top-bg" mode="aspectFill"></Image>
         <View className="rank-content">
           {
@@ -96,10 +98,10 @@ class RankList extends Component {
                     <View className="item-context">
                       <View className="item-title">
                         <Text className="title">{item.name}</Text>
-                        <View className="title-right">
+                        {city && <View className="title-right">
                           <Image src={dingwei} className="right-icon"></Image>
                           <Text className="city-name">{city}</Text>
-                        </View>
+                        </View>}
                       </View>
 
                       <View className="tag-list">
@@ -149,6 +151,12 @@ class RankList extends Component {
     Taro.switchTab({
       // url: `/pages/mall/index?rank=${id}`
       url
+    })
+  }
+
+  pageBack = () => {
+    Taro.navigateBack({
+      delta: 1
     })
   }
 }

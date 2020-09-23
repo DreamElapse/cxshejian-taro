@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
-
+import Taro from '@tarojs/taro'
 import configStore from '@/store'
+import API from '@/api'
 
 import './app.scss'
 
@@ -17,6 +18,22 @@ class App extends Component {
   componentDidMount () {}
 
   onLaunch() {
+    Taro.login({
+      success: val => {
+        let code = val.code
+        API.Global.login({code})
+          .then(res => {
+            Taro.setStorageSync('token', res.data)
+            API.Global.getUserInfo()
+              .then(info => {
+                info.data.openId && Taro.setStorageSync('openId', info.data.openId)
+              })
+          })
+      },
+      fail: data => {
+        console.log(data, '静默授权失败')
+      }
+    })
     // TD.launch({
     //   appkey: '1B4CB238B43B4B5C9648E0F8F380FA8E',
     //   appName: '畅行舌尖小程序',

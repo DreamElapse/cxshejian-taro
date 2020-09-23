@@ -44,7 +44,7 @@ interface Index {
 //   {img: default3, url: '', name: '广州热门必逛榜'}
 // ]
 
-const tabList = ['旅游爆款', '高铁优选', '当地美食', '亲子热门']
+const tabList = ['旅行爆款', '高铁优选', '当地美食', '亲子热门']
 
 @connect(({ counter }) => ({
   ...counter
@@ -83,7 +83,8 @@ class Index extends Component {
     middleAd: [],
     noMoreData: false,
     code: '',
-    defaultRecommend: [] // 默认推荐
+    defaultRecommend: [], // 默认推荐
+    currentCity: {}
   }
 
   onLoad() {
@@ -96,11 +97,12 @@ class Index extends Component {
 
   componentDidShow () {
     this.getDistance() // 获取行程
+    this.getAdData()
     // 扶手码code
     let router: any = getCurrentInstance().router
     let code = router.params.code
-    code && this.setState({code})
     !this.state.areaId && this.getLocation()
+    code && this.setState({code})
     this.getListData(this.state.tabIndex)
     // this.getTrainCityList()
   }
@@ -116,12 +118,12 @@ class Index extends Component {
   }
 
   render () {
-    const { hideModal, positionCity, areaId, tabIndex, recommendList, hasDistance, goodsList, topAd, middleAd, defaultRecommend } = this.state
+    const { hideModal, positionCity, areaId, tabIndex, recommendList, currentCity, hasDistance, goodsList, topAd, middleAd, defaultRecommend } = this.state
     const { trainInfo } = this.props
     return (
       <View className='home-page'>
         {/*<Image src={topBg} className="top-bg"></Image>*/}
-        {areaId && <Swiper
+        {topAd.length > 0 && <Swiper
           className='top-scroll-box'
           vertical={false}
         >
@@ -144,13 +146,12 @@ class Index extends Component {
               positionCity={positionCity} 
               areaId={areaId} 
               middleAd={middleAd}
-              setPosition={this.setLocationCity}
             ></NoDistanceTopSec>}
             {hasDistance && 
             <HasDistanceTopSec 
-              setTab={this.setTab} 
-              positionCity={positionCity} 
-              middleAd={middleAd} 
+              setCurrentCity={this.setCurrentCity} 
+              positionCity={currentCity.cityName} 
+              middleAd={middleAd}
               onRef={ref => {this.$child = ref}}
             ></HasDistanceTopSec>}
           </View>
@@ -244,7 +245,11 @@ class Index extends Component {
             <View className="tab-list">
               {
                 tabList.map((item, index) => {
-                  return <View className={`tab-item ${+tabIndex === index+1 && 'active'}`} onClick={() => this.changeTab(index+1)} key={'tab'+index}>{item}</View>
+                  return (
+                    <View className={`tab-item ${+tabIndex === index+1 && 'active'}`} onClick={() => this.changeTab(index+1)} key={'tab'+index}>
+                      <Text className='tab-text'>{item}</Text>   
+                    </View>
+                  )
                 })
               }
             </View>
@@ -287,26 +292,36 @@ class Index extends Component {
     API.Home.getDistance()
       .then(res => {
         if (res.data) {
-          let tranData = res.data
+          let trainData = res.data
           let obj = {
-            date: tranData.date,
-            train: tranData.train,
-            startStation: tranData.upStationName,
-            startTime: tranData.upTrainTime.split(' ')[1],
-            // startTime: tranData.trainStartTime,
-            duration: tranData.lengthTime,
-            endStation: tranData.downStationName,
-            endTime: tranData.downTrainTime.split(' ')[1],
-            // endTime: tranData.trainEndTime,
-            distanceId: tranData.id
+            date: trainData.date,
+            train: trainData.train,
+            startStation: trainData.upStationName,
+            startTime: trainData.upTrainTime.split(' ')[1],
+            // startTime: trainData.trainStartTime,
+            duration: trainData.lengthTime,
+            endStation: trainData.downStationName,
+            endTime: trainData.downTrainTime.split(' ')[1],
+            // endTime: trainData.trainEndTime,
+            distanceId: trainData.id,
+            startLessTime: trainData.startLessTime,
+            fullRemainTime: trainData.fullRemainTime
           }
           this.props.setTrainInfo(obj)
           this.setState({
-            hasDistance: !!res.data
+            hasDistance: true,
+            // areaId: '1004401',
+            // positionCity: '广州市'
+          }, () => {
+            this.getListData(this.state.tabIndex)
           })
           // this.getTrainCityList()
           this.$child.getTrainCityList()
         } else {
+          this.setState({
+            hasDistance: false,
+          })
+          this.props.setTrainInfo({})
           this.state.code && this.getTrain()
         }
       })
@@ -329,8 +344,12 @@ class Index extends Component {
   }
 
 
-  setTab = (num) => {
-    console.log(num)
+  setCurrentCity = (city) => {
+    this.setState({
+      currentCity: city
+    }, () => {
+      this.getMiddleAdData()
+    })
   }
 
   // 获取位置信息
@@ -340,6 +359,7 @@ class Index extends Component {
     this.setState({
       isGetLocation: true
     })
+    console.log(123)
     Taro.getSetting({
       success: res => {
         if (!res.authSetting['scope.userLocation']) {
@@ -359,6 +379,7 @@ class Index extends Component {
               })
             },
             fail() {
+              _this.getAdData()
               // _this.setState({
               //   isSetting: false
               // })
@@ -383,7 +404,7 @@ class Index extends Component {
               // 通过坐标值获取城市
             },
             fail: () => {
-
+              _this.getAdData()
             },
             complete() {
               _this.setState({
@@ -396,16 +417,9 @@ class Index extends Component {
     })
   }
 
-  setLocationCity = (areaId) => {
-    this.setState({
-      areaId
-    }, () => {
-      this.getListData(this.state.tabIndex)
-    })
-  }
-
   // 获取当前城市的城市ID
   getLocationCity = () => {
+    if (this.state.hasDistance) return
     let data = {
       latitude: this.state.lat,
       longitude: this.state.lon
@@ -416,6 +430,7 @@ class Index extends Component {
           positionCity: res.data.areaName,
           areaId: res.data.areaId + ''
         }, () => {
+          console.log(this.state.positionCity, 111)
           this.getAdData()
           this.getListData(this.state.tabIndex)
         })
@@ -459,14 +474,24 @@ class Index extends Component {
     
     if (index === 0) {
       let city = this.state.positionCity
-      if (+item.type === 1) {
+      if (+item.type === 1) { // 默认
         city = '广州'
       }
       Taro.navigateTo({
         url: `${item.toUrl}&city=${city}`
       })
     } else {
-      console.log(item)
+      let canTo = false
+      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+        canTo = true
+      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+        canTo = true
+      }
+      canTo && Taro.switchTab({
+        url: `/pages/mall/index`
+      })
     }
   }
 
@@ -481,9 +506,9 @@ class Index extends Component {
 
   // 切换商品推荐列表
   changeTab = (index) => {
-    let theme = ['',  '101098', '101032', '100110'] // 2 || 3 || 4
+    let theme = ['',  '101098', '101032', '101100'] // 2 || 3 || 4
     let themeId = theme[index-1]
-    let excludeThemeId = index === 1 ? '101098' : index === 4 ? '100110' : ''  // 1 || 4
+    let excludeThemeId = index === 1 ? '101098' : ''  // 1
     this.setState({
       tabIndex: index,
       themeId,
@@ -512,6 +537,7 @@ class Index extends Component {
 
   // 选择城市
   selectCity(city, index) {
+    console.log(55655)
     this.setState({
       positionCity: city.cityName,
       areaId: city.zwyCityId,
@@ -537,6 +563,21 @@ class Index extends Component {
         }
         this.setState({
           topAd: res[0].data ? res[0].data.bannerImgList : [],
+          middleAd: type ? [] : middleAd,
+          defaultRecommend: type ? middleAd : []
+        })
+      })
+  }
+
+  getMiddleAdData = () => {
+    API.Home.getAdData({code: 'home-middle', zwyAreaId: this.state.currentCity.cityCode})
+      .then(res => {
+        let middleAd: any[] = res.data ? res.data.bannerImgList : []
+        let type: number = 0
+        if (res.data && +res.data.bannerImgList[0].type === 1) {
+          type = 1
+        }
+        this.setState({
           middleAd: type ? [] : middleAd,
           defaultRecommend: type ? middleAd : []
         })

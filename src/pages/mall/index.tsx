@@ -47,12 +47,19 @@ class Mall extends Component {
     let preference = Taro.getStorageSync('preference')
     let hotRecommend = Taro.getStorageSync('hotRecommend')
     let today = Taro.getStorageSync('today')
+    let productdynamic = Taro.getStorageSync('productdynamic')
     const Timestamp = new Date().getTime()
     const webviewlink = config[config.environmental]
     if (today) {
       setTimeout(()=>{
         this.setState({
           webViewUrl: `${webviewlink}today?to=today&time=${Timestamp}`
+        })
+      },400)
+    }  else if (productdynamic) {
+      setTimeout(()=>{
+        this.setState({
+          webViewUrl: `${webviewlink}productdynamic/${productdynamic}?time=${Timestamp}`
         })
       },400)
     }  else if (hotRecommend) {
@@ -112,6 +119,7 @@ class Mall extends Component {
     Taro.removeStorageSync('preference')
     Taro.removeStorageSync('hotRecommend')
     Taro.removeStorageSync('today')
+    Taro.removeStorageSync('productdynamic')
   }
   UNSAFE_componentWillMount () {
     Taro.showShareMenu({

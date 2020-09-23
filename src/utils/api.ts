@@ -2,6 +2,7 @@ import Taro, { request, showLoading, hideLoading, showToast, getCurrentInstance 
 import HTTP from '@/api'
 
 class API {
+  getToken = false
   // 四种请求方式
   get(args) {
     return this.http(args, 'GET')
@@ -15,7 +16,7 @@ class API {
   delete(args) {
     return this.http(args, 'DELETE')
   }
-
+  
 
   // api控制器
   http(args, method = 'GET') {
@@ -106,18 +107,24 @@ class API {
   // 响应拦截
   beforeResponse(res, toast) {
     if (+res.code === 200 || +res.code === 201) {
-      Taro.login({
-        success: val => {
-          let code = val.code
-          debugger
-          HTTP.Global.login({code})
-            .then(() => {
-              let page: any = getCurrentInstance().page
-              page.onShow()
-              // toast && showToast({title: '操作失败，请从新操作'})
-            })
-        }
-      })
+      // if (!Taro.getStorageSync('token')) {
+      //   Taro.login({
+      //     success: val => {
+      //       let code = val.code
+      //       HTTP.Global.login({code})
+      //         .then(() => {
+      //           Taro.setStorageSync('token', res.data)
+      //           _this.getToken = false
+      //           HTTP.Global.getUserInfo()
+      //             .then(info => {
+      //               info.data && Taro.setStorageSync('openId', info.data.openId)
+      //               // let page: any = getCurrentInstance().page
+      //               // page.onShow()
+      //             })
+      //         })
+      //     }
+      //   })
+      // }
     } else if (+res.status === 400) {
       toast && showToast({title: '接口请求失败', icon: 'none'})
     } else if (+res.code !== 1 && +res.state !== 1) {

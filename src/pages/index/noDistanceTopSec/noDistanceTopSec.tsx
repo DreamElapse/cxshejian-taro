@@ -194,7 +194,17 @@ class NoDistanceTopSec extends Component {
         url: `${item.toUrl}&city=${city}`
       })
     } else {
-      console.log(item)
+      let canTo = false
+      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+        canTo = true
+      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+        canTo = true
+      }
+      canTo && Taro.switchTab({
+        url: `/pages/mall/index`
+      })
     }
   }
 }

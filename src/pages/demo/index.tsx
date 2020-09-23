@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, ScrollView, WebView } from '@tarojs/components'
+import { View, ScrollView, WebView, Text } from '@tarojs/components'
 
 // import { add, minus, asyncAdd } from '../../store/actions'
 
@@ -20,7 +20,9 @@ type PageState = {
   activeIndex: number,
   tabList: Array<string>,
   scrollNow: string,
-  url: string
+  url: string,
+  cityTempList: Array<any>,
+  cityList: Array<any>
 }
 
 type IProps = PageStateProps & PageDispatchProps & PageOwnProps
@@ -39,6 +41,8 @@ class Demo extends Component {
     activeIndex: 0,
     tabList: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
     scrollNow: 'a',
+    cityTempList: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+    cityList: ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
     url: 'https://www.baidu.com'
   }
 
@@ -55,7 +59,7 @@ class Demo extends Component {
   componentDidHide () { }
 
   render () {
-    const { tabList, activeIndex, scrollNow, url } = this.state
+    const { tabList, activeIndex, scrollNow, url, cityTempList, cityList } = this.state
     return (
       <View className='demo'>
         {/*<WebView src={url}></WebView>*/}
@@ -68,6 +72,34 @@ class Demo extends Component {
 
 
         </ScrollView>
+
+        <View className='road-city'>
+            {/*<View className='name'>途经城市好物推荐</View>*/}
+            <Text className='city-context'>{cityList[0]}</Text>
+            <View className="city begin-city">
+              <View className="city-icon"></View>
+              <Text className="city-name">{cityList[0]}</Text>
+            </View>
+            <View className="city-scroll-box">
+              {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
+              <ScrollView className='city-list' scrollX>
+                {
+                  cityTempList.map((item, index) => {
+                    return (
+                      <View className={`city`} key={'city'+index}>
+                        {item}
+                      </View>
+                    )
+                  })
+                }
+              </ScrollView>
+            </View>
+
+            <View className="city end-city">
+              <View className="city-icon"></View>
+              <Text className="city-name">{cityList[cityList.length-1]}</Text>
+            </View>
+          </View>
 
       </View>
     )

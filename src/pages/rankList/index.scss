@@ -4,15 +4,25 @@
   background: #2e3452;
   box-sizing: border-box;
   padding-bottom: 20px;
+  min-height: 100vh;
+  position: relative;
   image{
     display: block;
   }
+  .back-icon{
+    position: absolute;
+    left: 25px;
+    top: 62px;
+    width: 17px;
+    height: 30px;
+
+  }
   .top-bg{
-    height: 400px;
+    height: 500px;
     width: 100%;
   }
   .rank-content{
-    margin-top: -100px;
+    margin-top: -200px;
     padding: 0 30px;
     .rank-item{
       margin-bottom: 28px;
@@ -28,7 +38,7 @@
     }
     .item-context{
       padding-top: 20px;
-      background: #FFF;
+      background: #fff;
     }
     .item-title{
       font-size: 32px;
@@ -49,7 +59,7 @@
     }
     .city-name{
       font-size: 20px;
-      color: #666;
+      color: #333;
     }
 
     .tag-list{
@@ -69,7 +79,7 @@
       height: 43px;
       line-height: 43px;
       display: block;
-      background: #EDEDED;
+      background: #ededed;
       font-size: 24px;
       color: #666;
       margin-top: 20px;
@@ -79,17 +89,17 @@
     .top-icon{
       position: absolute;
       left: 50px;
-      top: -8px;
+      top: -9px;
       .icon-bg{
-        width: 64px;
-        height: 74px;
+        width: 84px;
+        height: 97px;
       }
       .icon-number{
         position: absolute;
         bottom: 10px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 36px;
+        font-size: 38px;
       }
     }
 

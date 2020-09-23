@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, ScrollView } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import dayjs from 'dayjs'
@@ -35,7 +35,7 @@ type PageStateProps = {
   middleAd: Array<any>
 }
 type PageDispatchProps = {
-  setTab: (any) => any,
+  setCurrentCity: (any) => any,
   onRef: (any) => void
 }
 
@@ -75,24 +75,6 @@ const fixedButton = [
   }
 ]
 
-// const defualtRecommend = [
-//   {img: default1, url: '', name: '广州必玩景点榜'},
-//   {img: default2, url: '', name: '广州美食必吃榜'},
-//   {img: default3, url: '', name: '广州热门必逛榜'}
-// ]
-
-// const cityList = [
-//   {name: '上海', img: shanghai},
-//   {name: '上海', img: shanghai},
-//   {name: '南京', img: ''},
-//   {name: '武汉', img: wuhan},
-//   {name: '长沙', img: changsha},
-//   {name: '韶关', img: ''},
-//   {name: '深圳', img: shenzhen},
-//   {name: '广州', img: guangzhou},
-//   {name: '广州', img: guangzhou}
-// ]
-
 const cityIcon = [
   { city: '北京市', icon: beijing },
   { city: '长沙市', icon: changsha },
@@ -118,9 +100,11 @@ class HasDistanceTopSec extends Component {
   state = {
     showBoll: false,
     week: ['周日','周一','周二','周三','周四','周五','周六'],
-    cityIndex: 0,
+    cityIndex: 1,
     areaId: 1,
-    cityList: []
+    cityList: [],
+    cityTempList: [],
+    currentCity: {}
   }
 
   UNSAFE_componentWillMount() {
@@ -136,7 +120,7 @@ class HasDistanceTopSec extends Component {
   componentDidHide () { }
 
   render() {
-    const { showBoll, week, cityIndex, cityList } = this.state
+    const { showBoll, week, cityIndex, cityList, cityTempList, currentCity } = this.state
     const { trainInfo, middleAd } = this.props
     return (
       <View className="has-distance">
@@ -162,7 +146,7 @@ class HasDistanceTopSec extends Component {
             <View className='top-msg'>
               <Text className='date'>{dayjs().format('MM月DD日')} {week[dayjs().day()]}</Text>
               {/* <Text className="customer-name">小小</Text> */}
-              {/* <Text className='tip-text'>到达口:C1</Text> */}
+              {(trainInfo.startLessTime || trainInfo.fullRemainTime) && <Text className='tip-text'>{trainInfo.startLessTime || trainInfo.fullRemainTime}</Text>}
             </View>
             <View className='bottom-msg'>
               <View className='left-msg'>
@@ -195,39 +179,41 @@ class HasDistanceTopSec extends Component {
           {/*------途径城市-------*/}
           {cityList.length > 0 && <View className='road-city'>
             {/*<View className='name'>途经城市好物推荐</View>*/}
-          <Text className='city-context'>{cityList[cityIndex].strokDesc}</Text>
-            <View className="city begin-city">
-              <View className="city-icon"></View>
-              <Text className="city-name">{cityList[0].name}</Text>
-            </View>
+          <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
+          <View className="city-content begin-city">
+            <View className="city-icon"></View>
+            <Text className="city-name">{cityList[0].stationName}</Text>
+          </View>
             <View className="city-scroll-box">
-              <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}>
+              {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
+              <ScrollView className='city-list' scrollX scrollLeft={`${(cityIndex - 1) * 152.5 + 10}rpx`} onScroll={this.scroll}>
                 {
-                  cityList.map((item, index) => {
+                  cityTempList.map((item, index) => {
                     return (
-                      <View className={`city ${index === cityIndex && 'active'}`} key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
-                        <View className={`city-icon ${!item.img && index === cityIndex && 'background'}`}>
-                          {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
-                          {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
-                          {index === cityIndex && item.img && <Image src={item.cityName} className="city-img" mode="aspectFit"></Image>}
-                          {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                      <View className="city" key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
+                        <View className={`city-content ${index === cityIndex && 'active'}`}>
+                          <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
+                            {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
+                            {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
+                            {index === cityIndex && currentCity.icon && <Image src={currentCity.icon} className="city-img" mode="aspectFit"></Image>}
+                            {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                          </View>
+                          <Text className={`city-name ${(index === 0 || index === cityTempList.length - 1) && 'transparent'}`}>{item.stationName}</Text>
                         </View>
-                        <Text className={`city-name ${(index === 0 || index === cityList.length - 1) && 'transparent'}`}>{item.name}</Text>
-
                       </View>
                     )
                   })
                 }
-              </View>
+              </ScrollView>
             </View>
 
-            <View className="city end-city">
+            <View className="city-content end-city">
               <View className="city-icon"></View>
-              <Text className="city-name">{cityList[cityList.length-1].name}</Text>
+              <Text className="city-name">{cityList[cityList.length-1].stationName}</Text>
             </View>
           </View>}
 
-          <View className="white-bg"></View>
+          {cityList.length > 0 && <View className="white-bg"></View>}
 
           {/*------当前城市有推荐商品-----*/}
           {middleAd.length > 0 && <View className="city-recommend">
@@ -295,15 +281,70 @@ class HasDistanceTopSec extends Component {
 
   // 选择城市
   selectCity(city, index) {
-    if (index === 0 || index === cityList.length - 1) return
-    this.setState({
-      // positionCity: city.cityName,
-      areaId: city.zwyCityId,
-      cityIndex: index
-    }, () => {
-      // this.getListData(this.state.tabIndex)
-      // this.props.setTab(123)
+    if (index === 0 || index === this.state.cityTempList.length - 1) return
+    let cityIndex = cityIcon.findIndex(item => {
+      return city.cityName.includes(item.city)
     })
+    let currentIndex = this.state.cityList.findIndex(item => {
+      return city.stationName.includes(item.stationName)
+    })
+    let currentCity = cityIndex > -1 ? Object.assign(city, cityIcon[cityIndex]) : city
+    this.setState({
+      cityIndex: currentIndex + 1,
+      currentCity
+    }, () => {
+      this.props.setCurrentCity(currentCity)
+    })
+  }
+
+  // 获取行程途径城市
+  getTrainCityList = () => {
+    let trainInfo = this.props.trainInfo
+    let data = {
+      scheduleId: trainInfo.distanceId || '',
+      train: trainInfo.train,
+      // train: 'G1315',
+      trainDate: dayjs().format('YYYY-MM-DD')
+    }
+    API.Home.getTrainCityList(data)
+      .then(res => {
+        if (!res.data) return
+        let arr = JSON.parse(JSON.stringify(res.data))
+        let start = arr[0]
+        let end = arr[res.data.length -1]
+        arr.push(end)
+        arr.unshift(start)
+        // 查找有标识的城市（下一站或当前）
+        let currentItem = res.data.filter(item => {
+          return item.strokDesc
+        })[0]
+        if (currentItem) {
+          // 查找有标识的城市index
+          let cityIndex = cityIcon.findIndex(item => {
+            return currentItem.cityName.includes(item.city)
+          })
+          let currentIndex = res.data.findIndex(item => {
+            return currentItem.stationName.includes(item.stationName)
+          })
+          let currentCity = cityIndex > -1 ? Object.assign(currentItem, cityIcon[cityIndex]) : currentItem
+          this.setState({
+            cityList: res.data,
+            cityTempList: arr,
+            currentCity,
+            cityIndex: currentIndex > -1 ? currentIndex+1 : 1
+          }, () => {
+            this.props.setCurrentCity(currentCity)
+          })
+        } else {
+          this.setState({
+            cityList: res.data,
+            cityTempList: arr,
+            currentCity: res.data[0]
+          }, () => {
+            this.props.setCurrentCity(res.data[0])
+          })
+        }
+      })
   }
 
   clickRecommend = (item, index) => {
@@ -312,29 +353,40 @@ class HasDistanceTopSec extends Component {
       if (+item.type === 1) {
         city = '广州'
       }
+      console.log(item, this.props.positionCity, 123)
       Taro.navigateTo({
         url: `${item.toUrl}&city=${city}`
       })
     } else {
-      console.log(item)
+      let canTo = false
+      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+        canTo = true
+      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+        canTo = true
+      }
+      canTo && Taro.switchTab({
+        url: `/pages/mall/index`
+      })
     }
   }
 
-  // 获取行程途径城市
-  getTrainCityList = () => {
-    let trainInfo = this.props.trainInfo
-    let data = {
-      scheduleId: trainInfo.distanceId || '',
-      // train: trainInfo.train,
-      train: 'G1315',
-      trainDate: dayjs().format('YYYY-MM-DD')
-    }
-    API.Home.getTrainCityList(data)
-      .then(res => {
-        this.setState({
-          cityList: res.data
-        })
+  scroll = (e) => {
+    let scrollLeft = e.detail.scrollLeft
+    let index = this.state.cityIndex
+    console.log(scrollLeft*2, (index - 1)* 152.5 + 140, index * 152.5 + 140, index)
+    if ((scrollLeft*2 > (index - 1) * 152.5 + 140) && (scrollLeft*2 < index * 152.5 + 140)) {
+      this.setState({
+        cityIndex: index + 1
       })
+      index + 1
+    } 
+    // else if ((scrollLeft * 2 > (index - 2) * 152.5 + 50) && (scrollLeft*2 < (index - 1) * 152.5 + 50)) {
+    //   this.setState({
+    //     cityIndex: index - 1
+    //   })
+    // }
   }
 
 }

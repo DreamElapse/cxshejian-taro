@@ -41,22 +41,25 @@ const enhancer = composeEnhancers(
 )
 
 // 静默授权
-Taro.login({
-  success: val => {
-    let code = val.code
-    API.Global.login({code})
-      .then(res => {
-        Taro.setStorageSync('token', res.data)
-        API.Global.getUserInfo()
-          .then(info => {
-            info.data.openId && Taro.setStorageSync('openId', info.data.openId)
-          })
-      })
-  },
-  fail: data => {
-    console.log(data, '静默授权失败')
-  }
-})
+// Taro.login({
+//   success: val => {
+//     console.log(456)
+//     let code = val.code
+//     API.Global.login({code})
+//       .then(res => {
+//         console.log(789)
+//         Taro.setStorageSync('token', res.data)
+//         API.Global.getUserInfo()
+//           .then(info => {
+//             console.log(10)
+//             info.data.openId && Taro.setStorageSync('openId', info.data.openId)
+//           })
+//       })
+//   },
+//   fail: data => {
+//     console.log(data, '静默授权失败')
+//   }
+// })
 
 // Taro.checkSession({
 //   success: () => {

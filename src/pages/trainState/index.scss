@@ -450,7 +450,7 @@ scroll-view {
 .trainNo {
   display: flex;
   justify-content: space-between;
-  padding: 36rpx 30rpx 44rpx;
+  padding: 30rpx 30rpx 20rpx;
 }
 
 .trainNo .leftBox {
@@ -573,7 +573,7 @@ scroll-view {
 .stationContent {
   display: flex;
   align-items: center;
-  padding-bottom: 50rpx;
+  padding-bottom: 20rpx;
 }
 
 .stationContent .stationTime, .stationContent .stationNew{
@@ -743,18 +743,21 @@ scroll-view {
   margin: 20rpx 30rpx 0 30rpx;
 }
 .deteleAll{
-  display: inline-block;
-  position:absolute;
-  bottom: -10rpx;
-  right: 0;
-  width: 60rpx;
-  height: 60rpx;
+  height: 80rpx;
   line-height: 60rpx;
-  vertical-align: middle;
-  text-align: center;
+  border-top: 1px dashed #FFF;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   .dimg{
     height: 30rpx;
     width: 30rpx;
+  }
+  .delete-text{
+    font-size: 26px;
+    color: #25b4ff;
+    margin-left: 5px;
   }
 }
 .serviceItem .itemName {

@@ -19,8 +19,8 @@ export default class Add extends Component {
         circular:true,
         current:0,
     },
-    cityNameS: '武汉',
-    cityNameE: '北京',
+    cityNameS: '广州',
+    cityNameE: '长沙',
 
     dateC: dayjs(new Date()).format(('YYYY-MM-DD')),
     timeCC: dayjs(new Date()).format(('MM月DD日')),

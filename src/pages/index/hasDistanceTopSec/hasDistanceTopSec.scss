@@ -7,7 +7,7 @@
   .fixed-boll{
     position: absolute;
     right: 0;
-    top: 45%;
+    top: 260px;
     width: 1px;
     height: 1px;
     z-index: 100;
@@ -53,8 +53,8 @@
       opacity: 0.1;
       transition: all 0.1s;
       &.active{
-        width: 400px;
-        height: 420px;
+        width: 420px;
+        height: 440px;
         border-radius: 100%;
         opacity: 1;
         top: 50%;
@@ -73,7 +73,7 @@
       font-size: 20px;
       color: #FFF;
       position: absolute;
-      bottom: -50px;
+      bottom: -55px;
       left: 50%;
       width: 100px;
       transform: translateX(-50%);
@@ -84,26 +84,26 @@
         opacity: 1;
       }
       &.boll-item1.active{
-        top: -130px;
-        right: 50px;
+        top: -150px;
+        right: 60px;
       }
       &.boll-item2.active{
-        top: -65px;
-        right: 140px;
+        top: -70px;
+        right: 170px;
       }
       &.boll-item3.active{
         top: 65px;
-        right: 140px;
+        right: 170px;
       }
       &.boll-item4.active{
-        top: 130px;
-        right: 50px;
+        top: 140px;
+        right: 60px;
       }
     }
 
   }
   .city-recommend{
-    margin-top: -25px;
+    margin-top: -45px;
   }
 
 
@@ -133,7 +133,7 @@
     }
     .tip-text{
       border-radius: 40px;
-      width: 160px;
+      padding: 0 20px;
       height: 40px;
       text-align: center;
       color: #FFF;
@@ -213,7 +213,7 @@
 
   /*途经城市*/
   .road-city{
-    margin-top: 70px;
+    margin-top: 30px;
     display: flex;
     align-items: center;
     z-index: 2;
@@ -234,26 +234,37 @@
     }
     .city-scroll-box{
       flex: 1;
-      overflow: hidden;
       overflow-X: auto;
+      height: 140px;
     }
     .city-list{
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 30px 0 30px 30px;
-      transition: all 0.2s;
+      width: 100%;
+      white-space: nowrap;
     }
     .city{
-      flex: 0 0 80px;
+      display: inline-block;
+      height: 140px;
+      vertical-align: middle;
+      &:first-child{
+        margin-left: 30px;
+      }
+    }
+    .city-content{
+      width: 80px;
       font-size: 20px;
       color: #4bb1fd;
-      margin: 0 30px;
+      margin: 0 36.5px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       position: relative;
+      height: 140px;
+      // transition: all 0.2s;
       .city-icon{
         width: 36px;
         height: 36px;
@@ -271,6 +282,11 @@
       }
       .city-name{
         margin-top: 8px;
+        position: absolute;
+        width: 100px;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         &.transparent{
           color: #FFF;
         }
@@ -306,7 +322,6 @@
       }
       &.active{
         font-size: 30px;
-        padding-top: 21px;
         .city-icon{
           width: 60px;
           height: 60px;
@@ -316,7 +331,7 @@
           background: #27a3ff;
         }
         .city-name{
-          margin-top: 14px;
+          bottom: 0px;
         }
       }
 
@@ -327,6 +342,7 @@
       .city-icon:before{
         content: "始发";
         font-size: 20px;
+        color: #333;
         position: absolute;
         width: 70px;
         top: -34px;
@@ -341,6 +357,7 @@
         content: "终点";
         width: 70px;
         font-size: 20px;
+        color: #333;
         position: absolute;
         top: -34px;
         left: 50%;
@@ -354,7 +371,7 @@
     border-radius: 100%;
     background: #FFF;
     margin: 0 auto;
-    margin-top: -200px;
+    margin-top: -170px;
     z-index: 1;
     position: relative;
   }

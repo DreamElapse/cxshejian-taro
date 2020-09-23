@@ -1,6 +1,6 @@
 .home-page {
   width: 100%;
-  padding: 30px 0;
+  padding-bottom: 30px;
   box-sizing: border-box;
   color: #333;
   line-height: 1;
@@ -9,13 +9,13 @@
   .top-scroll-box{
     height: 420px;
     .scroll-img{
-      height: 420px;
+      height: 600px;
       width: 100%;
     }
   }
   .page-content{
     padding: 0 20px;
-    margin-top: 150px;
+    margin-top: -80px;
     &.page-content-top{
       margin-top: -80px;
     }
@@ -32,7 +32,7 @@
 
   .top-img{
     width: 100%;
-    height: 300px;
+    height: 600px;
     background: #abd0bc;
     border-radius: 8px;
   }
@@ -215,35 +215,40 @@
     padding: 30px 20px;
     box-shadow: 0px 2px 12px 0px
     rgba(0, 0, 0, 0.05);
-    margin-top: 38px;
+    margin-top: 16px;
     .recommend-title{
       font-size: 32px;
+      font-weight: bold;
     }
     .tab-list{
       display: flex;
-      justify-content: center;
+      justify-content: space-around;
       align-items: center;
-      font-size: 24px;
-      margin-top: 35px;
+      font-size: 28px;
       .tab-item{
-        margin: 0 20px;
+        padding: 0 20px;
         padding-bottom: 16px;
         position: relative;
-        &:before{
-          content: "";
-          height: 6px;
-          width: 100%;
-          border-radius: 6px;
-          background: transparent;
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          transition: all 0.2s;
+        padding-top: 35px;
+        .tab-text{
+          position: relative;
+          &:before{
+            content: "";
+            height: 6px;
+            width: 100%;
+            border-radius: 6px;
+            background: transparent;
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            transition: all 0.2s;
+          }
         }
+        
       }
       .active{
         color: #27a3ff;
-        &:before{
+        .tab-text:before{
           background: #27a3ff;
         }
       }
