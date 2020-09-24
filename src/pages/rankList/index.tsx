@@ -59,13 +59,11 @@ class RankList extends Component {
     let router: any = getCurrentInstance().router
     let id = router.params.id
     let city = router.params.city
-    console.log(router, 1)
     if (id) {
       this.setState({
         id,
         city
       }, () => {
-        console.log(this.state.id, 88)
         this.getRankList()
       })
     } else {
@@ -125,8 +123,6 @@ class RankList extends Component {
             })
           }
         </View>
-
-
       </View>
     )
   }
@@ -148,9 +144,16 @@ class RankList extends Component {
   }
   // 点击榜单跳转
   toProduct = (url) => {
-    Taro.switchTab({
-      // url: `/pages/mall/index?rank=${id}`
-      url
+    let canTo = false
+    if(url.split('-')[0] === 'product') {
+      Taro.setStorageSync('infoId', url.split('-')[1])
+      canTo = true
+    } else if (url.split('-')[0] === 'productdynamic') {
+      Taro.setStorageSync('productdynamic', url.split('-')[1])
+      canTo = true
+    }
+    canTo && Taro.switchTab({
+      url: `/pages/mall/index`
     })
   }
 

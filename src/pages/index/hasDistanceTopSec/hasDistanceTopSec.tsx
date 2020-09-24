@@ -104,7 +104,12 @@ class HasDistanceTopSec extends Component {
     areaId: 1,
     cityList: [],
     cityTempList: [],
-    currentCity: {}
+    currentCity: {},
+    isEnd: true,
+    timer: 1,
+    scrollLeft: '',
+    touch: false,
+    changeStateTime: 0
   }
 
   UNSAFE_componentWillMount() {
@@ -120,7 +125,7 @@ class HasDistanceTopSec extends Component {
   componentDidHide () { }
 
   render() {
-    const { showBoll, week, cityIndex, cityList, cityTempList, currentCity } = this.state
+    const { showBoll, week, cityIndex, cityList, cityTempList, currentCity, isEnd, scrollLeft } = this.state
     const { trainInfo, middleAd } = this.props
     return (
       <View className="has-distance">
@@ -177,7 +182,7 @@ class HasDistanceTopSec extends Component {
           </View>
 
           {/*------途径城市-------*/}
-          {cityList.length > 0 && <View className='road-city'>
+          {cityList.length > 0 && <View className='road-city' onTouchStart={this.touchStart} onTouchEnd={this.touchEnd}>
             {/*<View className='name'>途经城市好物推荐</View>*/}
           <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
           <View className="city-content begin-city">
@@ -186,11 +191,18 @@ class HasDistanceTopSec extends Component {
           </View>
             <View className="city-scroll-box">
               {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
-              <ScrollView className='city-list' scrollX scrollLeft={`${(cityIndex - 1) * 152.5 + 10}rpx`} onScroll={this.scroll}>
+              <ScrollView 
+                className='city-list' 
+                scrollX 
+                scrollWithAnimation
+                // scrollLeft={(!this.state.touch && isEnd) ? (this.state.cityIndex-1) * 152.5 + 10+ 'rpx' : scrollLeft}
+                scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
+                onScroll={this.scroll}
+              >
                 {
                   cityTempList.map((item, index) => {
                     return (
-                      <View className="city" key={'city'+index} onClick={() => {this.selectCity(item, index)}}>
+                      <View className="city" key={'city'+index} id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
                         <View className={`city-content ${index === cityIndex && 'active'}`}>
                           <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
                             {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
@@ -279,24 +291,6 @@ class HasDistanceTopSec extends Component {
     })
   }
 
-  // 选择城市
-  selectCity(city, index) {
-    if (index === 0 || index === this.state.cityTempList.length - 1) return
-    let cityIndex = cityIcon.findIndex(item => {
-      return city.cityName.includes(item.city)
-    })
-    let currentIndex = this.state.cityList.findIndex(item => {
-      return city.stationName.includes(item.stationName)
-    })
-    let currentCity = cityIndex > -1 ? Object.assign(city, cityIcon[cityIndex]) : city
-    this.setState({
-      cityIndex: currentIndex + 1,
-      currentCity
-    }, () => {
-      this.props.setCurrentCity(currentCity)
-    })
-  }
-
   // 获取行程途径城市
   getTrainCityList = () => {
     let trainInfo = this.props.trainInfo
@@ -331,10 +325,11 @@ class HasDistanceTopSec extends Component {
             cityList: res.data,
             cityTempList: arr,
             currentCity,
-            cityIndex: currentIndex > -1 ? currentIndex+1 : 1
+            cityIndex: currentIndex > -1 ? currentIndex+1 : 1,
+            scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
           }, () => {
             this.props.setCurrentCity(currentCity)
-          })
+          }) 
         } else {
           this.setState({
             cityList: res.data,
@@ -347,47 +342,136 @@ class HasDistanceTopSec extends Component {
       })
   }
 
+   // 选择城市
+   selectCity(city, index) {
+    if (index === 0 || index === this.state.cityTempList.length - 1) return
+    this.setState({
+      isEnd: false
+    })
+    let cityIndex = cityIcon.findIndex(item => {
+      return city.cityName.includes(item.city)
+    })
+    let currentIndex = this.state.cityList.findIndex(item => {
+      return city.stationName.includes(item.stationName)
+    })
+    let currentCity = cityIndex > -1 ? Object.assign(city, cityIcon[cityIndex]) : city
+    this.setState({
+      cityIndex: currentIndex + 1,
+      currentCity,
+      scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
+    }, () => {
+      this.props.setCurrentCity(currentCity)
+    })
+    setTimeout(() => {
+      this.setState({
+        isEnd: true
+      })
+    }, 200)
+  }
+
+  scroll = (e) => {
+    if (this.state.isEnd || this.state.touch){
+      this.setState({
+        isEnd: false
+      })
+      // if (!this.state.touch) {
+      //   this.setState({
+      //     isEnd: true
+      //   })
+      // }
+      let scrollLeft = e.detail.scrollLeft
+      let index = this.state.cityIndex
+      let cityList = this.state.cityList
+      // console.log(scrollLeft*2, (index - 1)* 152.5 + 170 + 10 * index, index * 152.5 + 130 + 10 * index, index)
+      // console.log(scrollLeft*2, (index - 2) * 152.5 - 140 + 11.5 * index, (index-1) * 152.5 - 150 + 11.5 * index, index)
+      if (e.detail.deltaX < 0) {
+        if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
+          let currentIndex = cityIcon.findIndex(item => {
+            return cityList[index].cityName.includes(item.city)
+          })
+          let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
+          let time: any = new Date()
+          if (time - this.state.changeStateTime > 100) {
+            this.setState({
+              cityIndex: index + 1,
+              changeTime: new Date(),
+              currentCity
+            }, () => {
+              this.props.setCurrentCity(currentCity)
+            })
+            index + 1
+          }
+         
+          
+        }
+      } else {
+        if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
+          let currentIndex = cityIcon.findIndex(item => {
+            return cityList[index - 2].cityName.includes(item.city)
+          })
+          let currentCity = Object.assign(cityList[index - 2], cityIcon[currentIndex])
+          let time: any = new Date()
+          if (time - this.state.changeStateTime > 100) {
+            this.setState({
+              cityIndex: index - 1,
+              changeStateTime: new Date(),
+              currentCity
+              // scrollLeft: e.detail.scrollLeft + 'rpx'
+            }, () => {
+              this.props.setCurrentCity(currentCity)
+            })
+            index - 1
+          }
+          
+        }
+      }
+    }
+    
+
+  }
+
+  touchStart = () => {
+    this.setState({
+      touch: true
+    })
+  }
+
+  touchEnd = () => {
+      setTimeout(() =>{
+        this.setState({
+          isEnd: true,
+          touch: false,
+          // cityIndex: this.state.cityIndex,
+          scrollLeft: (this.state.cityIndex-1) * 152.5 + 10.5 + 'rpx'
+        }, () => {
+          // console.log(this.state.scrollLeft, (this.state.cityIndex-1) * 152.5 + 10.5, 123)
+        })
+      }, 400)
+     
+  }
+
   clickRecommend = (item, index) => {
-    if (index === 0) {
+    let canTo = false
+    if (item.toUrl && item.toUrl.split('-')[0] === 'rankinglist') {
       let city = this.props.positionCity
       if (+item.type === 1) {
         city = '广州'
       }
-      console.log(item, this.props.positionCity, 123)
       Taro.navigateTo({
-        url: `${item.toUrl}&city=${city}`
+        url: `/pages/rankList/index?id=${item.toUrl.split('-')[1]}&city=${city}`
       })
-    } else {
-      let canTo = false
-      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
-        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
-        canTo = true
-      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
-        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
-        canTo = true
-      }
-      canTo && Taro.switchTab({
-        url: `/pages/mall/index`
-      })
+    } else if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+      Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+      canTo = true
+    } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+      Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+      canTo = true
     }
+    canTo && Taro.switchTab({
+      url: `/pages/mall/index`
+    })
   }
-
-  scroll = (e) => {
-    let scrollLeft = e.detail.scrollLeft
-    let index = this.state.cityIndex
-    console.log(scrollLeft*2, (index - 1)* 152.5 + 140, index * 152.5 + 140, index)
-    if ((scrollLeft*2 > (index - 1) * 152.5 + 140) && (scrollLeft*2 < index * 152.5 + 140)) {
-      this.setState({
-        cityIndex: index + 1
-      })
-      index + 1
-    } 
-    // else if ((scrollLeft * 2 > (index - 2) * 152.5 + 50) && (scrollLeft*2 < (index - 1) * 152.5 + 50)) {
-    //   this.setState({
-    //     cityIndex: index - 1
-    //   })
-    // }
-  }
+    
 
 }
 

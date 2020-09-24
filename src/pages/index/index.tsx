@@ -69,6 +69,7 @@ class Index extends Component {
     recommendList: [],
     positionCity: '', // 用户定位
     areaId: '',
+    cityList: [],
     // isSetting: false, // 用户设置
     lat: '',
     lon: '',
@@ -91,7 +92,9 @@ class Index extends Component {
     
   }
 
-  UNSAFE_componentWillMount() {}
+  UNSAFE_componentWillMount() {
+   
+  }
 
   componentWillUnmount () { }
 
@@ -162,7 +165,7 @@ class Index extends Component {
               defaultRecommend.map((item, index) => {
                 return (
                   <View className="recommend-item" key={'reco'+index}>
-                    <Image src={item.imageUrl} className="recommend-img" mode="aspectFill" onClick={() => {this.clickRecommend(item.toUrl)}} key={'img'+index}></Image>
+                    <Image src={item.imageUrl} className="recommend-img" mode="aspectFill" onClick={() => {this.clickRecommend(item)}} key={'img'+index}></Image>
                     <Text className="recommend-text">{item.imageDesc}</Text>
                   </View>
                 )
@@ -258,7 +261,8 @@ class Index extends Component {
               {
                 recommendList.map((item, index) => {
                   return (
-                    <View className='recommend-item' key={'re'+index} onClick={() => {this.toMall(item)}}>
+                    // <View className={`recommend-item ${item.idDisplay && 'recommend-item-show'}`} key={'re'+index} onClick={() => {this.toMall(item)}}>
+                    <View className={`recommend-item recommend-item-show`} key={'re'+index} onClick={() => {this.toMall(item)}}>
                       <Image src={item.signImg} className='recommend-img' mode="aspectFill"></Image>
                       <Text className='recommend-title'>{item.infoTitle}</Text>
                       <View className='recommend-msg'>
@@ -317,6 +321,7 @@ class Index extends Component {
           })
           // this.getTrainCityList()
           this.$child.getTrainCityList()
+          // this.getCityList(trainData.train) // todo
         } else {
           this.setState({
             hasDistance: false,
@@ -337,6 +342,7 @@ class Index extends Component {
         if (res.data) {
           this.props.setTrainInfo(res.data)
           this.$child.getTrainCityList()
+          // this.getCityList(res.data.train) // todo
           // this.getCarFood(res.data)
           // this.getTrainCityList()
         }
@@ -345,10 +351,16 @@ class Index extends Component {
 
 
   setCurrentCity = (city) => {
+    // let index: number = this.state.cityList.findIndex(item => {
+    //   return item.areaName === city.cityName
+    // })
+    // let id = index > -1 ? this.state.cityList[index].areaId : ''
     this.setState({
-      currentCity: city
+      currentCity: city,
+      // areaId: id
     }, () => {
       this.getMiddleAdData()
+      // this.getListData(this.state.tabIndex)
     })
   }
 
@@ -359,7 +371,6 @@ class Index extends Component {
     this.setState({
       isGetLocation: true
     })
-    console.log(123)
     Taro.getSetting({
       success: res => {
         if (!res.authSetting['scope.userLocation']) {
@@ -430,7 +441,6 @@ class Index extends Component {
           positionCity: res.data.areaName,
           areaId: res.data.areaId + ''
         }, () => {
-          console.log(this.state.positionCity, 111)
           this.getAdData()
           this.getListData(this.state.tabIndex)
         })
@@ -441,10 +451,11 @@ class Index extends Component {
   getListData = (index) => {
     if (this.state.noMoreData) return
     let loading = this.state.startIndex > 1
+    let areaId = this.state.areaId
     let data = {
       resultNum: 5,
       startIndex: this.state.startIndex,
-      areaId: this.state.areaId,
+      areaId,
       themeId: this.state.themeId,
       excludeThemeId: this.state.excludeThemeId
     }
@@ -471,28 +482,25 @@ class Index extends Component {
   }
 
   clickRecommend = (item, index) => {
-    
-    if (index === 0) {
+    let canTo = false
+    if (item.toUrl && item.toUrl.split('-')[0] === 'rankinglist') {
       let city = this.state.positionCity
-      if (+item.type === 1) { // 默认
+      if (+item.type === 1) {
         city = '广州'
       }
       Taro.navigateTo({
-        url: `${item.toUrl}&city=${city}`
+        url: `/pages/rankList/index?id=${item.toUrl.split('-')[1]}&city=${city}`
       })
-    } else {
-      let canTo = false
-      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
-        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
-        canTo = true
-      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
-        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
-        canTo = true
-      }
-      canTo && Taro.switchTab({
-        url: `/pages/mall/index`
-      })
+    } else if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+      Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+      canTo = true
+    } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+      Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+      canTo = true
     }
+    canTo && Taro.switchTab({
+      url: `/pages/mall/index`
+    })
   }
 
   // 广告页跳转
@@ -520,24 +528,21 @@ class Index extends Component {
   }
 
   // 城市列表
-  // getCityList = (train) => {
-  //   API.Home.getCityList({train})
-  //     .then(res => {
-  //       let id = this.state.areaId
-  //       let index: number = res.data.findIndex(item => {
-  //         return item.zwyCityId === id
-  //       })
-  //       index > -1 && this.setState({
-  //         positionCity: res.data[index].cityName,
-  //         cityList: res.data,
-  //         cityIndex: index
-  //       })
-  //     })
-  // }
+  getCityList = (train) => {
+    API.Home.getCityList({train})
+      .then(res => {
+        // let id = this.state.areaId
+        // let index: number = res.data.findIndex(item => {
+        //   return item.zwyCityId === id
+        // })
+        this.setState({
+          cityList: res.data || [],
+        })
+      })
+  }
 
   // 选择城市
   selectCity(city, index) {
-    console.log(55655)
     this.setState({
       positionCity: city.cityName,
       areaId: city.zwyCityId,
@@ -558,13 +563,15 @@ class Index extends Component {
       .then(res => {
         let middleAd: any[] = res[1].data ? res[1].data.bannerImgList : []
         let type: number = 0
-        if (res[1].data && +res[1].data.bannerImgList[0].type === 1) {
+        if (res[1].data && res[1].data.bannerImgList[1] && +res[1].data.bannerImgList[1].type === 1) {
           type = 1
         }
         this.setState({
           topAd: res[0].data ? res[0].data.bannerImgList : [],
           middleAd: type ? [] : middleAd,
           defaultRecommend: type ? middleAd : []
+        }, () => {
+          // console.log(type, this.state.middleAd, this.state.defaultRecommend, res[1].data.bannerImgList)
         })
       })
   }
@@ -572,15 +579,20 @@ class Index extends Component {
   getMiddleAdData = () => {
     API.Home.getAdData({code: 'home-middle', zwyAreaId: this.state.currentCity.cityCode})
       .then(res => {
-        let middleAd: any[] = res.data ? res.data.bannerImgList : []
-        let type: number = 0
-        if (res.data && +res.data.bannerImgList[0].type === 1) {
-          type = 1
+        if (res.data) {
+          let middleAd: any[] = res.data.bannerImgList
+          let type: number = 0
+          if (res.data.bannerImgList[1] && +res.data.bannerImgList[1].type === 1) {
+            type = 1
+          }
+          this.setState({
+            middleAd: type ? [] : middleAd,
+            defaultRecommend: type ? middleAd : []
+          }, () => {
+            // console.log(type, this.state.middleAd, this.state.defaultRecommend, res.data.bannerImgList)
+          })
         }
-        this.setState({
-          middleAd: type ? [] : middleAd,
-          defaultRecommend: type ? middleAd : []
-        })
+        
       })
   }
 

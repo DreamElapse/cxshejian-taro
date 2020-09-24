@@ -1,10 +1,10 @@
 const config = {
   environmental: 't',
-  // t: 'https://testm.lvyoupdd.com/',
   // t: 'http://192.168.19.159:81/',
-  t: 'https://train.lvyoupdd.com/',
   // target: 'http://testm.lvyoupdd.com:8510',
-  // target: 'https://testm.lvyoupdd.com',
-  target: 'https://m2.lvyoupdd.com'
+  // t: 'https://pre-train.lvyoupdd.com/', // 测试地址
+  // target: 'https://testm.lvyoupdd.com', // 测试地址
+  t: 'https://train.lvyoupdd.com/', // 线上地址
+  target: 'https://m2.lvyoupdd.com' // 线上地址
 }
 export default config

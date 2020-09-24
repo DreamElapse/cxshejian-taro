@@ -185,27 +185,28 @@ class NoDistanceTopSec extends Component {
   }
 
   clickRecommend = (item, index) => {
-    if (index === 0) {
+    let canTo = false
+    if (item.toUrl && item.toUrl.split('-')[0] === 'rankinglist') {
       let city = this.props.positionCity
       if (+item.type === 1) {
         city = '广州'
       }
+      // Taro.navigateTo({
+      //   url: '/pages/rankList/index'
+      // })
       Taro.navigateTo({
-        url: `${item.toUrl}&city=${city}`
+        url: `/pages/rankList/index?id=${item.toUrl.split('-')[1]}&city=${city}`
       })
-    } else {
-      let canTo = false
-      if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
-        Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
-        canTo = true
-      } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
-        Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
-        canTo = true
-      }
-      canTo && Taro.switchTab({
-        url: `/pages/mall/index`
-      })
+    } else if(item.toUrl && item.toUrl.split('-')[0] === 'product') {
+      Taro.setStorageSync('infoId', item.toUrl.split('-')[1])
+      canTo = true
+    } else if (item.toUrl && item.toUrl.split('-')[0] === 'productdynamic') {
+      Taro.setStorageSync('productdynamic', item.toUrl.split('-')[1])
+      canTo = true
     }
+    canTo && Taro.switchTab({
+      url: `/pages/mall/index`
+    })
   }
 }
 
