@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import Taro from '@tarojs/taro'
-import { View, Text, Image, ScrollView } from '@tarojs/components'
+import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import dayjs from 'dayjs'
@@ -105,7 +105,6 @@ class HasDistanceTopSec extends Component {
     cityList: [],
     cityTempList: [],
     currentCity: {},
-    isEnd: true,
     timer: 1,
     scrollLeft: '',
     touch: false,
@@ -125,7 +124,7 @@ class HasDistanceTopSec extends Component {
   componentDidHide () { }
 
   render() {
-    const { showBoll, week, cityIndex, cityList, cityTempList, currentCity, isEnd, scrollLeft } = this.state
+    const { showBoll, week, cityIndex, cityList, cityTempList, currentCity } = this.state
     const { trainInfo, middleAd } = this.props
     return (
       <View className="has-distance">
@@ -182,7 +181,7 @@ class HasDistanceTopSec extends Component {
           </View>
 
           {/*------途径城市-------*/}
-          {cityList.length > 0 && <View className='road-city' onTouchStart={this.touchStart} onTouchEnd={this.touchEnd}>
+          {cityList.length > 0 && <View className='road-city'>
             {/*<View className='name'>途经城市好物推荐</View>*/}
           <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
           <View className="city-content begin-city">
@@ -191,32 +190,35 @@ class HasDistanceTopSec extends Component {
           </View>
             <View className="city-scroll-box">
               {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
-              <ScrollView 
-                className='city-list' 
-                scrollX 
-                scrollWithAnimation
-                scrollLeft={scrollLeft}
-                // scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
-                // onScroll={this.scroll}
-              >
+              <Swiper 
+                className='city-list'
+                circular={false}
+                duration={200}
+                displayMultipleItems={3}
+                current={cityIndex - 1}
+                onChange={this.changeSwiper}
+                // onTransition={this.swiperTrans}
+                onAnimationfinish={this.swiperAnim}              >
                 {
                   cityTempList.map((item, index) => {
                     return (
-                      <View className="city" key={'city'+index} id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
-                        <View className={`city-content ${index === cityIndex && 'active'}`}>
-                          <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
-                            {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
-                            {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
-                            {index === cityIndex && currentCity.icon && <Image src={currentCity.icon} className="city-img" mode="aspectFit"></Image>}
-                            {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                      <SwiperItem key={'city'+index} className="swiper-item">
+                        <View className="city"  id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
+                          <View className={`city-content ${index === cityIndex && 'active'}`}>
+                            <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
+                              {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
+                              {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
+                              <Image src={currentCity.icon} className="city-img" mode="aspectFit"></Image>
+                              {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                            </View>
+                            <Text className={`city-name ${(index === 0 || index === cityTempList.length - 1) && 'transparent'}`}>{item.stationName}</Text>
                           </View>
-                          <Text className={`city-name ${(index === 0 || index === cityTempList.length - 1) && 'transparent'}`}>{item.stationName}</Text>
                         </View>
-                      </View>
+                      </SwiperItem>
                     )
                   })
                 }
-              </ScrollView>
+              </Swiper>
             </View>
 
             <View className="city-content end-city">
@@ -326,8 +328,9 @@ class HasDistanceTopSec extends Component {
             cityTempList: arr,
             currentCity,
             cityIndex: currentIndex > -1 ? currentIndex+1 : 1,
-            scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
+            // scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
           }, () => {
+            console.log(this.state.cityIndex, 123)
             this.props.setCurrentCity(currentCity)
           }) 
         } else {
@@ -358,7 +361,7 @@ class HasDistanceTopSec extends Component {
     this.setState({
       cityIndex: currentIndex + 1,
       currentCity,
-      scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
+      // scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
     }, () => {
       this.props.setCurrentCity(currentCity)
     })
@@ -369,83 +372,39 @@ class HasDistanceTopSec extends Component {
     }, 200)
   }
 
-  scroll = (e) => {
-    if (!this.state.isEnd && !this.state.touch) return
-    this.setState({
-      isEnd: false
-    })
-    let scrollLeft = e.detail.scrollLeft
-    let index = this.state.cityIndex
-    let cityList = this.state.cityList
-    // console.log(scrollLeft*2, (index - 1)* 152.5 + 170 + 10 * index, index * 152.5 + 130 + 10 * index, index)
-    // console.log(scrollLeft*2, (index - 2) * 152.5 - 140 + 11.5 * index, (index-1) * 152.5 - 150 + 11.5 * index, index)
-    if (e.detail.deltaX < 0) {
-      if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
-        let currentIndex = cityIcon.findIndex(item => {
-          return cityList[index].cityName && cityList[index].cityName.includes(item.city)
-        })
-        let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
-        let time: any = new Date()
-        if (time - this.state.changeStateTime > 100) {
-          this.setState({
-            cityIndex: index + 1,
-            changeTime: new Date(),
-            currentCity
-          }, () => {
-            this.props.setCurrentCity(currentCity)
-          })
-          index + 1
-        }
-      }
-    } else {
-      if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
-        let currentIndex = cityIcon.findIndex(item => {
-          return cityList[index - 2].cityName && cityList[index - 2].cityName.includes(item.city)
-        })
-        let currentCity = Object.assign(cityList[index - 2], cityIcon[currentIndex])
-        let time: any = new Date()
-        if (time - this.state.changeStateTime > 100) {
-          this.setState({
-            cityIndex: index - 1,
-            changeStateTime: new Date(),
-            currentCity
-            // scrollLeft: e.detail.scrollLeft + 'rpx'
-          }, () => {
-            this.props.setCurrentCity(currentCity)
-          })
-          index - 1
-        }
-        
-      }
-    }
-  }
-
-  touchStart = () => {
-    this.setState({
-      touch: true
-    })
-  }
-
-  touchEnd = () => {
-    
-    this.setState({
-      touch: false,
-    })
-    if (!this.state.isEnd) {
-      setTimeout(() =>{
+  changeSwiper = (e) => {
+    if (this.state.isEnd) {
+      let index = e.detail.current
+      let cityList = this.state.cityList
+      let currentIndex = cityIcon.findIndex(item => {
+        return cityList[index].cityName && cityList[index].cityName.includes(item.city)
+      })
+      let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
+      let time: any = new Date()
+      if (time - this.state.changeStateTime > 100) {
         this.setState({
-          isEnd: true,
-          // touch: false,
-          // cityIndex: this.state.cityIndex,
-          scrollLeft: (this.state.cityIndex-1) * 152.5 + 10.5 + 'rpx'
+          cityIndex: index + 1,
+          changeTime: new Date(),
+          currentCity,
+          // isEnd: false
         }, () => {
-          // console.log(this.state.scrollLeft, (this.state.cityIndex-1) * 152.5 + 10.5, 123)
+          console.log('cityIndex: '+this.state.cityIndex, 'currentCity: ' + this.state.currentCity, 'index: '+index)
+          this.props.setCurrentCity(currentCity)
         })
-      }, 600)
+      }
     }
-    
-    
-     
+  }
+
+  // swiperTrans = () => {
+  //   this.setState({
+  //     isEnd: false
+  //   })
+  // }
+
+  swiperAnim = () => {
+    this.setState({
+      isEnd: true
+    })
   }
 
   clickRecommend = (item, index) => {

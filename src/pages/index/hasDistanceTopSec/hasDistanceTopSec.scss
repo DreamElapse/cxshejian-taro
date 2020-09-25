@@ -235,6 +235,7 @@
     .city-scroll-box{
       flex: 1;
       overflow-X: auto;
+      overflow-y: hidden;
       height: 140px;
     }
     .city-list{
@@ -243,13 +244,18 @@
       justify-content: center;
       width: 100%;
       white-space: nowrap;
+      padding-bottom: 20rpx;
+    }
+    .swiper-item{
+      overflow: inherit;
+      width: auto;
     }
     .city{
       display: inline-block;
       height: 140px;
       vertical-align: middle;
       &:first-child{
-        margin-left: 30px;
+        margin-left: 0px;
       }
     }
     .city-content{
@@ -269,16 +275,19 @@
         width: 36px;
         height: 36px;
         border-radius: 100%;
-        background: #27a3ff;
+        background: rgba(39,163,255, 1);
         position: relative;
         font-size: 16px;
         color: #FFF;
         text-align: center;
         line-height: 36px;
+        transition: all 0.2s;
       }
       .city-img{
-        width: 60px;
-        height: 60px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        transition: all 0.2s;
       }
       .city-name{
         margin-top: 8px;
@@ -287,13 +296,14 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
+        transition: all 0.2s;
         &.transparent{
           color: #FFF;
         }
       }
       .city-line-left,.city-line-right{
         position: absolute;
-        right: -57px;
+        right: -66px;
         top: 50%;
         transform: translateY(-50%);
         width: 12px;
@@ -318,14 +328,19 @@
       }
       .city-line-left{
         right: auto;
-        left: -57px;
+        left: -60px;
       }
       &.active{
         font-size: 30px;
         .city-icon{
           width: 60px;
           height: 60px;
-          background: transparent;
+          background: rgba(39,163,255, 0);
+        }
+        .city-img{
+          width: 60px;
+          height: 60px;
+          opacity:1;
         }
         .background{
           background: #27a3ff;
