@@ -90,6 +90,8 @@ class Index extends Component {
 
   onLoad() {
     let router: any = getCurrentInstance().router
+    let code = router.params.code
+    code && this.setState({code})
     let productdynamic = router.params.productdynamic
     if (productdynamic) {
       Taro.setStorageSync('productdynamic', productdynamic)
@@ -109,10 +111,7 @@ class Index extends Component {
     this.getDistance() // 获取行程
     this.getAdData()
     // 扶手码code
-    let router: any = getCurrentInstance().router
-    let code = router.params.code
     !this.state.areaId && this.getLocation()
-    code && this.setState({code})
     this.getListData(this.state.tabIndex)
     // this.getTrainCityList()
   }

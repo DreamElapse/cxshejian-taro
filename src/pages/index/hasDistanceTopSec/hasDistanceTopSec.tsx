@@ -195,9 +195,9 @@ class HasDistanceTopSec extends Component {
                 className='city-list' 
                 scrollX 
                 scrollWithAnimation
-                scrollLeft={(!this.state.touch && isEnd) ? (this.state.cityIndex-1) * 152.5 + 10 + 'rpx' : scrollLeft}
+                scrollLeft={scrollLeft}
                 // scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
-                onScroll={this.scroll}
+                // onScroll={this.scroll}
               >
                 {
                   cityTempList.map((item, index) => {
