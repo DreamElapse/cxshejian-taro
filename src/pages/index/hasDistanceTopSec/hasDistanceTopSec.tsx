@@ -195,8 +195,8 @@ class HasDistanceTopSec extends Component {
                 className='city-list' 
                 scrollX 
                 scrollWithAnimation
-                // scrollLeft={(!this.state.touch && isEnd) ? (this.state.cityIndex-1) * 152.5 + 10+ 'rpx' : scrollLeft}
-                scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
+                scrollLeft={(!this.state.touch && isEnd) ? (this.state.cityIndex-1) * 152.5 + 10 + 'rpx' : scrollLeft}
+                // scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
                 onScroll={this.scroll}
               >
                 {
@@ -349,7 +349,7 @@ class HasDistanceTopSec extends Component {
       isEnd: false
     })
     let cityIndex = cityIcon.findIndex(item => {
-      return city.cityName.includes(item.city)
+      return city.cityName && city.cityName.includes(item.city)
     })
     let currentIndex = this.state.cityList.findIndex(item => {
       return city.stationName.includes(item.stationName)
@@ -370,64 +370,54 @@ class HasDistanceTopSec extends Component {
   }
 
   scroll = (e) => {
-    if (this.state.isEnd || this.state.touch){
-      this.setState({
-        isEnd: false
-      })
-      // if (!this.state.touch) {
-      //   this.setState({
-      //     isEnd: true
-      //   })
-      // }
-      let scrollLeft = e.detail.scrollLeft
-      let index = this.state.cityIndex
-      let cityList = this.state.cityList
-      // console.log(scrollLeft*2, (index - 1)* 152.5 + 170 + 10 * index, index * 152.5 + 130 + 10 * index, index)
-      // console.log(scrollLeft*2, (index - 2) * 152.5 - 140 + 11.5 * index, (index-1) * 152.5 - 150 + 11.5 * index, index)
-      if (e.detail.deltaX < 0) {
-        if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
-          let currentIndex = cityIcon.findIndex(item => {
-            return cityList[index].cityName.includes(item.city)
+    if (!this.state.isEnd && !this.state.touch) return
+    this.setState({
+      isEnd: false
+    })
+    let scrollLeft = e.detail.scrollLeft
+    let index = this.state.cityIndex
+    let cityList = this.state.cityList
+    // console.log(scrollLeft*2, (index - 1)* 152.5 + 170 + 10 * index, index * 152.5 + 130 + 10 * index, index)
+    // console.log(scrollLeft*2, (index - 2) * 152.5 - 140 + 11.5 * index, (index-1) * 152.5 - 150 + 11.5 * index, index)
+    if (e.detail.deltaX < 0) {
+      if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
+        let currentIndex = cityIcon.findIndex(item => {
+          return cityList[index].cityName && cityList[index].cityName.includes(item.city)
+        })
+        let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
+        let time: any = new Date()
+        if (time - this.state.changeStateTime > 100) {
+          this.setState({
+            cityIndex: index + 1,
+            changeTime: new Date(),
+            currentCity
+          }, () => {
+            this.props.setCurrentCity(currentCity)
           })
-          let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
-          let time: any = new Date()
-          if (time - this.state.changeStateTime > 100) {
-            this.setState({
-              cityIndex: index + 1,
-              changeTime: new Date(),
-              currentCity
-            }, () => {
-              this.props.setCurrentCity(currentCity)
-            })
-            index + 1
-          }
-         
-          
-        }
-      } else {
-        if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
-          let currentIndex = cityIcon.findIndex(item => {
-            return cityList[index - 2].cityName.includes(item.city)
-          })
-          let currentCity = Object.assign(cityList[index - 2], cityIcon[currentIndex])
-          let time: any = new Date()
-          if (time - this.state.changeStateTime > 100) {
-            this.setState({
-              cityIndex: index - 1,
-              changeStateTime: new Date(),
-              currentCity
-              // scrollLeft: e.detail.scrollLeft + 'rpx'
-            }, () => {
-              this.props.setCurrentCity(currentCity)
-            })
-            index - 1
-          }
-          
+          index + 1
         }
       }
+    } else {
+      if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
+        let currentIndex = cityIcon.findIndex(item => {
+          return cityList[index - 2].cityName && cityList[index - 2].cityName.includes(item.city)
+        })
+        let currentCity = Object.assign(cityList[index - 2], cityIcon[currentIndex])
+        let time: any = new Date()
+        if (time - this.state.changeStateTime > 100) {
+          this.setState({
+            cityIndex: index - 1,
+            changeStateTime: new Date(),
+            currentCity
+            // scrollLeft: e.detail.scrollLeft + 'rpx'
+          }, () => {
+            this.props.setCurrentCity(currentCity)
+          })
+          index - 1
+        }
+        
+      }
     }
-    
-
   }
 
   touchStart = () => {
@@ -437,16 +427,24 @@ class HasDistanceTopSec extends Component {
   }
 
   touchEnd = () => {
+    
+    this.setState({
+      touch: false,
+    })
+    if (!this.state.isEnd) {
       setTimeout(() =>{
         this.setState({
           isEnd: true,
-          touch: false,
+          // touch: false,
           // cityIndex: this.state.cityIndex,
           scrollLeft: (this.state.cityIndex-1) * 152.5 + 10.5 + 'rpx'
         }, () => {
           // console.log(this.state.scrollLeft, (this.state.cityIndex-1) * 152.5 + 10.5, 123)
         })
-      }, 400)
+      }, 600)
+    }
+    
+    
      
   }
 

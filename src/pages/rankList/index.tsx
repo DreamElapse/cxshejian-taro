@@ -51,9 +51,22 @@ class RankList extends Component {
     id: '',
     rankData: {},
     rankList: [],
-    city: ''
+    city: '',
+    hasTop: false
   }
 
+  onLoad() {
+    Taro.getSystemInfo({
+      success: res => {
+        let statusBar = res.statusBarHeight //状态栏高度
+        let custom = Taro.getMenuButtonBoundingClientRect()//菜单按钮
+        console.log(statusBar, custom)
+        this.setState({
+          hasTop: statusBar > 40
+        })
+      }
+    })
+  }
 
   UNSAFE_componentWillMount() {
     let router: any = getCurrentInstance().router
@@ -81,10 +94,10 @@ class RankList extends Component {
   componentDidHide () { }
 
   render () {
-    const { rankList, rankData, city } = this.state
+    const { rankList, rankData, city, hasTop } = this.state
     return (
       <View className='rank-list'>
-        <Image src={backIcon} className='back-icon' mode="aspectFill" onClick={this.pageBack}></Image>
+        <Image src={backIcon} className={`back-icon ${hasTop && 'back-icon-top'}`} mode="aspectFill" onClick={this.pageBack}></Image>
         <Image src={rankData.imageUrl} className="top-bg" mode="aspectFill"></Image>
         <View className="rank-content">
           {

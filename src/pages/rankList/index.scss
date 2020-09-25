@@ -15,7 +15,9 @@
     top: 62px;
     width: 17px;
     height: 30px;
-
+    &.back-icon-top{
+      top: 108px;
+    }
   }
   .top-bg{
     height: 400px;

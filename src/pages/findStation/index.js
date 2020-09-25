@@ -260,9 +260,12 @@ export default class FindStation extends Component {
             icon: 'none',
             duration:1000,
           })
-          Taro.switchTab({
-            url: '/pages/trainState/index'
+          Taro.navigateBack({
+            delta: 2
           })
+          // Taro.switchTab({
+          //   url: '/pages/trainState/index'
+          // })
         }else{
           Taro.showToast({
             title: res.message,

@@ -89,7 +89,14 @@ class Index extends Component {
   }
 
   onLoad() {
-    
+    let router: any = getCurrentInstance().router
+    let productdynamic = router.params.productdynamic
+    if (productdynamic) {
+      Taro.setStorageSync('productdynamic', productdynamic)
+      Taro.switchTab({
+        url: `/pages/mall/index`
+      })
+    }
   }
 
   UNSAFE_componentWillMount() {
@@ -129,6 +136,7 @@ class Index extends Component {
         {topAd.length > 0 && <Swiper
           className='top-scroll-box'
           vertical={false}
+          autoplay
         >
           {
             topAd.map((item, index) => {
@@ -351,16 +359,12 @@ class Index extends Component {
 
 
   setCurrentCity = (city) => {
-    // let index: number = this.state.cityList.findIndex(item => {
-    //   return item.areaName === city.cityName
-    // })
-    // let id = index > -1 ? this.state.cityList[index].areaId : ''
     this.setState({
       currentCity: city,
-      // areaId: id
+      areaId: city.zwyCityId
     }, () => {
       this.getMiddleAdData()
-      // this.getListData(this.state.tabIndex)
+      this.getListData(this.state.tabIndex)
     })
   }
 
@@ -577,7 +581,7 @@ class Index extends Component {
   }
 
   getMiddleAdData = () => {
-    API.Home.getAdData({code: 'home-middle', zwyAreaId: this.state.currentCity.cityCode})
+    API.Home.getAdData({code: 'home-middle', zwyAreaId: this.state.currentCity.zwyCityId})
       .then(res => {
         if (res.data) {
           let middleAd: any[] = res.data.bannerImgList

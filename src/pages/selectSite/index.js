@@ -368,9 +368,13 @@ export default class Index extends Component {
               icon: 'none',
               duration:1000,
             })
-            Taro.switchTab({
-              url: '/pages/trainState/index'
+            // Taro.switchTab({
+            //   url: '/pages/trainState/index'
+            // })
+            Taro.navigateBack({
+              delta: 2
             })
+
           }else{
             Taro.showToast({
               title: res.message,
