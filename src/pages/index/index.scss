@@ -48,6 +48,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    display: none;
+    &.show{
+      display: flex;
+    }
     .recommend-item{
       flex: 1;
       width: 208px;

@@ -108,7 +108,8 @@ class HasDistanceTopSec extends Component {
     timer: 1,
     scrollLeft: '',
     touch: false,
-    changeStateTime: 0
+    changeStateTime: 0,
+    isEnd: true
   }
 
   UNSAFE_componentWillMount() {
@@ -181,7 +182,7 @@ class HasDistanceTopSec extends Component {
           </View>
 
           {/*------途径城市-------*/}
-          {cityList.length > 0 && <View className='road-city'>
+          {cityList.length > 0 && <View className={`road-city ${middleAd.length > 0 && 'has-recommend'}`}>
             {/*<View className='name'>途经城市好物推荐</View>*/}
           <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
           <View className="city-content begin-city">
@@ -193,12 +194,12 @@ class HasDistanceTopSec extends Component {
               <Swiper 
                 className='city-list'
                 circular={false}
-                duration={200}
+                duration={300}
                 displayMultipleItems={3}
                 current={cityIndex - 1}
                 onChange={this.changeSwiper}
                 // onTransition={this.swiperTrans}
-                onAnimationfinish={this.swiperAnim}              >
+                onAnimationfinish={this.swiperAnim}>
                 {
                   cityTempList.map((item, index) => {
                     return (
@@ -227,10 +228,10 @@ class HasDistanceTopSec extends Component {
             </View>
           </View>}
 
-          {cityList.length > 0 && <View className="white-bg"></View>}
+          <View className={`white-bg ${cityList.length > 0 && middleAd.length > 0 && 'show'}`}></View>
 
           {/*------当前城市有推荐商品-----*/}
-          {middleAd.length > 0 && <View className="city-recommend">
+          <View className={`city-recommend ${middleAd.length > 0 &&  'show'}`}>
             {
               middleAd.map((item, index) => {
                 return (
@@ -241,7 +242,7 @@ class HasDistanceTopSec extends Component {
                 )
               })
             }
-          </View>}
+          </View>
         </View>
 
       </View>
@@ -330,7 +331,6 @@ class HasDistanceTopSec extends Component {
             cityIndex: currentIndex > -1 ? currentIndex+1 : 1,
             // scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
           }, () => {
-            console.log(this.state.cityIndex, 123)
             this.props.setCurrentCity(currentCity)
           }) 
         } else {
@@ -388,7 +388,6 @@ class HasDistanceTopSec extends Component {
           currentCity,
           // isEnd: false
         }, () => {
-          console.log('cityIndex: '+this.state.cityIndex, 'currentCity: ' + this.state.currentCity, 'index: '+index)
           this.props.setCurrentCity(currentCity)
         })
       }
