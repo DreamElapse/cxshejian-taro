@@ -89,6 +89,7 @@ class Index extends Component {
   }
 
   onLoad() {
+    this.getAdData()
     let router: any = getCurrentInstance().router
     let code = router.params.code
     code && this.setState({code})
@@ -109,9 +110,6 @@ class Index extends Component {
 
   componentDidShow () {
     this.getDistance() // 获取行程
-    this.getAdData()
-    // 扶手码code
-    !this.state.areaId && this.getLocation()
     this.getListData(this.state.tabIndex)
     // this.getTrainCityList()
   }
@@ -331,8 +329,9 @@ class Index extends Component {
           // this.getCityList(trainData.train) // todo
         } else {
           this.setState({
-            hasDistance: false,
+            hasDistance: false
           })
+          !this.state.areaId && this.getLocation()
           this.props.setTrainInfo({})
           this.state.code && this.getTrain()
         }
@@ -359,8 +358,8 @@ class Index extends Component {
 
   setCurrentCity = (city) => {
     this.setState({
-      currentCity: city,
-      areaId: city.zwyCityId
+      currentCity: city
+      // areaId: city.zwyCityId
     }, () => {
       this.getMiddleAdData()
       this.getListData(this.state.tabIndex)
