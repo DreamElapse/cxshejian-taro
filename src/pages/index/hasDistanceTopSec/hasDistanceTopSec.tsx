@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import Taro from '@tarojs/taro'
-import { View, Text, Image, ScrollView } from '@tarojs/components'
+import { View, Text, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import dayjs from 'dayjs'
@@ -191,32 +191,35 @@ class HasDistanceTopSec extends Component {
           </View>
             <View className="city-scroll-box">
               {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
-              <ScrollView 
-                className='city-list' 
-                scrollX 
-                scrollWithAnimation
-                scrollLeft={(!this.state.touch && isEnd) ? (this.state.cityIndex-1) * 152.5 + 10 + 'rpx' : scrollLeft}
-                // scrollIntoView={(!this.state.touch && isEnd) ? `city${this.state.cityIndex-1}` : ''}
-                onScroll={this.scroll}
+              <Swiper 
+                className='city-list'
+                circular={false}
+                displayMultipleItems={3}
+                current={cityIndex - 1}
+                // onChange={this.changeSwiper}
+                onTransition={this.swiperTrans}
+                onAnimationfinish={this.swiperAnim}
               >
                 {
                   cityTempList.map((item, index) => {
                     return (
-                      <View className="city" key={'city'+index} id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
-                        <View className={`city-content ${index === cityIndex && 'active'}`}>
-                          <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
-                            {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
-                            {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
-                            {index === cityIndex && currentCity.icon && <Image src={currentCity.icon} className="city-img" mode="aspectFit"></Image>}
-                            {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                      <SwiperItem key={'city'+index} className="swiper-item">
+                        <View className="city"  id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
+                          <View className={`city-content ${index === cityIndex && 'active'}`}>
+                            <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
+                              {(index === cityIndex || index === 0) && <View className="city-line-left"></View>}
+                              {item.scheduleDesc && index !== cityIndex &&  <Text className="train-info">{item.scheduleDesc}</Text>}
+                              {index === cityIndex && currentCity.icon && <Image src={currentCity.icon} className="city-img" mode="aspectFit"></Image>}
+                              {index !== cityIndex - 1 && <View className="city-line-right"></View>}
+                            </View>
+                            <Text className={`city-name ${(index === 0 || index === cityTempList.length - 1) && 'transparent'}`}>{item.stationName}</Text>
                           </View>
-                          <Text className={`city-name ${(index === 0 || index === cityTempList.length - 1) && 'transparent'}`}>{item.stationName}</Text>
                         </View>
-                      </View>
+                      </SwiperItem>
                     )
                   })
                 }
-              </ScrollView>
+              </Swiper>
             </View>
 
             <View className="city-content end-city">
@@ -358,7 +361,7 @@ class HasDistanceTopSec extends Component {
     this.setState({
       cityIndex: currentIndex + 1,
       currentCity,
-      scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
+      // scrollLeft: (currentIndex > -1 ? currentIndex * 152.5 + 10 : 152.5 + 10) + 'rpx'
     }, () => {
       this.props.setCurrentCity(currentCity)
     })
@@ -367,6 +370,40 @@ class HasDistanceTopSec extends Component {
         isEnd: true
       })
     }, 200)
+  }
+
+  changeSwiper = (e) => {
+    if (this.state.isEnd) {
+      let index = e.detail.current
+      let cityList = this.state.cityList
+      let currentIndex = cityIcon.findIndex(item => {
+        return cityList[index].cityName && cityList[index].cityName.includes(item.city)
+      })
+      let currentCity = Object.assign(cityList[index], cityIcon[currentIndex])
+      let time: any = new Date()
+      if (time - this.state.changeStateTime > 100) {
+        this.setState({
+          cityIndex: index,
+          changeTime: new Date(),
+          currentCity,
+          isEnd: false
+        }, () => {
+          console.log('cityIndex: '+this.state.cityIndex, 'currentCity: ' + this.state.currentCity, 'index: '+index)
+        })
+      }
+    }
+  }
+
+  // swiperTrans = () => {
+  //   this.setState({
+  //     isEnd: false
+  //   })
+  // }
+
+  swiperAnim = () => {
+    this.setState({
+      isEnd: true
+    })
   }
 
   scroll = (e) => {
@@ -380,7 +417,8 @@ class HasDistanceTopSec extends Component {
     // console.log(scrollLeft*2, (index - 1)* 152.5 + 170 + 10 * index, index * 152.5 + 130 + 10 * index, index)
     // console.log(scrollLeft*2, (index - 2) * 152.5 - 140 + 11.5 * index, (index-1) * 152.5 - 150 + 11.5 * index, index)
     if (e.detail.deltaX < 0) {
-      if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
+      // if ((scrollLeft*2 > (index - 1) * 152.5 + 160 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 140 + 11.5 * index)) {
+      if ((scrollLeft*2 > (index - 1) * 152.5 + 100 + 11.5 * index) && (scrollLeft*2 < index * 152.5 + 60 + 11.5 * index)) {
         let currentIndex = cityIcon.findIndex(item => {
           return cityList[index].cityName && cityList[index].cityName.includes(item.city)
         })
@@ -398,7 +436,8 @@ class HasDistanceTopSec extends Component {
         }
       }
     } else {
-      if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
+      // if ((scrollLeft*2 > (index - 2) * 152.5 - 140 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 130 + 11.5 * index)) {
+      if ((scrollLeft*2 > (index - 2) * 152.5 - 50 + 11.5 * index) && (scrollLeft*2 < (index-1) * 152.5 - 60 + 11.5 * index)) {
         let currentIndex = cityIcon.findIndex(item => {
           return cityList[index - 2].cityName && cityList[index - 2].cityName.includes(item.city)
         })

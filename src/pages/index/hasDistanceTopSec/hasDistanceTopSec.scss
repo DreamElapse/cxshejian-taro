@@ -235,6 +235,7 @@
     .city-scroll-box{
       flex: 1;
       overflow-X: auto;
+      overflow-y: hidden;
       height: 140px;
     }
     .city-list{
@@ -243,13 +244,18 @@
       justify-content: center;
       width: 100%;
       white-space: nowrap;
+      padding-bottom: 20rpx;
+    }
+    .swiper-item{
+      overflow: inherit;
+      width: auto;
     }
     .city{
       display: inline-block;
       height: 140px;
       vertical-align: middle;
       &:first-child{
-        margin-left: 30px;
+        margin-left: 0px;
       }
     }
     .city-content{
