@@ -165,7 +165,7 @@ class Index extends Component {
           </View>
 
           {/*------当前城市无推荐商品-----*/}
-          <View className={`city-recommend ${defaultRecommend.length > 0 && 'show'}`}>
+          {defaultRecommend.length > 0 && <View className="city-recommend">
             {
               defaultRecommend.map((item, index) => {
                 return (
@@ -176,7 +176,7 @@ class Index extends Component {
                 )
               })
             }
-          </View>
+          </View>}
 
           {/*------免费试吃/开卡------*/}
           {/*<View className='sec-middle'>

@@ -48,10 +48,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    display: none;
-    &.show{
-      display: flex;
-    }
     .recommend-item{
       flex: 1;
       width: 208px;
@@ -266,10 +262,6 @@
         background: #FFF;
         box-shadow: 0px 2px 14px 0px
         rgba(0, 0, 0, 0.2);
-        display: none;
-        &.recommend-item-show{
-          display: block;
-        }
       }
       .recommend-img{
         width: 100%;
