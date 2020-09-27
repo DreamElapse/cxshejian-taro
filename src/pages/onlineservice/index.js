@@ -7,6 +7,7 @@ import API from '@/api'
 import firstStep from '@/static/img/zowoyoo/first-step.png'
 import secondStep from '@/static/img/zowoyoo/second-step.png'
 import postInfo from '@/static/img/zowoyoo/postinfo.jpg'
+
 export default class Onlineservice extends Component {
   state = {
     titleType: '0', // 0为默认空title ； 1:设置提醒 ；2：团长升级后 ；3：在线客服（未关注）；4: 在线客服（已关注）；5：支付完成
@@ -82,7 +83,7 @@ export default class Onlineservice extends Component {
         method: 'POST',
         data: {
           content: '想体验更多功能，请长按识别二维码关注“畅行舌尖”公众号',
-          minappOpenid: Taro.getStorageSync('token'),
+          minappOpenid: Taro.getStorageSync('openId'),
           url: 'url',
           isFollow: 1,
           siteId: 6
