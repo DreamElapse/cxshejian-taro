@@ -184,11 +184,11 @@ class HasDistanceTopSec extends Component {
           {/*------途径城市-------*/}
           {cityList.length > 0 && <View className={`road-city ${middleAd.length > 0 && 'has-recommend'}`}>
             {/*<View className='name'>途经城市好物推荐</View>*/}
-          <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
-          <View className="city-content begin-city">
-            <View className="city-icon"></View>
-            <Text className="city-name">{cityList[0].stationName}</Text>
-          </View>
+            <Text className='city-context'>{currentCity.strokDesc || currentCity.scheduleDesc}</Text>
+            <View className="city-content begin-city">
+              <View className="city-icon"></View>
+              <Text className="city-name">{cityList[0].stationName}</Text>
+            </View>
             <View className="city-scroll-box">
               {/* <View className='city-list' style={{width: 140 * cityList.length+'rpx', transform: `translateX(-${(cityIndex - 1) * 140 - 20}rpx)`}}> */}
               <Swiper 
@@ -203,7 +203,12 @@ class HasDistanceTopSec extends Component {
                 {
                   cityTempList.map((item, index) => {
                     return (
-                      <SwiperItem key={'city'+index} className="swiper-item">
+                      <SwiperItem key={'city'+index} className="swiper-item" style={{
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        transform: `translate(${index}00%, 0px) translateZ(0px)`
+                      }}>
                         <View className="city"  id={'city'+index} onClick={() => {this.selectCity(item, index)}}>
                           <View className={`city-content ${index === cityIndex && 'active'}`}>
                             <View className={`city-icon ${!currentCity.icon && index === cityIndex && 'background'}`}>
