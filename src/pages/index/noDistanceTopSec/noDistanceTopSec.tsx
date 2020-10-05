@@ -128,7 +128,7 @@ class NoDistanceTopSec extends Component {
         </View>
 
         {/*------当前城市有推荐商品-----*/}
-        <View className={`city-recommend ${middleAd.length > 0 && 'show'}`}>
+        {middleAd.length > 0 && <View className="city-recommend">
           {
             middleAd.map((item, index) => {
               return (
@@ -139,7 +139,7 @@ class NoDistanceTopSec extends Component {
               )
             })
           }
-        </View>
+        </View>}
 
 
       </View>

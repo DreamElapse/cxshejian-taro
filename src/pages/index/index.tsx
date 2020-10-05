@@ -90,15 +90,18 @@ class Index extends Component {
 
   onLoad() {
     this.getAdData()
+    this.getListData(1)
     let router: any = getCurrentInstance().router
-    let code = router.params.code
-    code && this.setState({code})
-    let productdynamic = router.params.productdynamic
-    if (productdynamic) {
-      Taro.setStorageSync('productdynamic', productdynamic)
-      Taro.switchTab({
-        url: `/pages/mall/index`
-      })
+    for (let item in router.params) {
+      switch(item) {
+        case 'code':
+          this.setState({code: router.params[item]});
+          break;
+        case 'productdynamic':
+        case'product':
+        case 'rankinglist':
+          this.clickRecommend({toUrl: `${item}-${router.params[item]}`});
+      }
     }
   }
 
@@ -110,7 +113,7 @@ class Index extends Component {
 
   componentDidShow () {
     this.getDistance() // 获取行程
-    this.getListData(this.state.tabIndex)
+    // this.getListData(this.state.tabIndex)
     // this.getTrainCityList()
   }
 
@@ -322,7 +325,7 @@ class Index extends Component {
             // areaId: '1004401',
             // positionCity: '广州市'
           }, () => {
-            this.getListData(this.state.tabIndex)
+            // this.getListData(this.state.tabIndex)
           })
           // this.getTrainCityList()
           this.$child.getTrainCityList()
@@ -483,7 +486,7 @@ class Index extends Component {
     })
   }
 
-  clickRecommend = (item, index) => {
+  clickRecommend = (item) => {
     let canTo = false
     if (item.toUrl && item.toUrl.split('-')[0] === 'rankinglist') {
       let city = this.state.positionCity
@@ -541,16 +544,6 @@ class Index extends Component {
           cityList: res.data || [],
         })
       })
-  }
-
-  // 选择城市
-  selectCity(city, index) {
-    this.setState({
-      positionCity: city.cityName,
-      areaId: city.zwyCityId,
-    }, () => {
-      this.getListData(this.state.tabIndex)
-    })
   }
 
   // 广告

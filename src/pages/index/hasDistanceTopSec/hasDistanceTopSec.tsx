@@ -233,10 +233,10 @@ class HasDistanceTopSec extends Component {
             </View>
           </View>}
 
-          <View className={`white-bg ${cityList.length > 0 && middleAd.length > 0 && 'show'}`}></View>
+          {cityList.length > 0 && middleAd.length > 0 && <View className="white-bg"></View>}
 
           {/*------当前城市有推荐商品-----*/}
-          <View className={`city-recommend ${middleAd.length > 0 &&  'show'}`}>
+          {middleAd.length > 0 && <View className="city-recommend">
             {
               middleAd.map((item, index) => {
                 return (
@@ -247,7 +247,7 @@ class HasDistanceTopSec extends Component {
                 )
               })
             }
-          </View>
+          </View>}
         </View>
 
       </View>
