@@ -514,6 +514,11 @@ class Index extends Component {
       ad.toUrl && Taro.navigateTo({
         url: `/pages/adPage/index?url=${ad.toUrl}`
       })
+    } else if (ad.toUrl && ad.toUrl.split('-')[0] === 'storeId') {
+      Taro.navigateToMiniProgram({
+        appId: 'wxfc478628cf4f2c73',
+        path: `/pages/shop/index?storeId=${ad.toUrl.split('-')[1]}`
+      })
     }
   }
 
