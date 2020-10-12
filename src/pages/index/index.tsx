@@ -510,14 +510,14 @@ class Index extends Component {
 
   // 广告页跳转
   toAdPage = (ad) => {
-    if (+ad.linkType === 1 && ad.toUrl) {
-      ad.toUrl && Taro.navigateTo({
-        url: `/pages/adPage/index?url=${ad.toUrl}`
-      })
-    } else if (ad.toUrl && ad.toUrl.split('-')[0] === 'storeId') {
+    if (ad.toUrl && ad.toUrl.split('-')[0] === 'storeId') {
       Taro.navigateToMiniProgram({
         appId: 'wxfc478628cf4f2c73',
         path: `/pages/shop/index?storeId=${ad.toUrl.split('-')[1]}`
+      })
+    } else if (+ad.linkType === 1 && ad.toUrl) {
+      ad.toUrl && Taro.navigateTo({
+        url: `/pages/adPage/index?url=${ad.toUrl}`
       })
     }
   }

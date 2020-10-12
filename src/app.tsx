@@ -7,6 +7,7 @@ import API from '@/api'
 import './app.scss'
 
 // let tdweapp = require('@/utils/tdweapp.js')
+// console.log(tdweapp, 123)
 
 
 const store = configStore()
