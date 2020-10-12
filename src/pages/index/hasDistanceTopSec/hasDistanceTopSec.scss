@@ -249,6 +249,8 @@
     .swiper-item{
       height: auto;
       overflow: inherit;
+      display: flex;
+      justify-content: center;
     }
     .city{
       display: inline-block;
@@ -303,7 +305,7 @@
       }
       .city-line-left,.city-line-right{
         position: absolute;
-        right: -66px;
+        right: -71px;
         top: 50%;
         transform: translateY(-50%);
         width: 12px;
@@ -328,7 +330,7 @@
       }
       .city-line-left{
         right: auto;
-        left: -60px;
+        left: -71px;
       }
       &.active{
         font-size: 30px;
