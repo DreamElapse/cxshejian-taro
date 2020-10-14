@@ -17,6 +17,10 @@ import default3 from '@/static/img/index/default-3.png'
 import NoDistanceTopSec from './NoDistanceTopSec/NoDistanceTopSec'
 import HasDistanceTopSec from './HasDistanceTopSec/HasDistanceTopSec'
 
+const TD = require('@/utils/tdweapp.js')
+
+// let tdweapp = require('@/utils/tdweapp.js')
+
 type PageStateProps = {
   date: string,
   trainInfo: any,
@@ -98,7 +102,7 @@ class Index extends Component {
           this.setState({code: router.params[item]});
           break;
         case 'productdynamic':
-        case'product':
+        case 'product':
         case 'rankinglist':
           this.clickRecommend({toUrl: `${item}-${router.params[item]}`});
       }
@@ -109,15 +113,20 @@ class Index extends Component {
    
   }
 
-  componentWillUnmount () { }
+  componentWillUnmount () { 
+    TD.Page.onUnload()
+  }
 
   componentDidShow () {
     this.getDistance() // 获取行程
+    TD.Page.onShow()
     // this.getListData(this.state.tabIndex)
     // this.getTrainCityList()
   }
 
-  componentDidHide () { }
+  componentDidHide () {
+    TD.Page.onHide()
+   }
 
   onReachBottom() {
     if (this.state.noMoreData) return

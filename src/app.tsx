@@ -1,24 +1,21 @@
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
-import Taro from '@tarojs/taro'
+import Taro, { getCurrentInstance } from '@tarojs/taro'
 import configStore from '@/store'
 import API from '@/api'
 
 import './app.scss'
 
-// let tdweapp = require('@/utils/tdweapp.js')
-// console.log(tdweapp, 123)
-
-
 const store = configStore()
 
-// const TD = require('@/utils/tdweapp.js')
+const TD = require('@/utils/tdweapp.js')
 
 class App extends Component {
 
   componentDidMount () {}
 
-  onLaunch() {
+  onLaunch(options) {
+    TD.App.onLaunch(options)
     Taro.login({
       success: val => {
         let code = val.code
@@ -75,9 +72,13 @@ class App extends Component {
     // });
   }
 
-  componentDidShow () {}
+  componentDidShow (options) {
+    TD.App.onShow(options)
+  }
 
-  componentDidHide () {}
+  componentDidHide () {
+    TD.App.onHide()
+  }
 
   componentDidCatchError () {}
 

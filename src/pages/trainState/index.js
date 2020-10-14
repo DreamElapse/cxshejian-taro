@@ -122,7 +122,6 @@ onPullDownRefresh(){
     })
   }
   deleteSchedule = (id) =>{ //删除行程
-    console.log(1111, id)
     var that = this
     var scheduleIDs = []
     scheduleIDs.push(id)

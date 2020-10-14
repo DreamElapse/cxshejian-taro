@@ -23,7 +23,6 @@ export default class Customer extends Component {
     Taro.navigateBack()
   }
   onLoad (options) {
-    console.log(options)
     if (options && options.link) {
       // 存在外链信息，type为1是预约外链 2为商品详情外链
       const token = options['X-Authorization']

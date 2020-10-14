@@ -17,7 +17,6 @@ export default class Bindphone extends Component {
     bc:''
   }
   onLoad (options) {
-    console.log(options)
     if(options) {
       this.setState({
         originalPhoneNumber: options.valuePhone,
@@ -29,7 +28,6 @@ export default class Bindphone extends Component {
     }
   }
   getPhoneNumber = (e) => {
-    console.log('+++++++++++++++++++++++++++++++++++')
     if(e && e.detail && e.detail.errMsg==="getPhoneNumber:ok") {
       this.state.encryptedData = e.detail.encryptedData
       this.state.iv = e.detail.iv

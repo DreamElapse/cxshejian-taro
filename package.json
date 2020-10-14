@@ -39,6 +39,7 @@
   "dependencies": {
     "@babel/runtime": "^7.7.7",
     "@tarojs/components": "3.0.6",
+    "@tarojs/mini-runner": "^3.0.6",
     "@tarojs/react": "3.0.6",
     "@tarojs/runtime": "3.0.6",
     "@tarojs/taro": "3.0.6",
