@@ -1,6 +1,5 @@
 const path = require('path') // enlist-disable-line
-  
-// argv: weapp / swan / alipay / h5 / rn / tt / qq / quickapp
+// argv[4]: weapp / swan / alipay / h5 / rn / tt / qq / quickapp
 const config = {
   projectName: 'cxsj-miniprograme-taro',
   date: '2020-7-30',

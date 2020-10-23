@@ -85,7 +85,6 @@ class NoDistanceTopSec extends Component {
   }
 
   UNSAFE_componentWillMount() {
-    
   }
 
   componentWillUnmount () { }

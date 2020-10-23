@@ -110,7 +110,6 @@ class Index extends Component {
   }
 
   UNSAFE_componentWillMount() {
-   
   }
 
   componentWillUnmount () { 
@@ -157,6 +156,7 @@ class Index extends Component {
             })
           }
         </Swiper>}
+        {/* <View className='pay' onClick={this.getPay}>发起支付</View> */}
 
         <View className={`page-content ${areaId && 'page-content-top'}`}>
           {/*----顶部部分-----*/}
@@ -300,6 +300,37 @@ class Index extends Component {
         </View>
       </View>
     )
+  }
+
+  getPay = () => {
+    API.Order.createPayment()
+    .then(res => {
+        let data = {
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+        }
+        console.log(data, 111)
+        Taro.requestPayment({
+          timeStamp: res.data.timeStamp,
+          nonceStr: res.data.nonceStr,
+          package: res.data.packages,
+          signType: res.data.signType,
+          paySign: res.data.paySign,
+          success () {
+            Taro.redirectTo({
+              url: `/pages/payResult/index`
+            })
+          },
+          fail () {
+            Taro.redirectTo({
+              url: `/pages/payResult/index?orderId=${value.orderId}`
+            })
+          }
+        })
+      })
   }
 
   showTip = () => {

@@ -10,7 +10,6 @@ export default {
       'pages/city/index',
       'pages/createOrder/index',
       'pages/customer/index',
-      'pages/demo/index',
       'pages/findStation/index',
       'pages/guide/index',
       'pages/lateQueryResults/index',
